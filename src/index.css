@@ -1,0 +1,53 @@
+@import "@fontsource/poppins/400.css"; /* Regular */
+@import "@fontsource/poppins/600.css"; /* Semi-Bold */
+@import "@fontsource/poppins/700.css"; /* Bold */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    font-family: 'poppins'
+  }
+  body {
+    @apply bg-surface-page text-brand-navy;
+    -webkit-font-smoothing: antialiased;
+
+  }
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #d1d5e8;
+    border-radius: 99px;
+  }
+}
+
+@layer components {
+  .nav-link {
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium
+           transition-all duration-200 cursor-pointer select-none text-brand-navy;
+  }
+  .nav-link:hover {
+    @apply bg-surface-page;
+  }
+  .nav-link.active {
+    @apply bg-brand-orange text-white shadow-md;
+    box-shadow: 0 4px 14px rgba(233, 108, 42, 0.35);
+  }
+  .kpi-card {
+    @apply bg-white rounded-2xl p-5 border border-slate-100;
+  }
+  .chart-card {
+    @apply bg-white rounded-2xl p-5 border border-slate-100;
+  }
+}
