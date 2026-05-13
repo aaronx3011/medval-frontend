@@ -6,6 +6,25 @@ modprobe wireguard 2>/dev/null || true
 mkdir -p /dev/net
 mknod /dev/net/tun c 10 200 2>/dev/null || true
 
-wg-quick up /etc/wireguard/wg0.conf
+CONFIG=/etc/wireguard/wg0.conf
+
+ip link add dev wg0 type wireguard
+wg setconf wg0 "$CONFIG"
+
+ADDRESSES=$(grep -i '^Address' "$CONFIG" | head -1 | sed 's/.*=\s*//')
+OLDIFS=$IFS
+IFS=','
+for addr in $ADDRESSES; do
+    addr=$(echo "$addr" | xargs)
+    ip address add "$addr" dev wg0
+done
+IFS=$OLDIFS
+
+MTU=$(grep -i '^MTU' "$CONFIG" | head -1 | sed 's/.*=\s*//')
+if [ -n "$MTU" ]; then
+    ip link set mtu "$MTU" up dev wg0
+else
+    ip link set up dev wg0
+fi
 
 nginx -g 'daemon off;'
