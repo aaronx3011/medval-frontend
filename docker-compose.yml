@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   dashboard:
     build:
@@ -11,8 +9,12 @@ services:
       - SYS_MODULE
     volumes:
       - ./wg0.conf:/etc/wireguard/wg0.conf:ro
-    ports:
-      - "8080:80"
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
+    networks:
+      - nginx_default
     restart: unless-stopped
+
+networks:
+  nginx_default:
+    external: true
