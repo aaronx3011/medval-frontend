@@ -17,6 +17,8 @@ interface ApiResponse {
     data: InventarioItem[]
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 // ── Badge logic ───────────────────────────────────────────────────────────────
 function monthsUntil(isoDate: string): number {
     const now = new Date()
@@ -109,7 +111,7 @@ export default function NotificationsPanel() {
         const fetchData = async () => {
             try {
                 const res = await fetch(
-                    'http://10.8.0.4:3000/api/view/aaron_view_AnalisisReposicionInventario?limit=100000'
+                    `${API_BASE_URL}/view/aaron_view_AnalisisReposicionInventario?limit=100000`
                 )
                 if (!res.ok) throw new Error(`HTTP ${res.status}`)
                 const json: ApiResponse = await res.json()
