@@ -200,14 +200,14 @@ export default function InventarioTreemap() {
             className="chart-card mb-4"
         >
             {/* Header */}
-            <div className="flex items-center justify-between mb-4">
-                <h2 className="uppercase font-display text-2xl font-bold text-brand-navy text-left">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
+                <h2 className="uppercase font-display text-xl lg:text-2xl font-bold text-brand-navy text-left">
                     Inventario
                 </h2>
 
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center gap-4">
                     {/* Legend */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
                         {Object.entries(SOFT_COLORS)
                             .filter(([key]) => key !== 'DEFAULT')
                             .map(([prefix, color]) => (

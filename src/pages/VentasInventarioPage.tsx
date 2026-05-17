@@ -8,7 +8,7 @@ export default function VentasInventarioPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
-            className="flex-1 overflow-y-auto p-6"
+            className="flex-1 overflow-y-auto p-4 lg:p-6"
         >
             <VentaInventarioKpiRow />
             <VentasAnalisisRotacionSection />

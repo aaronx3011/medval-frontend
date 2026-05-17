@@ -51,10 +51,10 @@ export default function VentasProductoPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
-            className="flex-1 overflow-y-auto p-6"
+            className="flex-1 overflow-y-auto p-4 lg:p-6"
         >
-            <div className="flex flex-row gap-4 mb-4">
-                <div className='flex-[6]'>
+            <div className="flex flex-col lg:flex-row gap-4 mb-4">
+                <div className='w-full lg:flex-[6]'>
                     <VentasPorProducto
                         selectedProduct={selectedProductCode}
                         onSelectProduct={setSelectedProductCode}
@@ -62,27 +62,27 @@ export default function VentasProductoPage() {
                         isLoadingVentas={isLoadingVentas}
                     />
                 </div>
-                <div className='flex-[4]'>
+                <div className='w-full lg:flex-[4]'>
                     <VariacionMensualChart codigoArticulo={selectedProductCode} />
                 </div>
             </div>
 
-            <div className="flex flex-row gap-4 mb-4">
-                <div className='flex-[3]'>
+            <div className="flex flex-col lg:flex-row gap-4 mb-4">
+                <div className='w-full lg:flex-[3]'>
                     <VentasTotalesPorPeriodo
                         data={clientesData || []}
                         isLoading={isLoadingClientes}
                     />
                 </div>
-                <div className='flex-[3]'>
+                <div className='w-full lg:flex-[3]'>
                     <DistribucionDeVentasChart data={clientesData || []} />
                 </div>
-                <div className='flex-[4]'>
-                    <div className='flex flex-col gap-4 mb-4 h-full'>
-                        <div className='flex-1 min-h-0'>
+                <div className='w-full lg:flex-[4]'>
+                    <div className='flex flex-col sm:flex-row lg:flex-col gap-4 h-full'>
+                        <div className='flex-1 min-h-[200px] lg:min-h-0'>
                             <TopProductosMasVendidos data={top5} isLoading={isLoadingVentas} />
                         </div>
-                        <div className='flex-1 min-h-0'>
+                        <div className='flex-1 min-h-[200px] lg:min-h-0'>
                             <TopProductosMenosVendidos data={bottom5} isLoading={isLoadingVentas} />
                         </div>
                     </div>

@@ -156,11 +156,10 @@ export default function VentasAnalisisRotacionSection() {
                 />
 
                 <div className='flex flex-col gap-4'>
-                    <div className="h-full w-full">
+                    <div className="min-h-[300px] w-full">
                         <VentasRotacionProductoAnualActualChart selectedRow={selectedRowData} />
                     </div>
-                    <div className="h-full w-full">
-                        {/* NUEVO: Pasamos el historial completo y el año en curso */}
+                    <div className="min-h-[300px] w-full">
                         <VentasRotacionProductoAnualChart
                             productHistory={productHistory}
                             activeYear={selectedAnio}

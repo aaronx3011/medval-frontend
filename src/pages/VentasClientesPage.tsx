@@ -87,16 +87,16 @@ export default function VentasClientesPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
-            className="grid h-full grid-rows-2 overflow-y-auto p-6"
+            className="flex flex-col overflow-y-auto p-4 lg:p-6 gap-4"
         >
 
-            <div className="mb-4">
+            <div>
                 <GraphCardWithFilters
                     title='Evolución de ventas y unidades'
                     filters={
-                        <div className="flex gap-3 items-center">
+                        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
                             {/* --- CLIENT COMBOBOX --- */}
-                            <div className="w-full">
+                            <div className="w-full sm:min-w-[250px]">
                                 <Autocomplete
                                     options={Array.isArray(clientes) ? clientes : []}
                                     loading={isLoadingClientes}
@@ -227,7 +227,7 @@ export default function VentasClientesPage() {
             </div>
 
             {/* --- TARJETAS INFERIORES --- */}
-            <div className="min-h-[300px] grid grid-cols-2 gap-4 pb-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pb-10">
                 <ClientesConMayorCompraChart data={top5Clientes} isLoading={isLoadingAnual} />
                 <ProductosPorClienteTable
                     codigoCliente={selectedCliente?.Codigo_Cliente}

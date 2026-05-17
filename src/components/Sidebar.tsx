@@ -3,9 +3,8 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HomeIcon, SalesIcon, InventoryIcon, LogoutIcon, ChevronIcon } from './Icons'
 import logoMedval from '../public/resources/logoMedval.svg'
-import { HandCoins, LucideHandCoins } from 'lucide-react'
+import { HandCoins, X } from 'lucide-react'
 
-// 1. Updated navItems with paths for React Router
 const navItems = [
     { id: 'inicio', label: 'Inicio', Icon: HomeIcon, path: '/' },
     {
@@ -37,35 +36,30 @@ const navItems = [
     },
 ]
 
-// 2. Restored your original Animation Variants
-const containerVariants = {
-    hidden: { x: -240 },
-    visible: {
-        x: 0,
-        transition: { type: 'spring', stiffness: 260, damping: 26, staggerChildren: 0.05 },
-    },
-}
-
 const itemVariants = {
     hidden: { opacity: 0, x: -20 },
     visible: { opacity: 1, x: 0 },
 }
 
-export default function Sidebar({ onLogout }: { onLogout: () => void }) {
+export default function Sidebar({ onLogout, isOpen, onClose }: { onLogout: () => void; isOpen: boolean; onClose: () => void }) {
     const [hoveredId, setHoveredId] = useState<string | null>(null);
+    const [expandedId, setExpandedId] = useState<string | null>(null);
     const location = useLocation();
 
-    return (
-        <motion.aside
-            initial="hidden"
-            animate="visible"
-            variants={containerVariants}
-            className="w-[220px] min-h-screen bg-white border-r border-slate-100 flex flex-col"
-        >
-            {/* RESTORED: Logo Section */}
-            <motion.div variants={itemVariants} className="flex h-20 items-center gap-3 px-5 pt-3 pb-1">
+    const toggleExpand = (id: string) => {
+        setExpandedId(prev => prev === id ? null : id);
+    };
+
+    const isExpanded = (id: string) => hoveredId === id || expandedId === id;
+
+    const navContent = (
+        <>
+            <div className="flex h-20 items-center gap-3 px-5 pt-3 pb-1 relative">
                 <img src={logoMedval} className='w-full h-full' alt="Medval Logo" />
-            </motion.div>
+                <button onClick={onClose} className="lg:hidden absolute top-2 right-2 p-1 rounded-lg hover:bg-slate-100 text-slate-400">
+                    <X size={18} />
+                </button>
+            </div>
 
             <nav className="flex-1 px-3 py-5 flex flex-col gap-1">
                 {navItems.map(({ id, label, Icon, path, subItems }) => {
@@ -79,21 +73,40 @@ export default function Sidebar({ onLogout }: { onLogout: () => void }) {
                             onMouseEnter={() => setHoveredId(id)}
                             onMouseLeave={() => setHoveredId(null)}
                         >
-                            <NavLink
-                                to={path}
-                                className={({ isActive }) =>
-                                    `nav-link flex items-center justify-between ${isActive || isParentActive ? 'active' : ''}`
-                                }
-                            >
-                                <div className="flex items-center gap-3">
-                                    <Icon size={18} />
-                                    <span>{label}</span>
+                            {subItems ? (
+                                <div className={`nav-link flex items-center justify-between ${isParentActive ? 'active' : ''}`}>
+                                    <NavLink
+                                        to={path}
+                                        onClick={() => { onClose(); setExpandedId(null); }}
+                                        className="flex items-center gap-3 flex-1"
+                                    >
+                                        <Icon size={18} />
+                                        <span>{label}</span>
+                                    </NavLink>
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); toggleExpand(id); }}
+                                        className="p-1.5 rounded-lg hover:bg-white/20 transition-colors"
+                                    >
+                                        <ChevronIcon size={14} className={`transition-transform ${isExpanded(id) ? 'rotate-90' : ''}`} />
+                                    </button>
                                 </div>
-                                {subItems && <ChevronIcon size={14} className={`transition-transform ${hoveredId === id ? 'rotate-90' : ''}`} />}
-                            </NavLink>
+                            ) : (
+                                <NavLink
+                                    to={path}
+                                    onClick={() => { onClose(); setExpandedId(null); }}
+                                    className={({ isActive }) =>
+                                        `nav-link flex items-center justify-between ${isActive || isParentActive ? 'active' : ''}`
+                                    }
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <Icon size={18} />
+                                        <span>{label}</span>
+                                    </div>
+                                </NavLink>
+                            )}
 
                             <AnimatePresence>
-                                {subItems && hoveredId === id && (
+                                {subItems && isExpanded(id) && (
                                     <motion.div
                                         initial={{ opacity: 0, height: 0 }}
                                         animate={{ opacity: 1, height: 'auto' }}
@@ -104,6 +117,7 @@ export default function Sidebar({ onLogout }: { onLogout: () => void }) {
                                             <NavLink
                                                 key={sub.id}
                                                 to={sub.path}
+                                                onClick={() => { onClose(); setExpandedId(null); }}
                                                 className={({ isActive }) =>
                                                     `block py-2 px-3 text-xs transition-colors ${isActive ? 'text-brand-navy font-bold' : 'text-slate-500 hover:text-brand-navy'}`
                                                 }
@@ -119,7 +133,6 @@ export default function Sidebar({ onLogout }: { onLogout: () => void }) {
                 })}
             </nav>
 
-            {/* RESTORED: Logout Button with Animations */}
             <motion.div
                 variants={itemVariants}
                 whileHover={{ scale: 1.02 }}
@@ -132,6 +145,23 @@ export default function Sidebar({ onLogout }: { onLogout: () => void }) {
                 <LogoutIcon size={17} />
                 <span>Cerrar Sesión</span>
             </motion.div>
-        </motion.aside>
+        </>
+    );
+
+    return (
+        <>
+            {isOpen && (
+                <div className="fixed inset-0 bg-black/30 z-40 lg:hidden" onClick={onClose} />
+            )}
+            <aside className={`
+                w-[220px] min-h-screen bg-white border-r border-slate-100 flex flex-col flex-shrink-0
+                fixed inset-y-0 left-0 z-50
+                lg:relative lg:translate-x-0 lg:z-auto
+                transition-transform duration-300 ease-in-out
+                ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+            `}>
+                {navContent}
+            </aside>
+        </>
     )
 }

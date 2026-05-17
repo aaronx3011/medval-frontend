@@ -167,7 +167,7 @@ export default function VentasUnidadesSection({
                 Ventas por Producto Mensual
             </h2>
 
-            <div className="flex items-center gap-2 mb-3 text-xs text-slate-500">
+            <div className="flex flex-wrap items-center gap-2 mb-3 text-xs text-slate-500">
                 <span className="font-medium">Desde:</span>
                 <select
                     value={fromYear}
@@ -209,7 +209,7 @@ export default function VentasUnidadesSection({
                 </select>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 h-[560px]">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 min-h-[560px]">
                 <div className="flex flex-col h-full w-full">
                     <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2, flexShrink: 0 }}>
                         <Paper

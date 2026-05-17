@@ -13,21 +13,29 @@ export default function SummaryPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
-            className="flex flex-col w-full h-full overflow-y-auto p-6"
+            className="flex flex-col w-full h-full overflow-y-auto p-4 lg:p-6"
         >
             {/* KPI row */}
             <KpiRow />
 
-            {/* Mid row: line chart + top clients */}
-            <div className="h-[40%] grid grid-cols-2 gap-4 mb-4">
-                <NotificationsPanel />
-                <MonthlySalesChart />
+            {/* Mid row */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+                <div className="min-h-[300px] lg:min-h-[380px]">
+                    <NotificationsPanel />
+                </div>
+                <div className="min-h-[300px] lg:min-h-[380px]">
+                    <MonthlySalesChart />
+                </div>
             </div>
 
-            {/* Bottom row: notifications + monthly sales */}
-            <div className="h-[60%] grid grid-cols-2 gap-4">
-                <CuentasPorCobrarSummary />
-                <TopClientsChart />
+            {/* Bottom row */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="min-h-[400px] lg:min-h-[440px]">
+                    <CuentasPorCobrarSummary />
+                </div>
+                <div className="min-h-[300px] lg:min-h-[440px]">
+                    <TopClientsChart />
+                </div>
             </div>
         </motion.main>
     )

@@ -334,27 +334,23 @@ export default function HeatmapSummaryView() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
-            className="grid grid-rows-5 w-full h-full overflow-y-auto p-6 space-y-6"
+            className="flex flex-col w-full h-full overflow-y-auto p-4 lg:p-6 gap-6"
         >
-            <div className="w-full flex row-span-3 min-w-0">
-                <div className="flex-1 w-full min-w-0">
-                    <GraphCard
-                        titlle='Ventas Diarias'
-                        graph={
-                            <div className="w-full py-4 px-2">
-                                <MonthCalendar />
-                            </div>
-                        }
-                        legend={<></>}
-                    />
-                </div>
+            <div className="w-full min-w-0">
+                <GraphCard
+                    titlle='Ventas Diarias'
+                    graph={
+                        <div className="w-full py-4 px-2 overflow-x-auto">
+                            <MonthCalendar />
+                        </div>
+                    }
+                    legend={<></>}
+                />
             </div>
 
-            <div className="w-full row-span-2 min-h-[400px] flex min-w-0">
-                <div className="grid grid-cols-2 w-full gap-4 h-full min-w-0">
-                    <DistribucionVentaAnualPorProducto />
-                    <LineAllTearsByMonth />
-                </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 w-full gap-4 min-w-0">
+                <DistribucionVentaAnualPorProducto />
+                <LineAllTearsByMonth />
             </div>
         </motion.main>
     )

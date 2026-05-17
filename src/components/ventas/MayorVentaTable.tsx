@@ -19,7 +19,7 @@ export default function MayorVentaTable({ data = [] }: Props) {
         <TableCard
             title='Top de productos con mayor venta'
             graph={
-                <div className="overflow-hidden rounded-xl border border-slate-100 bg-white">
+                <div className="overflow-x-auto rounded-xl border border-slate-100 bg-white">
                     <table className="w-full border-collapse">
                         <thead>
                             <tr className="bg-white">

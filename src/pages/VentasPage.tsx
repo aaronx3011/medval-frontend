@@ -121,7 +121,7 @@ export default function VentasPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
-            className="flex-1 overflow-y-auto p-6"
+            className="flex-1 overflow-y-auto p-4 lg:p-6"
         >
             <VentasUnidadesSection
                 fromMonth={fromMonth}
@@ -140,12 +140,12 @@ export default function VentasPage() {
                 setSelectedProduct={setSelectedProduct}
             />
 
-            <div className="min-h-72 grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                 <TopProductosMasVendidos data={sortedData.top5Charts} />
-                <ArticuloVsVentas data={sortedData.donutData} /> {/* Passed as prop here */}
+                <ArticuloVsVentas data={sortedData.donutData} />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <MayorVentaTable data={sortedData.top5Table} />
                 <MenorVentaTable data={sortedData.bottom5Table} />
             </div>

@@ -103,7 +103,7 @@ export default function InventarioMainList() {
             graph={
                 <div className="flex flex-col h-full w-full">
                     {/* Filter Bar */}
-                    <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 3, flexShrink: 0 }}>
+                    <Stack sx={{ mb: 3, flexShrink: 0, flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'stretch', sm: 'center' }, gap: 2 }}>
 
                         {/* General search */}
                         <Paper
@@ -112,7 +112,7 @@ export default function InventarioMainList() {
                                 p: '8px 16px',
                                 display: 'flex',
                                 alignItems: 'center',
-                                width: 260,
+                                width: { xs: '100%', sm: 260 },
                                 backgroundColor: '#FFFFFF',
                                 borderRadius: '12px',
                                 border: '1px solid #E0E4E8',
@@ -139,7 +139,7 @@ export default function InventarioMainList() {
                                 p: '8px 16px',
                                 display: 'flex',
                                 alignItems: 'center',
-                                width: 200,
+                                width: { xs: '100%', sm: 200 },
                                 backgroundColor: '#FFFFFF',
                                 borderRadius: '12px',
                                 border: '1px solid #E0E4E8',
@@ -167,13 +167,13 @@ export default function InventarioMainList() {
                                     setLoteSearch('');
                                     setSelectedAlmacen('');
                                 }}
-                                sx={{ color: '#718096', textTransform: 'none', fontWeight: 600, fontSize: '0.85rem', '&:hover': { color: '#FF6600' } }}
+                                sx={{ color: '#718096', textTransform: 'none', fontWeight: 600, fontSize: '0.85rem', '&:hover': { color: '#FF6600' }, alignSelf: { xs: 'flex-start', sm: 'center' } }}
                             >
                                 Limpiar
                             </Button>
                         )}
 
-                        <Box sx={{ flexGrow: 1 }} />
+                        <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }} />
 
                         {/* Almacen dropdown */}
                         <Button
@@ -188,7 +188,8 @@ export default function InventarioMainList() {
                                 textTransform: 'none',
                                 fontWeight: 600,
                                 px: 2,
-                                '&:hover': { backgroundColor: '#FFF', borderColor: '#FF6600' }
+                                '&:hover': { backgroundColor: '#FFF', borderColor: '#FF6600' },
+                                alignSelf: { xs: 'flex-start', sm: 'center' }
                             }}
                         >
                             {selectedAlmacen || 'Almacén'}

@@ -164,7 +164,7 @@ export default function NotificationsPanel() {
 
     // ── Table slot — plain overflow scroll, no absolute positioning ───────────
     const tableSlot = (
-        <div className="overflow-y-auto w-full h-full">
+        <div className="overflow-y-auto overflow-x-auto w-full h-full min-w-0">
             {isLoading && (
                 <div className="flex items-center justify-center py-10 text-xs text-slate-400">
                     Cargando...
@@ -205,9 +205,9 @@ export default function NotificationsPanel() {
                                         <td className="py-2 pr-3 text-xs text-slate-400 font-medium w-16 align-middle whitespace-nowrap">
                                             {formatDate(item.Proximo_Vencimiento)}
                                         </td>
-                                        <td className="py-2 pr-3 text-xs text-brand-navy align-middle">
+                                        <td className="py-2 pr-3 text-xs text-brand-navy align-middle min-w-0">
                                             <span className="text-slate-400 mr-1">{item.Codigo_Articulo}</span>
-                                            {item.Descripcion_Articulo}
+                                            <span className="break-words">{item.Descripcion_Articulo}</span>
                                         </td>
                                         <td className="py-2 align-middle">
                                             <div className="flex items-center justify-end gap-1 flex-wrap">

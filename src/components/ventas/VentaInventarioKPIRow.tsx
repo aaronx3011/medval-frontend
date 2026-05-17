@@ -54,14 +54,14 @@ export default function VentaInventarioKpiRow() {
         {
             type: 'amount',
             label: 'Inventario Actual',
-            value: `$${valorTotalInventarioUSD.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
+            value: `$${valorTotalInventarioUSD.toLocaleString('en-US', { maximumFractionDigits: 2 })}`,
             units: `${totalUnidadesInventario.toLocaleString('es-ES')}`,
             cardClass: 'bg-white',
         },
         {
             type: 'amount',
             label: `Inventario Crítico (${cantidadItemsCriticos} Prod.)`,
-            value: `$${dineroEnRiesgoUSD.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
+            value: `$${dineroEnRiesgoUSD.toLocaleString('en-US', { maximumFractionDigits: 2 })}`,
             units: `${totalUnidadesCriticas.toLocaleString('es-ES')}`,
             cardClass: 'bg-white',
         },
@@ -75,14 +75,14 @@ export default function VentaInventarioKpiRow() {
         {
             type: 'amount',
             label: 'Stock Bajo (≤ 1 Mes)',
-            value: `$${valorStockBajoUSD.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
+            value: `$${valorStockBajoUSD.toLocaleString('en-US', { maximumFractionDigits: 2 })}`,
             units: `${totalUnidadesStockBajo.toLocaleString('es-ES')}`,
             cardClass: 'bg-white',
         },
     ];
 
     return (
-        <div className="grid grid-cols-4 gap-4 mb-5">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5">
             {kpiData.map((kpi, i) => (
                 <motion.div
                     key={i}

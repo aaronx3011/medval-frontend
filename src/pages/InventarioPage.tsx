@@ -8,7 +8,7 @@ export default function InventarioPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
-            className="flex flex-col w-full h-full overflow-y-auto p-6"
+            className="flex flex-col w-full h-full overflow-y-auto p-4 lg:p-6"
         >
 
 

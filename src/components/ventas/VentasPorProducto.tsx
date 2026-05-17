@@ -102,7 +102,7 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
                 Ventas por Producto
             </h2>
 
-            <div className="grid grid-cols-2 gap-4 h-[560px]">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 min-h-[560px]">
                 <div className="flex flex-col h-full w-full">
                     <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2, flexShrink: 0 }}>
                         <Paper

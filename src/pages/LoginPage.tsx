@@ -11,8 +11,8 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-surface-page">
-            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl border border-slate-100 w-80 flex flex-col gap-4">
+        <div className="flex min-h-screen items-center justify-center bg-surface-page p-4">
+            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl border border-slate-100 w-full max-w-sm flex flex-col gap-4">
                 <img src={logoMedval} className='w-full h-full' />
                 <p className="text-base text-slate-400">Ingresa tus credenciales</p>
 

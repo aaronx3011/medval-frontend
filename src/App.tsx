@@ -20,6 +20,7 @@ import CuentasPorCobrarPage from './pages/CuentasPorCobrarPage'
 
 export default function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [sidebarOpen, setSidebarOpen] = useState(false)
 
     if (!isLoggedIn) {
         return <LoginPage onLogin={() => setIsLoggedIn(true)} />
@@ -28,9 +29,9 @@ export default function App() {
     return (
         <BrowserRouter>
             <div className="flex h-screen overflow-hidden bg-surface-page">
-                <Sidebar onLogout={() => setIsLoggedIn(false)} />
+                <Sidebar onLogout={() => setIsLoggedIn(false)} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
                 <div className="flex flex-col flex-1 min-w-0">
-                    <Topbar />
+                    <Topbar onToggleSidebar={() => setSidebarOpen(prev => !prev)} />
                     <div className="flex-1 overflow-hidden flex flex-col">
                         <Routes>
                             <Route path="/" element={<SummaryPage />} />

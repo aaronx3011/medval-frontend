@@ -64,7 +64,7 @@ export default function CuentasPorCobrarSummary() {
             title="Resumen de Cuentas por Cobrar"
             graph={
                 <div className="flex flex-col h-full w-full">
-                    <Box sx={{ height: 500, width: '100%', mt: 2 }}>
+                    <Box sx={{ height: '100%', width: '100%' }}>
                         <Paper elevation={0} sx={{ height: '100%', width: '100%', border: '1px solid #E0E4E8', borderRadius: '12px', overflow: 'hidden' }}>
                             {loading ? (
                                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
@@ -135,7 +135,7 @@ export default function CuentasPorCobrarSummary() {
                         p: '4px 12px',
                         display: 'flex',
                         alignItems: 'center',
-                        width: '250px',
+                        width: { xs: '100%', sm: '250px' },
                         backgroundColor: '#FFFFFF',
                         borderRadius: '10px',
                         border: '1px solid #E0E4E8',

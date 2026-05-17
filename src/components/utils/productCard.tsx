@@ -5,12 +5,12 @@ interface productCardProps {
 
 export default function ProuctCard({ titlle, value }: productCardProps) {
     return (
-        <div>
-            <p className="text-sm text-slate-400 uppercase">
+        <div className="min-w-0">
+            <p className="text-xs sm:text-sm text-slate-400 uppercase leading-tight break-words h-8 sm:h-auto">
                 {titlle}
             </p>
-            <div className="flex justify-start px-[5%]">
-                <p className="font-display text-3xl font-bold text-brand-orange mt-2 overflow-clip truncate" title={value}>
+            <div className="flex justify-end px-[2%] sm:px-[5%]">
+                <p className="font-display text-lg sm:text-xl lg:text-3xl font-bold text-brand-orange mt-2 leading-tight text-right break-words line-clamp-2">
                     {value}
                 </p>
             </div>

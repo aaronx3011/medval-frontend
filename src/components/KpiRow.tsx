@@ -68,19 +68,19 @@ export default function KpiRow() {
         {
             type: 'amount',
             label: 'Unidades vendidas durante el año',
-            value: ventasTotals ? formatNumber(ventasTotals.Total_USD) : '0',
+            value: ventasTotals ? ventasTotals.Total_USD.toLocaleString('en-US', { maximumFractionDigits: 2 }) : '0',
             units: ventasTotals ? formatNumber(ventasTotals.Total_Unidades) : '0'
         },
         {
             type: 'amount',
             label: 'Inventario Actual',
-            value: formatNumber(valorTotalInventarioUSD), // Valor calculado ($)
+            value: valorTotalInventarioUSD.toLocaleString('en-US', { maximumFractionDigits: 2 }), // Valor calculado ($)
             units: formatNumber(totalUnidadesInventario)  // Total de stock (Unidades)
         },
         {
             type: 'amount',
             label: 'Promedio de venta mensual',
-            value: formatNumber(promedioVentaMensualUSD),
+            value: promedioVentaMensualUSD.toLocaleString('en-US', { maximumFractionDigits: 2 }),
             units: formatNumber(promedioVentaMensualUnidades)
         },
         {
@@ -92,7 +92,7 @@ export default function KpiRow() {
     ];
 
     return (
-        <div className="grid grid-cols-4 gap-4 mb-5">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5">
             {kpiData.map((kpi, i) => (
                 <motion.div
                     key={i}

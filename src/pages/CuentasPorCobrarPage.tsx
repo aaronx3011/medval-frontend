@@ -134,7 +134,7 @@ export default function CuentasPorCobrarPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
-            className="flex-1 overflow-y-auto p-6"
+            className="flex-1 overflow-y-auto p-4 lg:p-6"
         >
             <motion.div
                 initial={{ opacity: 0, y: 24 }}
@@ -142,9 +142,9 @@ export default function CuentasPorCobrarPage() {
                 transition={{ delay: 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 className="chart-card mb-4"
             >
-                <div className="flex items-start justify-between mb-4">
+                <div className="flex flex-col sm:flex-row items-start justify-between mb-4 gap-2">
                     <div>
-                        <h2 className="uppercase font-display text-2xl font-bold text-brand-navy text-left">
+                        <h2 className="uppercase font-display text-xl lg:text-2xl font-bold text-brand-navy text-left">
                             Cuentas por Cobrar
                         </h2>
                         {selectedBucket && (
@@ -170,9 +170,9 @@ export default function CuentasPorCobrarPage() {
                     </div>
                 </div>
 
-                <div className="flex gap-6 h-[520px]">
+                <div className="flex flex-col lg:flex-row gap-6 min-h-[520px]">
                     {/* Left — Pie chart */}
-                    <div className="flex flex-col" style={{ width: 340, flexShrink: 0, paddingLeft: 24 }}>
+                    <div className="flex flex-col w-full lg:w-[340px] lg:flex-shrink-0 lg:pl-6">
                         <p className="text-xs text-slate-400 uppercase tracking-wide mb-2">
                             Distribución por antigüedad (USD)
                         </p>
