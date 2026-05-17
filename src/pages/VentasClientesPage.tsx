@@ -90,152 +90,285 @@ export default function VentasClientesPage() {
             className="flex flex-col overflow-y-auto p-4 lg:p-6 gap-4"
         >
 
-            <div className="min-h-[450px] lg:min-h-[500px]">
-                <GraphCardWithFilters
-                    title='Evolución de ventas y unidades'
-                    filters={
-                        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-                            {/* --- CLIENT COMBOBOX --- */}
-                            <div className="w-full sm:min-w-[250px]">
-                                <Autocomplete
-                                    options={Array.isArray(clientes) ? clientes : []}
-                                    loading={isLoadingClientes}
-                                    getOptionLabel={(option) => `${option.Codigo_Cliente} - ${option.Nombre_Cliente}`}
-                                    isOptionEqualToValue={(option, value) => option.Codigo_Cliente === value.Codigo_Cliente}
-                                    value={selectedCliente}
-                                    onChange={(_event, newValue) => {
-                                        setSelectedCliente(newValue);
-                                    }}
-                                    noOptionsText="No se encontraron clientes"
-                                    loadingText="Cargando..."
-                                    size="small"
-                                    renderInput={(params) => (
-                                        <TextField
-                                            {...params}
-                                            placeholder="Buscar cliente..."
-                                            variant="outlined"
-                                            InputProps={{
-                                                ...params.InputProps,
-                                                style: {
-                                                    fontSize: '0.75rem',
-                                                    borderRadius: '9999px',
-                                                    backgroundColor: '#f8fafc',
-                                                    height: '32px',
-                                                    paddingTop: '2px',
-                                                    paddingBottom: '2px'
-                                                }
-                                            }}
-                                            sx={{
-                                                '& .MuiOutlinedInput-root': {
-                                                    '& fieldset': { borderColor: '#e2e8f0' },
-                                                    '&:hover fieldset': { borderColor: '#cbd5e1' },
-                                                    '&.Mui-focused fieldset': { borderColor: '#FF6600' }
-                                                }
-                                            }}
-                                        />
-                                    )}
-                                />
+            {/* Mobile: pie chart first, then line chart, then table */}
+            <div className="flex flex-col gap-4 lg:hidden pb-10">
+                <div className="min-h-[350px]">
+                    <ClientesConMayorCompraChart data={top5Clientes} isLoading={isLoadingAnual} />
+                </div>
+                <div className="min-h-[450px]">
+                    <GraphCardWithFilters
+                        title='Evolución de ventas y unidades'
+                        filters={
+                            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                                <div className="w-full sm:min-w-[250px]">
+                                    <Autocomplete
+                                        options={Array.isArray(clientes) ? clientes : []}
+                                        loading={isLoadingClientes}
+                                        getOptionLabel={(option) => `${option.Codigo_Cliente} - ${option.Nombre_Cliente}`}
+                                        isOptionEqualToValue={(option, value) => option.Codigo_Cliente === value.Codigo_Cliente}
+                                        value={selectedCliente}
+                                        onChange={(_event, newValue) => {
+                                            setSelectedCliente(newValue);
+                                        }}
+                                        noOptionsText="No se encontraron clientes"
+                                        loadingText="Cargando..."
+                                        size="small"
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                placeholder="Buscar cliente..."
+                                                variant="outlined"
+                                                InputProps={{
+                                                    ...params.InputProps,
+                                                    style: {
+                                                        fontSize: '0.75rem',
+                                                        borderRadius: '9999px',
+                                                        backgroundColor: '#f8fafc',
+                                                        height: '32px',
+                                                        paddingTop: '2px',
+                                                        paddingBottom: '2px'
+                                                    }
+                                                }}
+                                                sx={{
+                                                    '& .MuiOutlinedInput-root': {
+                                                        '& fieldset': { borderColor: '#e2e8f0' },
+                                                        '&:hover fieldset': { borderColor: '#cbd5e1' },
+                                                        '&.Mui-focused fieldset': { borderColor: '#FF6600' }
+                                                    }
+                                                }}
+                                            />
+                                        )}
+                                    />
+                                </div>
+                                <div className="relative">
+                                    <select
+                                        value={selectedYear}
+                                        onChange={(e) => setSelectedYear(e.target.value)}
+                                        disabled={availableYears.length === 0}
+                                        className="appearance-none bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-full pl-3 pr-8 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand-orange/20 font-medium h-8 disabled:opacity-50"
+                                    >
+                                        {availableYears.length === 0 && <option value="">Año</option>}
+                                        {availableYears.map(y => <option key={y} value={y}>{y}</option>)}
+                                    </select>
+                                    <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+                                </div>
                             </div>
-
-                            {/* --- YEAR FILTER (Dinamico) --- */}
-                            <div className="relative">
-                                <select
-                                    value={selectedYear}
-                                    onChange={(e) => setSelectedYear(e.target.value)}
-                                    disabled={availableYears.length === 0}
-                                    className="appearance-none bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-full pl-3 pr-8 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand-orange/20 font-medium h-8 disabled:opacity-50"
-                                >
-                                    {availableYears.length === 0 && <option value="">Año</option>}
-                                    {availableYears.map(y => <option key={y} value={y}>{y}</option>)}
-                                </select>
-                                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
-                            </div>
-                        </div>
-                    }
-                    graph={
-                        <div className="w-full min-h-[350opx] flex flex-row">
-                            {isLoadingHistorial ? (
-                                <div style={{ width: '100%', height: 380 }}>
+                        }
+                        graph={
+                                isLoadingHistorial ? (
                                     <div className="absolute inset-0 flex items-center justify-center text-sm font-medium text-slate-400">
                                         Cargando datos del cliente...
                                     </div>
+                                ) : lineChartData.length > 0 ? (
+                                    <LineChart
+                                        dataset={lineChartData}
+                                        xAxis={[{
+                                            scaleType: 'point',
+                                            dataKey: 'x',
+                                            tickLabelStyle: { fill: '#94a3b8', fontSize: { xs: 8, lg: 11 } },
+                                            sx: {
+                                                '& .MuiChartsAxis-line': { stroke: 'transparent' },
+                                                '& .MuiChartsAxis-tick': { stroke: 'transparent' }
+                                            }
+                                        }]}
+                                        yAxis={[{
+                                            valueFormatter: (v) => v.toLocaleString('es-ES'),
+                                            tickLabelStyle: { fill: '#94a3b8', fontSize: { xs: 8, lg: 11 } },
+                                            sx: {
+                                                '& .MuiChartsAxis-line': { stroke: 'transparent' },
+                                                '& .MuiChartsAxis-tick': { stroke: 'transparent' }
+                                            }
+                                        }]}
+                                        series={[
+                                            {
+                                                dataKey: 'unidades',
+                                                color: '#0F172A',
+                                                curve: 'monotoneX',
+                                                showMark: false,
+                                                area: false,
+                                            },
+                                            {
+                                                dataKey: 'usd',
+                                                color: '#ff6b00',
+                                                curve: 'monotoneX',
+                                                showMark: false,
+                                                area: false,
+                                            },
+                                        ]}
+                                        slotProps={{ legend: { hidden: true } }}
+                                        margin={{ left: 45, right: 10, top: 10, bottom: 20 }}
+                                        grid={{ horizontal: true }}
+                                        sx={{ '& .MuiChartsGrid-line': { stroke: '#f1f5f9', strokeWidth: 1.5 } }}
+                                    />
+                                ) : (
+                                    <div className="absolute inset-0 flex items-center justify-center text-sm font-medium text-slate-400">
+                                        Selecciona un cliente para ver su evolución
+                                    </div>
+                                )
+                        }
+                        legend={
+                            <div className='flex items-center justify-center pt-2'>
+                                <div className="flex items-center gap-4">
+                                    <span className="flex items-center gap-1.5 text-xs text-slate-500">
+                                        <span className="w-5 h-0.5 bg-brand-navy inline-block rounded" />
+                                        Numero de unidades
+                                    </span>
+                                    <span className="flex items-center gap-1.5 text-xs text-slate-500">
+                                        <span className="w-5 h-0.5 bg-brand-orange inline-block rounded" />
+                                        Valor en USD
+                                    </span>
                                 </div>
-                            ) : lineChartData.length > 0 ? (
-                                <LineChart
-                                    dataset={lineChartData}
-                                    xAxis={[{
-                                        scaleType: 'point',
-                                        dataKey: 'x',
-                                        tickLabelStyle: { fill: '#94a3b8', fontSize: 11 },
-                                        sx: {
-                                            '& .MuiChartsAxis-line': { stroke: 'transparent' },
-                                            '& .MuiChartsAxis-tick': { stroke: 'transparent' }
-                                        }
-                                    }]}
-                                    yAxis={[{
-                                        valueFormatter: (v) => v.toLocaleString('es-ES'),
-                                        tickLabelStyle: { fill: '#94a3b8', fontSize: 11 },
-                                        sx: {
-                                            '& .MuiChartsAxis-line': { stroke: 'transparent' },
-                                            '& .MuiChartsAxis-tick': { stroke: 'transparent' }
-                                        }
-                                    }]}
-                                    series={[
-                                        {
-                                            dataKey: 'unidades',
-                                            color: '#0F172A',
-                                            curve: 'monotoneX',
-                                            showMark: false,
-                                            area: false,
-                                        },
-                                        {
-                                            dataKey: 'usd',
-                                            color: '#ff6b00',
-                                            curve: 'monotoneX',
-                                            showMark: false,
-                                            area: false,
-                                        },
-                                    ]}
-                                    slotProps={{ legend: { hidden: true } }}
-                                    margin={{ left: 70, right: 20, top: 20, bottom: 30 }}
-                                    grid={{ horizontal: true }}
-                                    sx={{ '& .MuiChartsGrid-line': { stroke: '#f1f5f9', strokeWidth: 1.5 } }}
-                                    height={350}
-                                />
-                            ) : (
-                                <div className="absolute inset-0 flex items-center justify-center text-sm font-medium text-slate-400">
-                                    Selecciona un cliente para ver su evolución
-                                </div>
-                            )}
-                        </div>
-                    }
-                    legend={
-                        <div className='flex items-center justify-center pt-2'>
-                            <div className="flex items-center gap-4">
-                                <span className="flex items-center gap-1.5 text-xs text-slate-500">
-                                    <span className="w-5 h-0.5 bg-brand-navy inline-block rounded" />
-                                    Numero de unidades
-                                </span>
-                                <span className="flex items-center gap-1.5 text-xs text-slate-500">
-                                    <span className="w-5 h-0.5 bg-brand-orange inline-block rounded" />
-                                    Valor en USD
-                                </span>
                             </div>
-                        </div>
-                    }
-                />
-            </div>
-
-            {/* --- TARJETAS INFERIORES --- */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pb-10">
-                <div className="min-h-[350px] lg:min-h-[420px]">
-                    <ClientesConMayorCompraChart data={top5Clientes} isLoading={isLoadingAnual} />
+                        }
+                    />
                 </div>
-                <div className="min-h-[350px] lg:min-h-[420px]">
+                <div className="min-h-[350px]">
                     <ProductosPorClienteTable
                         codigoCliente={selectedCliente?.Codigo_Cliente}
                         nombreCliente={selectedCliente?.Nombre_Cliente}
                     />
+                </div>
+            </div>
+
+            {/* Desktop: line chart on top, pie + table side by side below */}
+            <div className="hidden lg:flex lg:flex-col gap-4 pb-10">
+                <div className="min-h-[500px]">
+                    <GraphCardWithFilters
+                        title='Evolución de ventas y unidades'
+                        filters={
+                            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                                <div className="w-full sm:min-w-[250px]">
+                                    <Autocomplete
+                                        options={Array.isArray(clientes) ? clientes : []}
+                                        loading={isLoadingClientes}
+                                        getOptionLabel={(option) => `${option.Codigo_Cliente} - ${option.Nombre_Cliente}`}
+                                        isOptionEqualToValue={(option, value) => option.Codigo_Cliente === value.Codigo_Cliente}
+                                        value={selectedCliente}
+                                        onChange={(_event, newValue) => {
+                                            setSelectedCliente(newValue);
+                                        }}
+                                        noOptionsText="No se encontraron clientes"
+                                        loadingText="Cargando..."
+                                        size="small"
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                placeholder="Buscar cliente..."
+                                                variant="outlined"
+                                                InputProps={{
+                                                    ...params.InputProps,
+                                                    style: {
+                                                        fontSize: '0.75rem',
+                                                        borderRadius: '9999px',
+                                                        backgroundColor: '#f8fafc',
+                                                        height: '32px',
+                                                        paddingTop: '2px',
+                                                        paddingBottom: '2px'
+                                                    }
+                                                }}
+                                                sx={{
+                                                    '& .MuiOutlinedInput-root': {
+                                                        '& fieldset': { borderColor: '#e2e8f0' },
+                                                        '&:hover fieldset': { borderColor: '#cbd5e1' },
+                                                        '&.Mui-focused fieldset': { borderColor: '#FF6600' }
+                                                    }
+                                                }}
+                                            />
+                                        )}
+                                    />
+                                </div>
+                                <div className="relative">
+                                    <select
+                                        value={selectedYear}
+                                        onChange={(e) => setSelectedYear(e.target.value)}
+                                        disabled={availableYears.length === 0}
+                                        className="appearance-none bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-full pl-3 pr-8 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand-orange/20 font-medium h-8 disabled:opacity-50"
+                                    >
+                                        {availableYears.length === 0 && <option value="">Año</option>}
+                                        {availableYears.map(y => <option key={y} value={y}>{y}</option>)}
+                                    </select>
+                                    <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+                                </div>
+                            </div>
+                        }
+                        graph={
+                                isLoadingHistorial ? (
+                                    <div className="absolute inset-0 flex items-center justify-center text-sm font-medium text-slate-400">
+                                        Cargando datos del cliente...
+                                    </div>
+                                ) : lineChartData.length > 0 ? (
+                                    <LineChart
+                                        dataset={lineChartData}
+                                        xAxis={[{
+                                            scaleType: 'point',
+                                            dataKey: 'x',
+                                            tickLabelStyle: { fill: '#94a3b8', fontSize: { xs: 8, lg: 11 } },
+                                            sx: {
+                                                '& .MuiChartsAxis-line': { stroke: 'transparent' },
+                                                '& .MuiChartsAxis-tick': { stroke: 'transparent' }
+                                            }
+                                        }]}
+                                        yAxis={[{
+                                            valueFormatter: (v) => v.toLocaleString('es-ES'),
+                                            tickLabelStyle: { fill: '#94a3b8', fontSize: { xs: 8, lg: 11 } },
+                                            sx: {
+                                                '& .MuiChartsAxis-line': { stroke: 'transparent' },
+                                                '& .MuiChartsAxis-tick': { stroke: 'transparent' }
+                                            }
+                                        }]}
+                                        series={[
+                                            {
+                                                dataKey: 'unidades',
+                                                color: '#0F172A',
+                                                curve: 'monotoneX',
+                                                showMark: false,
+                                                area: false,
+                                            },
+                                            {
+                                                dataKey: 'usd',
+                                                color: '#ff6b00',
+                                                curve: 'monotoneX',
+                                                showMark: false,
+                                                area: false,
+                                            },
+                                        ]}
+                                        slotProps={{ legend: { hidden: true } }}
+                                        margin={{ left: 45, right: 10, top: 10, bottom: 20 }}
+                                        grid={{ horizontal: true }}
+                                        sx={{ '& .MuiChartsGrid-line': { stroke: '#f1f5f9', strokeWidth: 1.5 } }}
+                                    />
+                                ) : (
+                                    <div className="absolute inset-0 flex items-center justify-center text-sm font-medium text-slate-400">
+                                        Selecciona un cliente para ver su evolución
+                                    </div>
+                                )
+                        }
+                        legend={
+                            <div className='flex items-center justify-center pt-2'>
+                                <div className="flex items-center gap-4">
+                                    <span className="flex items-center gap-1.5 text-xs text-slate-500">
+                                        <span className="w-5 h-0.5 bg-brand-navy inline-block rounded" />
+                                        Numero de unidades
+                                    </span>
+                                    <span className="flex items-center gap-1.5 text-xs text-slate-500">
+                                        <span className="w-5 h-0.5 bg-brand-orange inline-block rounded" />
+                                        Valor en USD
+                                    </span>
+                                </div>
+                            </div>
+                        }
+                    />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="min-h-[420px]">
+                        <ClientesConMayorCompraChart data={top5Clientes} isLoading={isLoadingAnual} />
+                    </div>
+                    <div className="min-h-[420px]">
+                        <ProductosPorClienteTable
+                            codigoCliente={selectedCliente?.Codigo_Cliente}
+                            nombreCliente={selectedCliente?.Nombre_Cliente}
+                        />
+                    </div>
                 </div>
             </div>
         </motion.main>

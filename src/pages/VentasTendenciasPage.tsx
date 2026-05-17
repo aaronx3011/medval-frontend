@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion'
-import GraphCard from '../components/utils/graphCard'
 import DistribucionVentaAnualPorProducto from '../components/ventas/DistribucionVentaAnualPorProducto'
 import LineAllTearsByMonth from '../components/ventas/LineAllYearsByMonth'
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
@@ -235,7 +234,7 @@ function MonthCalendar() {
             {/* Day headers */}
             <div className="grid grid-cols-7 mb-1">
                 {DAY_LABELS.map(d => (
-                    <div key={d} className="text-center py-1" style={{ fontSize: 10, fontWeight: 600, color: '#94a3b8' }}>
+                    <div key={d} className="text-center py-0.5 sm:py-1 text-[8px] sm:text-[10px]" style={{ fontWeight: 600, color: '#94a3b8' }}>
                         {d}
                     </div>
                 ))}
@@ -263,10 +262,9 @@ function MonthCalendar() {
                             return (
                                 <div
                                     key={di}
-                                    className="rounded-lg flex flex-col items-center justify-center transition-all duration-150 cursor-pointer"
+                                    className="rounded-lg flex flex-col items-center justify-center transition-all duration-150 cursor-pointer h-10 sm:h-14"
                                     style={{
                                         backgroundColor: color,
-                                        height: 56,
                                         border: isToday ? '2px solid #FF6600' : '2px solid transparent',
                                     }}
                                     onMouseEnter={(e) => {
@@ -275,16 +273,16 @@ function MonthCalendar() {
                                     }}
                                     onMouseLeave={() => setTooltip(null)}
                                 >
-                                    <span style={{ fontSize: 11, fontWeight: 600, color: textColor, opacity: 0.6, lineHeight: 1 }}>
+                                    <span className="text-[8px] sm:text-[11px]" style={{ fontWeight: 600, color: textColor, opacity: 0.6, lineHeight: 1 }}>
                                         {day}
                                     </span>
                                     {value !== undefined && (
-                                        <span style={{ fontSize: 9, fontWeight: 700, color: textColor, marginTop: 3, lineHeight: 1 }}>
+                                        <span className="text-[6px] sm:text-[9px]" style={{ fontWeight: 700, color: textColor, marginTop: 2, lineHeight: 1 }}>
                                             ${value >= 1000 ? `${(value / 1000).toFixed(1)}k` : value.toFixed(0)}
                                         </span>
                                     )}
                                     {value === undefined && (
-                                        <span style={{ fontSize: 8, color: '#cbd5e1', marginTop: 2 }}>—</span>
+                                        <span className="text-[6px] sm:text-[8px]" style={{ color: '#cbd5e1', marginTop: 1 }}>—</span>
                                     )}
                                 </div>
                             )
@@ -336,17 +334,17 @@ export default function HeatmapSummaryView() {
             transition={{ duration: 0.3 }}
             className="flex flex-col w-full h-full overflow-y-auto p-4 lg:p-6 gap-6"
         >
-            <div className="w-full min-h-[400px] lg:min-h-[500px]">
-                <GraphCard
-                    titlle='Ventas Diarias'
-                    graph={
-                        <div className="w-full py-4 px-2 overflow-x-auto">
-                            <MonthCalendar />
-                        </div>
-                    }
-                    legend={<></>}
-                />
-            </div>
+            <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.32, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="chart-card"
+            >
+                <h3 className="text-l font-bold text-brand-orange uppercase mb-4">Ventas Diarias</h3>
+                <div className="px-2">
+                    <MonthCalendar />
+                </div>
+            </motion.div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 w-full gap-4 min-w-0">
                 <div className="min-h-[350px] lg:min-h-[420px]">

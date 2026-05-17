@@ -3,7 +3,6 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Paper, alpha } from '@mui/material';
 import { useProductosPorCliente } from '../../hooks/useProductosPorCliente';
 import GraphCardWithFilters from '../utils/graphCardWithFilters';
-import { div } from 'framer-motion/client';
 
 interface Props {
     codigoCliente: string | undefined;
@@ -68,20 +67,18 @@ export default function ProductosPorClienteTable({ codigoCliente, nombreCliente 
                 </span>
             }
             graph={
-                <div className='top-4 pb-4'>
                     <Paper
                         elevation={0}
                         sx={{
-                            flex: 1,
-                            minHeight: 0,
                             width: '100%',
-                            height: 350,
+                            height: '100%',
                             backgroundColor: '#FFFFFF',
                             borderRadius: '8px',
                             p: 1,
                             border: '1px solid #E0E4E8',
                             display: 'flex',
                             flexDirection: 'column',
+                            overflow: 'hidden',
                         }}
                     >
                         {error ? (
@@ -109,6 +106,8 @@ export default function ProductosPorClienteTable({ codigoCliente, nombreCliente 
                                 pagination
                                 sx={{
                                     border: 'none',
+                                    flex: 1,
+                                    minHeight: 0,
                                     '& .MuiDataGrid-columnHeaders': {
                                         backgroundColor: '#f8fafc',
                                         fontSize: '0.7rem',
@@ -141,7 +140,6 @@ export default function ProductosPorClienteTable({ codigoCliente, nombreCliente 
                             />
                         )}
                     </Paper>
-                </div>
             }
             legend={<></>}
         />
