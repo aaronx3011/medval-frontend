@@ -69,7 +69,7 @@ export default function DistribucionDeVentasChart({ data = [] }: Props) {
                             margin={{ left: 0, right: 0, top: 0, bottom: 0 }}
                             sx={{
                                 [`& .${pieArcLabelClasses.root}`]: {
-                                    fontSize: '10px',
+                                    fontSize: { xs: '7px', sm: '9px', md: '10px' },
                                     fontWeight: 700,
                                 },
                                 ...chartData.reduce((acc, d, i) => ({
@@ -86,28 +86,28 @@ export default function DistribucionDeVentasChart({ data = [] }: Props) {
 
                     {chartData.length > 0 && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                            <p className="text-xl font-extrabold text-slate-800 leading-none">
+                            <p className="text-sm sm:text-base lg:text-lg font-extrabold text-slate-800 leading-none px-1 truncate max-w-full">
                                 ${total.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
                             </p>
-                            <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tighter mt-1">Total</p>
+                            <p className="text-[7px] sm:text-[9px] font-medium text-slate-400 uppercase tracking-tighter mt-0.5">Total</p>
                         </div>
                     )}
                 </div>
             }
             legend={
-                <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-2">
+                <div className="grid grid-cols-1 gap-2">
                     {chartData.map(d => (
                         <div key={d.label} className="flex items-center gap-3 text-[11px] text-slate-600">
                             <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: d.color }} />
                             <span className="font-bold w-12 text-slate-800">
                                 ${d.value.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
                             </span>
-                            <span className="truncate max-w-[70px]">{d.label}</span>
+                            <span className="truncate max-w-[80px]">{d.label}</span>
                         </div>
                     ))}
                 </div>
             }
-            legendOrientation='horizontal'
+            legendOrientation='vertical'
         />
     )
 }

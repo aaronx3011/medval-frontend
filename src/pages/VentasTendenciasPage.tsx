@@ -336,7 +336,7 @@ export default function HeatmapSummaryView() {
             transition={{ duration: 0.3 }}
             className="flex flex-col w-full h-full overflow-y-auto p-4 lg:p-6 gap-6"
         >
-            <div className="w-full min-w-0">
+            <div className="w-full min-h-[400px] lg:min-h-[500px]">
                 <GraphCard
                     titlle='Ventas Diarias'
                     graph={
@@ -349,8 +349,12 @@ export default function HeatmapSummaryView() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 w-full gap-4 min-w-0">
-                <DistribucionVentaAnualPorProducto />
-                <LineAllTearsByMonth />
+                <div className="min-h-[350px] lg:min-h-[420px]">
+                    <DistribucionVentaAnualPorProducto />
+                </div>
+                <div className="min-h-[350px] lg:min-h-[420px]">
+                    <LineAllTearsByMonth />
+                </div>
             </div>
         </motion.main>
     )

@@ -21,13 +21,13 @@ export default function ArticuloVsVentas({ data = [] }: Props) {
         <GraphCard
             titlle='Articulo VS Ventas'
             graph={
-                <div className="relative w-full h-[220px] flex items-center justify-center">
+                <div className="relative w-full h-full flex items-center justify-center">
                     {data.length > 0 && (
                         <PieChart
                             series={[{
                                 data: data,
-                                innerRadius: 65,
-                                outerRadius: 95,
+                                innerRadius: '55%',
+                                outerRadius: '80%',
                                 paddingAngle: 2,
                                 cornerRadius: 4,
                                 arcLabel: (item) => `${item.value.toFixed(0)}`,
@@ -43,7 +43,7 @@ export default function ArticuloVsVentas({ data = [] }: Props) {
                                 flexBasis: '100%',
                                 // Styling the labels globally
                                 [`& .${pieArcLabelClasses.root}`]: {
-                                    fontSize: '10px',
+                                    fontSize: { xs: '7px', sm: '9px', md: '10px' },
                                     fontWeight: 700,
                                 },
                                 // Applying dynamic contrast colors per-slice index
@@ -59,10 +59,10 @@ export default function ArticuloVsVentas({ data = [] }: Props) {
 
                     {/* Centered Total Label */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                        <p className="text-xl font-extrabold text-slate-800 leading-none">
+                        <p className="text-sm sm:text-base lg:text-lg font-extrabold text-slate-800 leading-none px-1 truncate max-w-full">
                             ${total.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
                         </p>
-                        <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tighter mt-1">Total</p>
+                        <p className="text-[7px] sm:text-[9px] font-medium text-slate-400 uppercase tracking-tighter mt-0.5">Total</p>
                     </div>
                 </div>
             }

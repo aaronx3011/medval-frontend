@@ -53,8 +53,8 @@ export default function VentasProductoPage() {
             transition={{ duration: 0.3 }}
             className="flex-1 overflow-y-auto p-4 lg:p-6"
         >
-            <div className="flex flex-col lg:flex-row gap-4 mb-4">
-                <div className='w-full lg:flex-[6]'>
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 mb-4">
+                <div className="lg:col-span-3">
                     <VentasPorProducto
                         selectedProduct={selectedProductCode}
                         onSelectProduct={setSelectedProductCode}
@@ -62,30 +62,50 @@ export default function VentasProductoPage() {
                         isLoadingVentas={isLoadingVentas}
                     />
                 </div>
-                <div className='w-full lg:flex-[4]'>
+                <div className="min-h-[300px] lg:min-h-[380px] lg:col-span-2">
                     <VariacionMensualChart codigoArticulo={selectedProductCode} />
                 </div>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-4 mb-4">
-                <div className='w-full lg:flex-[3]'>
+            {/* Desktop: 3-column grid with two pies stacked in the third column */}
+            <div className="hidden lg:grid lg:grid-cols-3 gap-4 mb-4">
+                <div className="min-h-[380px]">
                     <VentasTotalesPorPeriodo
                         data={clientesData || []}
                         isLoading={isLoadingClientes}
                     />
                 </div>
-                <div className='w-full lg:flex-[3]'>
+                <div className="min-h-[380px]">
                     <DistribucionDeVentasChart data={clientesData || []} />
                 </div>
-                <div className='w-full lg:flex-[4]'>
-                    <div className='flex flex-col sm:flex-row lg:flex-col gap-4 h-full'>
-                        <div className='flex-1 min-h-[200px] lg:min-h-0'>
+                <div className="min-h-[380px]">
+                    <div className='flex flex-col gap-4 h-full'>
+                        <div className='flex-1'>
                             <TopProductosMasVendidos data={top5} isLoading={isLoadingVentas} />
                         </div>
-                        <div className='flex-1 min-h-[200px] lg:min-h-0'>
+                        <div className='flex-1'>
                             <TopProductosMenosVendidos data={bottom5} isLoading={isLoadingVentas} />
                         </div>
                     </div>
+                </div>
+            </div>
+
+            {/* Mobile: each pie chart in its own full-width container */}
+            <div className="grid grid-cols-1 lg:hidden gap-4 mb-4">
+                <div className="min-h-[300px]">
+                    <VentasTotalesPorPeriodo
+                        data={clientesData || []}
+                        isLoading={isLoadingClientes}
+                    />
+                </div>
+                <div className="min-h-[300px]">
+                    <DistribucionDeVentasChart data={clientesData || []} />
+                </div>
+                <div className="min-h-[300px]">
+                    <TopProductosMasVendidos data={top5} isLoading={isLoadingVentas} />
+                </div>
+                <div className="min-h-[300px]">
+                    <TopProductosMenosVendidos data={bottom5} isLoading={isLoadingVentas} />
                 </div>
             </div>
         </motion.main>

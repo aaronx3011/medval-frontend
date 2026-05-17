@@ -145,8 +145,8 @@ export default function VentasAnalisisRotacionSection() {
                                 }}
                                 sx={{
                                     border: 'none',
-                                    '& .MuiDataGrid-columnHeaders': { backgroundColor: '#F8FAFC', color: '#475569', fontWeight: 600, fontSize: '0.85rem' },
-                                    '& .MuiDataGrid-cell': { fontSize: '0.85rem', color: '#334155', cursor: 'pointer' },
+                                    '& .MuiDataGrid-columnHeaders': { backgroundColor: '#F8FAFC', color: '#475569', fontWeight: 600, fontSize: { xs: '0.65rem', lg: '0.85rem' } },
+                                    '& .MuiDataGrid-cell': { fontSize: { xs: '0.65rem', lg: '0.85rem' }, color: '#334155', cursor: 'pointer' },
                                     '& .MuiDataGrid-row:hover': { backgroundColor: '#F1F5F9' },
                                     '& .MuiDataGrid-row.Mui-selected': { backgroundColor: '#E2E8F0' },
                                 }}
@@ -155,11 +155,11 @@ export default function VentasAnalisisRotacionSection() {
                     }
                 />
 
-                <div className='flex flex-col gap-4'>
-                    <div className="min-h-[300px] w-full">
+                <div className='flex flex-col gap-4 h-full'>
+                    <div className="flex-1 min-h-[300px] w-full">
                         <VentasRotacionProductoAnualActualChart selectedRow={selectedRowData} />
                     </div>
-                    <div className="min-h-[300px] w-full">
+                    <div className="flex-1 min-h-[300px] w-full">
                         <VentasRotacionProductoAnualChart
                             productHistory={productHistory}
                             activeYear={selectedAnio}

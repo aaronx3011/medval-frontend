@@ -141,8 +141,12 @@ export default function VentasPage() {
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-                <TopProductosMasVendidos data={sortedData.top5Charts} />
-                <ArticuloVsVentas data={sortedData.donutData} />
+                <div className="min-h-[300px] lg:min-h-[380px]">
+                    <TopProductosMasVendidos data={sortedData.top5Charts} />
+                </div>
+                <div className="min-h-[300px] lg:min-h-[380px]">
+                    <ArticuloVsVentas data={sortedData.donutData} />
+                </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

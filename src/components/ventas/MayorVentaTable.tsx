@@ -20,7 +20,7 @@ export default function MayorVentaTable({ data = [] }: Props) {
             title='Top de productos con mayor venta'
             graph={
                 <div className="overflow-x-auto rounded-xl border border-slate-100 bg-white">
-                    <table className="w-full border-collapse">
+                    <table className="w-full min-w-[500px] border-collapse">
                         <thead>
                             <tr className="bg-white">
                                 {HEADERS.map(h => (
@@ -33,10 +33,10 @@ export default function MayorVentaTable({ data = [] }: Props) {
                         <tbody>
                             {data.map((row, i) => (
                                 <tr key={i} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
-                                    <td className="py-1.5 px-2 font-semibold text-slate-700 text-[11px]">{row.Codigo_Articulo}</td>
-                                    <td className="py-1.5 px-2 text-slate-500 text-[11px]">{row.Total_Unidades}</td>
-                                    <td className="py-1.5 px-2 text-slate-500 text-[11px]">{row.Total_Facturas}</td>
-                                    <td className="py-1.5 px-2 font-bold text-slate-900 text-[11px]">
+                                    <td className="py-1.5 px-2 font-semibold text-slate-700 text-[11px] whitespace-nowrap">{row.Codigo_Articulo}</td>
+                                    <td className="py-1.5 px-2 text-slate-500 text-[11px] whitespace-nowrap">{row.Total_Unidades}</td>
+                                    <td className="py-1.5 px-2 text-slate-500 text-[11px] whitespace-nowrap">{row.Total_Facturas}</td>
+                                    <td className="py-1.5 px-2 font-bold text-slate-900 text-[11px] whitespace-nowrap">
                                         ${Number(row.Total_USD).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                                     </td>
                                 </tr>

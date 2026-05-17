@@ -37,7 +37,7 @@ export default function TopProductosMasVendidos({ data }: Props) {
                             margin={{ left: 0, right: 0, top: 0, bottom: 0 }}
                             sx={{
                                 [`& .${pieArcLabelClasses.root}`]: {
-                                    fontSize: '10px',
+                                    fontSize: { xs: '7px', sm: '9px', md: '10px' },
                                     fontWeight: 700,
                                 },
                                 ...data.reduce((acc, d, i) => ({
@@ -50,8 +50,8 @@ export default function TopProductosMasVendidos({ data }: Props) {
                         />
                     )}
                     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                        <p className="text-xl font-extrabold text-slate-800 leading-none">${total}</p>
-                        <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tighter mt-1">Total</p>
+                        <p className="text-sm sm:text-base lg:text-lg font-extrabold text-slate-800 leading-none px-1 truncate max-w-full">${total}</p>
+                        <p className="text-[7px] sm:text-[9px] font-medium text-slate-400 uppercase tracking-tighter mt-0.5">Total</p>
                     </div>
                 </div>
             }

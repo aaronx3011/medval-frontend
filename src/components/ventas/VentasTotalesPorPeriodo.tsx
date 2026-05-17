@@ -36,13 +36,14 @@ export default function VentasTotalesPorPeriodo({ data, isLoading }: Props) {
 
     // Columnas que reflejan el API real
     const columns: GridColDef[] = [
-        { field: 'Codigo_Cliente', headerName: 'Cliente', flex: 1.5, minWidth: 120 },
-        { field: 'Total_Unidades', headerName: 'Unidades', flex: 0.8, type: 'number', align: 'left', headerAlign: 'left' },
-        { field: 'Total_Facturas', headerName: 'Facturas', flex: 0.8, type: 'number' },
+        { field: 'Codigo_Cliente', headerName: 'Cliente', flex: 1.5, minWidth: 140 },
+        { field: 'Total_Unidades', headerName: 'Unidades', flex: 0.8, minWidth: 90, type: 'number', align: 'left', headerAlign: 'left' },
+        { field: 'Total_Facturas', headerName: 'Facturas', flex: 0.8, minWidth: 90, type: 'number' },
         {
             field: 'Total_USD',
             headerName: 'Monto $',
             flex: 1,
+            minWidth: 110,
             renderCell: (params) => (
                 <strong style={{ color: '#1e293b' }}>
                     ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2 })}

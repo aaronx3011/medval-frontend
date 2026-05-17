@@ -104,12 +104,13 @@ export default function VentasUnidadesSection({
 
     const columns: GridColDef[] = [
         { field: 'Codigo_Articulo', headerName: 'Código', flex: 1.2, minWidth: 100 },
-        { field: 'Total_Unidades', headerName: 'Unidades', flex: 0.8, type: 'number', align: 'left', headerAlign: 'left' },
-        { field: 'Total_Facturas', headerName: 'Facturas', flex: 0.8, type: 'number' },
+        { field: 'Total_Unidades', headerName: 'Unidades', flex: 0.8, minWidth: 90, type: 'number', align: 'left', headerAlign: 'left' },
+        { field: 'Total_Facturas', headerName: 'Facturas', flex: 0.8, minWidth: 90, type: 'number' },
         {
             field: 'Total_USD',
             headerName: 'Monto $',
             flex: 1,
+            minWidth: 110,
             renderCell: (params) => (
                 <strong style={{ color: '#1e293b' }}>
                     ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2 })}
@@ -119,6 +120,7 @@ export default function VentasUnidadesSection({
         {
             field: 'actions',
             headerName: 'Acción',
+            minWidth: 70,
             flex: 0.8,
             sortable: false,
             align: 'center',
@@ -167,46 +169,50 @@ export default function VentasUnidadesSection({
                 Ventas por Producto Mensual
             </h2>
 
-            <div className="flex flex-wrap items-center gap-2 mb-3 text-xs text-slate-500">
-                <span className="font-medium">Desde:</span>
-                <select
-                    value={fromYear}
-                    onChange={e => setFromYear(e.target.value)}
-                    disabled={isLoadingFechas}
-                    className="h-7 px-3 rounded-full border border-slate-200 bg-slate-50 text-xs outline-none focus:ring-2 focus:ring-brand-orange/20 cursor-pointer disabled:opacity-50"
-                >
-                    <option value="">Año</option>
-                    {availableFromYears.map((y: any) => <option key={y} value={y}>{y}</option>)}
-                </select>
-                <select
-                    value={fromMonth}
-                    onChange={e => setFromMonth(e.target.value)}
-                    disabled={!fromYear || isLoadingFechas}
-                    className="h-7 px-3 rounded-full border border-slate-200 bg-slate-50 text-xs outline-none focus:ring-2 focus:ring-brand-orange/20 cursor-pointer disabled:opacity-50"
-                >
-                    <option value="">Mes</option>
-                    {availableFromMonths.map((m: any) => <option key={m} value={m}>{MONTH_NAMES[m - 1]}</option>)}
-                </select>
+            <div className="flex flex-col sm:flex-row gap-2 mb-3 text-xs text-slate-500">
+                <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-medium">Desde:</span>
+                    <select
+                        value={fromYear}
+                        onChange={e => setFromYear(e.target.value)}
+                        disabled={isLoadingFechas}
+                        className="h-7 px-3 rounded-full border border-slate-200 bg-slate-50 text-xs outline-none focus:ring-2 focus:ring-brand-orange/20 cursor-pointer disabled:opacity-50"
+                    >
+                        <option value="">Año</option>
+                        {availableFromYears.map((y: any) => <option key={y} value={y}>{y}</option>)}
+                    </select>
+                    <select
+                        value={fromMonth}
+                        onChange={e => setFromMonth(e.target.value)}
+                        disabled={!fromYear || isLoadingFechas}
+                        className="h-7 px-3 rounded-full border border-slate-200 bg-slate-50 text-xs outline-none focus:ring-2 focus:ring-brand-orange/20 cursor-pointer disabled:opacity-50"
+                    >
+                        <option value="">Mes</option>
+                        {availableFromMonths.map((m: any) => <option key={m} value={m}>{MONTH_NAMES[m - 1]}</option>)}
+                    </select>
+                </div>
 
-                <span className="font-medium ml-2">Hasta:</span>
-                <select
-                    value={toYear}
-                    onChange={e => setToYear(e.target.value)}
-                    disabled={isLoadingFechas}
-                    className="h-7 px-3 rounded-full border border-slate-200 bg-slate-50 text-xs outline-none focus:ring-2 focus:ring-brand-orange/20 cursor-pointer disabled:opacity-50"
-                >
-                    <option value="">Año</option>
-                    {availableToYears.map((y: any) => <option key={y} value={y}>{y}</option>)}
-                </select>
-                <select
-                    value={toMonth}
-                    onChange={e => setToMonth(e.target.value)}
-                    disabled={!toYear || isLoadingFechas}
-                    className="h-7 px-3 rounded-full border border-slate-200 bg-slate-50 text-xs outline-none focus:ring-2 focus:ring-brand-orange/20 cursor-pointer disabled:opacity-50"
-                >
-                    <option value="">Mes</option>
-                    {availableToMonths.map((m: any) => <option key={m} value={m}>{MONTH_NAMES[m - 1]}</option>)}
-                </select>
+                <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-medium">Hasta:</span>
+                    <select
+                        value={toYear}
+                        onChange={e => setToYear(e.target.value)}
+                        disabled={isLoadingFechas}
+                        className="h-7 px-3 rounded-full border border-slate-200 bg-slate-50 text-xs outline-none focus:ring-2 focus:ring-brand-orange/20 cursor-pointer disabled:opacity-50"
+                    >
+                        <option value="">Año</option>
+                        {availableToYears.map((y: any) => <option key={y} value={y}>{y}</option>)}
+                    </select>
+                    <select
+                        value={toMonth}
+                        onChange={e => setToMonth(e.target.value)}
+                        disabled={!toYear || isLoadingFechas}
+                        className="h-7 px-3 rounded-full border border-slate-200 bg-slate-50 text-xs outline-none focus:ring-2 focus:ring-brand-orange/20 cursor-pointer disabled:opacity-50"
+                    >
+                        <option value="">Mes</option>
+                        {availableToMonths.map((m: any) => <option key={m} value={m}>{MONTH_NAMES[m - 1]}</option>)}
+                    </select>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 min-h-[560px]">
@@ -307,7 +313,7 @@ export default function VentasUnidadesSection({
                     </Paper>
                 </div>
 
-                <div className="h-full">
+                <div className="h-full min-h-[350px] lg:min-h-0">
                     <DailyGoalsChart
                         selectedProduct={selectedProduct}
                         fromYear={fromYear}

@@ -90,7 +90,7 @@ export default function VentasClientesPage() {
             className="flex flex-col overflow-y-auto p-4 lg:p-6 gap-4"
         >
 
-            <div>
+            <div className="min-h-[450px] lg:min-h-[500px]">
                 <GraphCardWithFilters
                     title='Evolución de ventas y unidades'
                     filters={
@@ -228,11 +228,15 @@ export default function VentasClientesPage() {
 
             {/* --- TARJETAS INFERIORES --- */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pb-10">
-                <ClientesConMayorCompraChart data={top5Clientes} isLoading={isLoadingAnual} />
-                <ProductosPorClienteTable
-                    codigoCliente={selectedCliente?.Codigo_Cliente}
-                    nombreCliente={selectedCliente?.Nombre_Cliente}
-                />
+                <div className="min-h-[350px] lg:min-h-[420px]">
+                    <ClientesConMayorCompraChart data={top5Clientes} isLoading={isLoadingAnual} />
+                </div>
+                <div className="min-h-[350px] lg:min-h-[420px]">
+                    <ProductosPorClienteTable
+                        codigoCliente={selectedCliente?.Codigo_Cliente}
+                        nombreCliente={selectedCliente?.Nombre_Cliente}
+                    />
+                </div>
             </div>
         </motion.main>
     );
