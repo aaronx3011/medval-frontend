@@ -1,6 +1,7 @@
 
 export interface CuentaPorCobrar {
     Codigo_Cliente: string;
+    Nombre_Cliente: string;
     Total_Documentos_Pendientes: number;
     Dias_Maximo_Atraso: number;
     Total_Facturado_USD: number | null;

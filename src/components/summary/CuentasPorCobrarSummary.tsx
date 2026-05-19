@@ -6,7 +6,19 @@ import GraphCardWithFilters from '../utils/graphCardWithFilters'; // Asegúrate 
 import { useCuentasPorCobrar } from '../../hooks/useCuentasPorCobrar';
 
 const columns: GridColDef[] = [
-    { field: 'Codigo_Cliente', headerName: 'Código Cliente', width: 140 },
+    {
+        field: 'Nombre_Cliente',
+        headerName: 'Cliente',
+        width: 220,
+        renderCell: (params: any) => (
+            <span style={{ fontWeight: 500 }}>
+                {params.value}
+                <span style={{ color: '#94a3b8', marginLeft: 6, fontSize: '0.7rem' }}>
+                    {params.row.Codigo_Cliente}
+                </span>
+            </span>
+        )
+    },
     {
         field: 'Deuda_Total_USD',
         headerName: 'Deuda Total',

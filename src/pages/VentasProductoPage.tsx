@@ -27,7 +27,7 @@ export default function VentasProductoPage() {
             .map((item, i) => ({
                 id: i,
                 value: item.Total_USD,
-                label: item.Codigo_Articulo,
+                label: item.Descripcion_Articulo || item.Codigo_Articulo,
                 color: COLORS_TOP[i],
             }));
     }, [ventasData]);
@@ -41,7 +41,7 @@ export default function VentasProductoPage() {
             .map((item, i) => ({
                 id: i,
                 value: item.Total_USD,
-                label: item.Codigo_Articulo,
+                label: item.Descripcion_Articulo || item.Codigo_Articulo,
                 color: COLORS_BOTTOM[i],
             }));
     }, [ventasData]);

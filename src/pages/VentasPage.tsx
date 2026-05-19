@@ -65,7 +65,7 @@ export default function VentasPage() {
             const othersValue = totalVentas - selectedValue;
 
             donutData = [
-                { id: 0, label: selectedItem.Codigo_Articulo, value: selectedValue, color: '#FF6600' },
+                { id: 0, label: selectedItem.Descripcion_Articulo || selectedItem.Codigo_Articulo, value: selectedValue, color: '#FF6600' },
                 { id: 1, label: 'Otros Productos', value: othersValue, color: '#0F172A' } // Navy for contrast
             ];
         }
@@ -100,7 +100,7 @@ export default function VentasPage() {
                 const color = isSelected ? '#FF6600' : OTHER_COLORS[colorIndex++];
                 return {
                     id: i,
-                    label: item.Codigo_Articulo,
+                    label: item.Descripcion_Articulo || item.Codigo_Articulo,
                     value: Number(item.Total_USD),
                     color: color
                 };

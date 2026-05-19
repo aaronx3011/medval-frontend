@@ -60,11 +60,12 @@ export default function DailyGoalsChart({
         return { labels, usd, unidades };
     }, [apiResponse]);
 
+    const productName = apiResponse?.data?.[0]?.Descripcion_Articulo || selectedProduct || '';
     const isEmpty = chartData.labels.length === 0;
 
     return (
         <GraphCard
-            titlle={selectedProduct ? `Acumulado Mensual: ${selectedProduct}` : "Venta por producto"}
+            titlle={selectedProduct ? `Acumulado Mensual: ${productName}` : "Venta por producto"}
             graph={
                 isLoading ? (
                     <div className="flex h-full items-center justify-center text-sm text-slate-500">Cargando gráfico...</div>
