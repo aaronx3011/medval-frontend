@@ -28,7 +28,7 @@ export default function DistribucionDeVentasChart({ data = [] }: Props) {
         // 3. Map Top 5 to the chart format
         const formattedData = top5.map((client, index) => ({
             id: index,
-            label: client.Codigo_Cliente,
+            label: client.Nombre_Cliente,
             value: Number(client.Total_USD),
             color: TOP_COLORS[index % TOP_COLORS.length]
         }));

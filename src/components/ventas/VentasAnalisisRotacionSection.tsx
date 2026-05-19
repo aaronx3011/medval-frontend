@@ -42,7 +42,7 @@ export default function VentasAnalisisRotacionSection() {
 
     const filteredData = useMemo(() => {
         return data.filter(item => {
-            const matchesSearch = item.Codigo_Articulo.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesSearch = item.Codigo_Articulo.toLowerCase().includes(searchTerm.toLowerCase()) || (item.Descripcion_Articulo?.toLowerCase() || '').includes(searchTerm.toLowerCase());
             const matchesAnio = selectedAnio ? item.Anio.toString() === selectedAnio : true;
             return matchesSearch && matchesAnio;
         });
@@ -60,7 +60,19 @@ export default function VentasAnalisisRotacionSection() {
     };
 
     const columns: GridColDef[] = [
-        { field: 'Codigo_Articulo', headerName: 'Código Artículo', width: 160, fontWeight: 'bold' },
+        {
+            field: 'Descripcion_Articulo',
+            headerName: 'Artículo',
+            width: 280,
+            renderCell: (params) => (
+                <span style={{ fontWeight: 500 }}>
+                    {params.value}
+                    <span style={{ color: '#94a3b8', marginLeft: 6, fontSize: '0.7rem' }}>
+                        {params.row.Codigo_Articulo}
+                    </span>
+                </span>
+            )
+        },
         { field: 'Total', headerName: 'Total USD', width: 120, valueFormatter: currencyFormatter, cellClassName: 'font-bold text-slate-800 bg-slate-50' },
         { field: 'Enero', headerName: 'Ene', width: 110, valueFormatter: currencyFormatter },
         { field: 'Febrero', headerName: 'Feb', width: 110, valueFormatter: currencyFormatter },

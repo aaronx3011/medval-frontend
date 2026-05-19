@@ -29,6 +29,7 @@ export interface AnalisisReposicionResponse {
 
 export interface VentasRotacionApiItem {
     Codigo_Articulo: string;
+    Descripcion_Articulo: string;
     Anio: number;
     Enero: number | null;
     Febrero: number | null;
@@ -53,6 +54,7 @@ export interface VentasRotacionApiResponse {
 export interface VentasMesesFrontend {
     id: string;
     Codigo_Articulo: string;
+    Descripcion_Articulo: string;
     Anio: number; // Lo mantenemos para el filtro interno, aunque no se muestre
     Enero: number;
     Febrero: number;

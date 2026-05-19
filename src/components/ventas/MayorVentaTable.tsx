@@ -1,10 +1,11 @@
 import TableCard from '../utils/TableCard'
 
 // Updated headers to match API sales data
-const HEADERS = ['Código de Artículo', 'Unidades', 'Facturas', 'Total USD']
+const HEADERS = ['Artículo', 'Unidades', 'Facturas', 'Total USD']
 
 interface TableRowData {
     Codigo_Articulo: string;
+    Descripcion_Articulo: string;
     Total_Unidades: number;
     Total_Facturas: number;
     Total_USD: number | string;
@@ -33,7 +34,7 @@ export default function MayorVentaTable({ data = [] }: Props) {
                         <tbody>
                             {data.map((row, i) => (
                                 <tr key={i} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
-                                    <td className="py-1.5 px-2 font-semibold text-slate-700 text-[11px] whitespace-nowrap">{row.Codigo_Articulo}</td>
+                                    <td className="py-1.5 px-2 font-semibold text-slate-700 text-[11px] whitespace-nowrap">{row.Descripcion_Articulo} <span className="text-slate-400 text-[10px]">{row.Codigo_Articulo}</span></td>
                                     <td className="py-1.5 px-2 text-slate-500 text-[11px] whitespace-nowrap">{row.Total_Unidades}</td>
                                     <td className="py-1.5 px-2 text-slate-500 text-[11px] whitespace-nowrap">{row.Total_Facturas}</td>
                                     <td className="py-1.5 px-2 font-bold text-slate-900 text-[11px] whitespace-nowrap">

@@ -11,10 +11,18 @@ interface Props {
 
 const columns: GridColDef[] = [
     {
-        field: 'Codigo_Articulo',
-        headerName: 'Código',
-        flex: 1.2,
-        minWidth: 120,
+        field: 'Descripcion_Articulo',
+        headerName: 'Artículo',
+        flex: 1.5,
+        minWidth: 180,
+        renderCell: (params) => (
+            <span style={{ fontWeight: 500 }}>
+                {params.value}
+                <span style={{ color: '#94a3b8', marginLeft: 6, fontSize: '0.7rem' }}>
+                    {params.row.Codigo_Articulo}
+                </span>
+            </span>
+        )
     },
     {
         field: 'Total_Unidades',

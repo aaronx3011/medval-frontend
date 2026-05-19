@@ -30,7 +30,7 @@ export default function VentasRotacionProductoAnualActualChart({ selectedRow }: 
 
     return (
         <GraphCardWithFilters
-            title={`Distribución mensual ${selectedRow ? `- ${selectedRow.Codigo_Articulo} (${selectedRow.Anio})` : ''}`}
+            title={`Distribución mensual ${selectedRow ? `- ${selectedRow.Descripcion_Articulo || selectedRow.Codigo_Articulo} (${selectedRow.Anio})` : ''}`}
             filters={<div className="h-6"></div>} // Espacio vacío para mantener aliganción del layout
             graph={
                 isEmpty ? (

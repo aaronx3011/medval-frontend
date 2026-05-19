@@ -18,7 +18,7 @@ interface VentasRotacionProductoAnualChartProps {
 export default function VentasRotacionProductoAnualChart({ productHistory, activeYear }: VentasRotacionProductoAnualChartProps) {
 
     const isEmpty = !productHistory || productHistory.length === 0;
-    const productName = productHistory.length > 0 ? productHistory[0].Codigo_Articulo : '';
+    const productName = productHistory.length > 0 ? productHistory[0].Descripcion_Articulo || productHistory[0].Codigo_Articulo : '';
 
     // 1. Mapeamos la data para convertirla en series del LineChart
     const chartData = useMemo(() => {

@@ -33,6 +33,7 @@ export const useVentasRotacion = () => {
                     return {
                         id: `${item.Codigo_Articulo}-${item.Anio}`,
                         Codigo_Articulo: item.Codigo_Articulo,
+                        Descripcion_Articulo: item.Descripcion_Articulo,
                         Anio: item.Anio,
                         Enero: ene,
                         Febrero: feb,
