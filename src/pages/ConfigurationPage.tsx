@@ -17,22 +17,36 @@ export default function ConfigurationPage() {
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editValue, setEditValue] = useState<string>('');
     const [savingEdit, setSavingEdit] = useState(false);
+    const [editError, setEditError] = useState<string | null>(null);
+
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
 
     const sortedGoals = useMemo(() => {
         if (!goals) return [];
         return [...goals].sort((a, b) => b.year - a.year || b.month - a.month);
     }, [goals]);
 
-    const currentGoal = sortedGoals[0] ?? null;
+    const currentGoal = goals?.find(g => g.year === currentYear && g.month === currentMonth) ?? null;
 
     const handleStartEdit = (goal: SalesGoal) => {
         setEditingId(goal.id);
         setEditValue(goal.goal_amount.toString());
+        setEditError(null);
     };
 
     const handleSaveEdit = async (id: number) => {
+        if (!/^\d+(\.\d{1,2})?$/.test(editValue)) {
+            setEditError('Solo se permiten números');
+            return;
+        }
         const amount = parseFloat(editValue);
-        if (isNaN(amount) || amount <= 0) return;
+        if (amount <= 0) {
+            setEditError('El monto debe ser un número positivo');
+            return;
+        }
+        setEditError(null);
         setSavingEdit(true);
         try {
             await updateSalesGoal(id, amount);
@@ -72,13 +86,13 @@ export default function ConfigurationPage() {
 
                 {!loading && !error && !currentGoal && (
                     <div className="text-center py-8">
-                        <p className="text-slate-500 mb-4">No hay metas configuradas</p>
+                        <p className="text-slate-500 mb-4">No hay meta para {MONTH_NAMES[currentMonth - 1]} {currentYear}</p>
                         <button
                             onClick={() => setAddModalOpen(true)}
                             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-orange text-white text-sm font-medium hover:bg-orange-600 transition-colors"
                         >
                             <Plus size={16} />
-                            Agregar Meta
+                            Crear Meta
                         </button>
                     </div>
                 )}
@@ -94,29 +108,34 @@ export default function ConfigurationPage() {
                         <div className="w-full sm:w-auto sm:flex-1">
                             <label className="block text-xs text-slate-500 mb-1">Monto ($)</label>
                             {editingId === currentGoal.id ? (
-                                <div className="flex items-center gap-2">
-                                    <input
-                                        type="number"
-                                        step="0.01"
-                                        min="0.01"
-                                        value={editValue}
-                                        onChange={(e) => setEditValue(e.target.value)}
-                                        className="flex-1 min-w-0 rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/30 focus:border-brand-orange"
-                                        autoFocus
-                                    />
-                                    <button
-                                        onClick={() => handleSaveEdit(currentGoal.id)}
-                                        disabled={savingEdit}
-                                        className="shrink-0 p-2 rounded-xl bg-green-500 text-white hover:bg-green-600 transition-colors disabled:opacity-50"
-                                    >
-                                        <Check size={16} />
-                                    </button>
-                                    <button
-                                        onClick={handleCancelEdit}
-                                        className="shrink-0 p-2 rounded-xl border border-slate-200 text-slate-500 hover:bg-surface-page transition-colors"
-                                    >
-                                        <X size={16} />
-                                    </button>
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="number"
+                                            step="0.01"
+                                            min="0.01"
+                                            value={editValue}
+                                            onChange={(e) => { setEditValue(e.target.value); setEditError(null); }}
+                                            className="flex-1 min-w-0 rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/30 focus:border-brand-orange"
+                                            autoFocus
+                                        />
+                                        <button
+                                            onClick={() => handleSaveEdit(currentGoal.id)}
+                                            disabled={savingEdit}
+                                            className="shrink-0 p-2 rounded-xl bg-green-500 text-white hover:bg-green-600 transition-colors disabled:opacity-50"
+                                        >
+                                            <Check size={16} />
+                                        </button>
+                                        <button
+                                            onClick={handleCancelEdit}
+                                            className="shrink-0 p-2 rounded-xl border border-slate-200 text-slate-500 hover:bg-surface-page transition-colors"
+                                        >
+                                            <X size={16} />
+                                        </button>
+                                    </div>
+                                    {editError && (
+                                        <p className="text-red-500 text-xs mt-1">{editError}</p>
+                                    )}
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-2">
@@ -145,13 +164,6 @@ export default function ConfigurationPage() {
             >
                 <div className="flex items-center justify-between gap-2 mb-4">
                     <h2 className="text-sm sm:text-base font-bold text-brand-orange uppercase">Historial de Metas</h2>
-                    <button
-                        onClick={() => setAddModalOpen(true)}
-                        className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-brand-orange text-white text-xs font-medium hover:bg-orange-600 transition-colors"
-                    >
-                        <Plus size={14} />
-                        <span className="hidden sm:inline">Agregar Meta</span>
-                    </button>
                 </div>
 
                 {loading && <p className="text-sm text-slate-500">Cargando...</p>}
@@ -169,7 +181,6 @@ export default function ConfigurationPage() {
                                     <th className="text-left py-3 px-4 sm:px-2 text-xs font-semibold text-slate-500 uppercase whitespace-nowrap">Año</th>
                                     <th className="text-left py-3 px-4 sm:px-2 text-xs font-semibold text-slate-500 uppercase whitespace-nowrap">Mes</th>
                                     <th className="text-right py-3 px-4 sm:px-2 text-xs font-semibold text-slate-500 uppercase whitespace-nowrap">Monto ($)</th>
-                                    <th className="text-right py-3 px-4 sm:px-2 text-xs font-semibold text-slate-500 uppercase whitespace-nowrap">Acción</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -178,45 +189,7 @@ export default function ConfigurationPage() {
                                         <td className="py-3 px-4 sm:px-2 text-brand-navy font-medium whitespace-nowrap">{goal.year}</td>
                                         <td className="py-3 px-4 sm:px-2 text-slate-600 whitespace-nowrap">{MONTH_NAMES[goal.month - 1]}</td>
                                         <td className="py-3 px-4 sm:px-2 text-right text-brand-navy font-medium whitespace-nowrap">
-                                            {editingId === goal.id ? (
-                                                <div className="flex items-center justify-end gap-1">
-                                                    <input
-                                                        type="number"
-                                                        step="0.01"
-                                                        min="0.01"
-                                                        value={editValue}
-                                                        onChange={(e) => setEditValue(e.target.value)}
-                                                        className="w-20 sm:w-28 rounded-lg border border-slate-200 px-2 py-1 text-sm text-right focus:outline-none focus:ring-2 focus:ring-brand-orange/30 focus:border-brand-orange"
-                                                        autoFocus
-                                                    />
-                                                    <button
-                                                        onClick={() => handleSaveEdit(goal.id)}
-                                                        disabled={savingEdit}
-                                                        className="shrink-0 p-1.5 rounded-lg bg-green-500 text-white hover:bg-green-600 transition-colors disabled:opacity-50"
-                                                    >
-                                                        <Check size={12} />
-                                                    </button>
-                                                    <button
-                                                        onClick={handleCancelEdit}
-                                                        className="shrink-0 p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:bg-surface-page transition-colors"
-                                                    >
-                                                        <X size={12} />
-                                                    </button>
-                                                </div>
-                                            ) : (
-                                                <span>${goal.goal_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                            )}
-                                        </td>
-                                        <td className="py-3 px-4 sm:px-2 text-right whitespace-nowrap">
-                                            {editingId !== goal.id && (
-                                                <button
-                                                    onClick={() => handleStartEdit(goal)}
-                                                    className="p-1.5 rounded-lg text-slate-400 hover:text-brand-orange hover:bg-surface-page transition-colors"
-                                                    title="Editar meta"
-                                                >
-                                                    <Pencil size={14} />
-                                                </button>
-                                            )}
+                                            ${goal.goal_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                         </td>
                                     </tr>
                                 ))}

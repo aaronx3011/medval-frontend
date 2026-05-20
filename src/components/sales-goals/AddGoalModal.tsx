@@ -9,42 +9,33 @@ interface AddGoalModalProps {
     onSuccess: () => void;
 }
 
-const MONTHS = [
-    { value: 1, label: 'Enero' },
-    { value: 2, label: 'Febrero' },
-    { value: 3, label: 'Marzo' },
-    { value: 4, label: 'Abril' },
-    { value: 5, label: 'Mayo' },
-    { value: 6, label: 'Junio' },
-    { value: 7, label: 'Julio' },
-    { value: 8, label: 'Agosto' },
-    { value: 9, label: 'Septiembre' },
-    { value: 10, label: 'Octubre' },
-    { value: 11, label: 'Noviembre' },
-    { value: 12, label: 'Diciembre' },
+const currentYear = new Date().getFullYear();
+const currentMonth = new Date().getMonth() + 1;
+const MONTH_NAMES = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
 ];
 
-const currentYear = new Date().getFullYear();
-const YEAR_OPTIONS = Array.from({ length: 100 }, (_, i) => 2000 + i);
-
 export default function AddGoalModal({ open, onClose, onSuccess }: AddGoalModalProps) {
-    const [year, setYear] = useState<number>(currentYear);
-    const [month, setMonth] = useState<number>(1);
     const [goalAmount, setGoalAmount] = useState<string>('');
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!/^\d+(\.\d{1,2})?$/.test(goalAmount)) {
+            setError('Solo se permiten números');
+            return;
+        }
         const amount = parseFloat(goalAmount);
-        if (isNaN(amount) || amount <= 0) {
+        if (amount <= 0) {
             setError('El monto debe ser un número positivo');
             return;
         }
         setSaving(true);
         setError(null);
         try {
-            await createSalesGoal(year, month, amount);
+            await createSalesGoal(currentYear, currentMonth, amount);
             onSuccess();
             onClose();
             setGoalAmount('');
@@ -64,42 +55,20 @@ export default function AddGoalModal({ open, onClose, onSuccess }: AddGoalModalP
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
-                        className="relative bg-white rounded-2xl p-6 w-full max-w-md mx-4 shadow-xl"
+                        className="relative bg-white rounded-2xl p-6 w-full max-w-sm mx-4 shadow-xl"
                     >
                         <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-lg font-bold text-brand-navy">Agregar Meta</h2>
+                            <h2 className="text-lg font-bold text-brand-navy">Crear Meta</h2>
                             <button onClick={onClose} className="p-1 rounded-lg hover:bg-surface-page text-slate-400">
                                 <X size={20} />
                             </button>
                         </div>
 
+                        <p className="text-sm text-slate-500 mb-4">
+                            Meta para {MONTH_NAMES[currentMonth - 1]} {currentYear}
+                        </p>
+
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-brand-navy mb-1">Año</label>
-                                <select
-                                    value={year}
-                                    onChange={(e) => setYear(Number(e.target.value))}
-                                    className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/30 focus:border-brand-orange"
-                                >
-                                    {YEAR_OPTIONS.map((y) => (
-                                        <option key={y} value={y}>{y}</option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-brand-navy mb-1">Mes</label>
-                                <select
-                                    value={month}
-                                    onChange={(e) => setMonth(Number(e.target.value))}
-                                    className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/30 focus:border-brand-orange"
-                                >
-                                    {MONTHS.map((m) => (
-                                        <option key={m.value} value={m.value}>{m.label}</option>
-                                    ))}
-                                </select>
-                            </div>
-
                             <div>
                                 <label className="block text-sm font-medium text-brand-navy mb-1">Monto ($)</label>
                                 <input
@@ -110,6 +79,7 @@ export default function AddGoalModal({ open, onClose, onSuccess }: AddGoalModalP
                                     onChange={(e) => setGoalAmount(e.target.value)}
                                     placeholder="50000.00"
                                     className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/30 focus:border-brand-orange"
+                                    autoFocus
                                 />
                             </div>
 
