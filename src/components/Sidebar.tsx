@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HomeIcon, SalesIcon, InventoryIcon, LogoutIcon, ChevronIcon } from './Icons'
 import logoMedval from '../public/resources/logoMedval.svg'
-import { HandCoins, X } from 'lucide-react'
+import { HandCoins, X, Settings } from 'lucide-react'
 
 const navItems = [
     { id: 'inicio', label: 'Inicio', Icon: HomeIcon, path: '/' },
@@ -33,6 +33,12 @@ const navItems = [
         label: 'Cuentas Por Cobrar',
         Icon: HandCoins,
         path: '/cuentas-por-cobrar',
+    },
+    {
+        id: 'configuracion',
+        label: 'Configuración',
+        Icon: Settings,
+        path: '/configuration',
     },
 ]
 

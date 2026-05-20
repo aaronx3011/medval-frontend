@@ -17,6 +17,7 @@ import InventarioPage from './pages/InventarioPage'
 import LoginPage from './pages/LoginPage'
 import InventarioTreemap from './pages/InventarioTreemap'
 import CuentasPorCobrarPage from './pages/CuentasPorCobrarPage'
+import ConfigurationPage from './pages/ConfigurationPage'
 
 export default function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -51,6 +52,8 @@ export default function App() {
 
                             {/* Cuentas Por Cobrar Routes */}
                             <Route path="/cuentas-por-cobrar" element={<CuentasPorCobrarPage />} />
+
+                            <Route path="/configuration" element={<ConfigurationPage />} />
 
                             <Route path="*" element={<Navigate to="/" replace />} />
                         </Routes>
