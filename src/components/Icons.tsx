@@ -58,6 +58,14 @@ export const SearchIcon = ({ className, size = 16 }: IconProps) => (
     </svg>
 )
 
+export const ConfigIcon = ({ className, size = 18 }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 20 20" fill="none" className={className}>
+        <circle cx="10" cy="10" r="3" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.93 4.93l1.41 1.41M13.66 13.66l1.41 1.41M4.93 15.07l1.41-1.41M13.66 6.34l1.41-1.41"
+            stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+    </svg>
+)
+
 export const MedvalLogo = ({ size = 36 }: { size?: number }) => (
     <svg width={size} height={size} viewBox="0 0 36 36" fill="none">
         <rect width="36" height="36" rx="10" fill="#1a2a5e" />

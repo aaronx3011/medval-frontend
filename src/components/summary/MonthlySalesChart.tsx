@@ -1,11 +1,19 @@
 import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
 import GraphCard from '../utils/graphCard';
 import { useVentasMensuales } from '../../hooks/useVentasMensuales';
-
-const GOAL = 120000;
+import { useSalesGoals } from '../../hooks/useSalesGoals';
 
 export default function MonthlySalesChart() {
     const { data, loading, error } = useVentasMensuales();
+    const { data: goals, loading: goalsLoading } = useSalesGoals();
+
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+
+    const currentGoal = goals?.find(g => g.year === currentYear && g.month === currentMonth) ?? null;
+    const goalAmount = currentGoal?.goal_amount ?? 0;
+    const hasGoal = goalAmount > 0;
 
     const lastMonth = data?.data
         ? [...data.data].sort((a, b) => {
@@ -16,7 +24,7 @@ export default function MonthlySalesChart() {
 
     const currentUSD = lastMonth?.Total_USD ?? 0;
     const currentK = Math.round(currentUSD / 1000);
-    const goalK = Math.round(GOAL / 1000);
+    const goalK = Math.round(goalAmount / 1000);
 
     const MONTH_NAMES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
     const monthLabel = lastMonth
@@ -27,13 +35,17 @@ export default function MonthlySalesChart() {
         <GraphCard
             titlle='Progreso de meta mensual'
             graph={
-                loading ? (
+                loading || goalsLoading ? (
                     <div className="flex h-full w-full items-center justify-center text-slate-400 text-sm">
                         Cargando...
                     </div>
                 ) : error ? (
                     <div className="flex h-full w-full items-center justify-center text-red-400 text-sm">
                         Error cargando datos
+                    </div>
+                ) : !hasGoal ? (
+                    <div className="flex h-full w-full items-center justify-center text-slate-400 text-sm">
+                        Sin meta configurada
                     </div>
                 ) : (
                     <Gauge
@@ -60,7 +72,7 @@ export default function MonthlySalesChart() {
                         <span className="flex items-center gap-1.5 text-[10px] text-slate-500">
                             <span
                                 className="w-2.5 h-2.5 rounded-sm flex-shrink-0"
-                                style={{ background: currentK >= goalK ? '#16a34a' : '#1a2a5e' }}
+                                style={{ background: hasGoal && currentK >= goalK ? '#16a34a' : '#1a2a5e' }}
                             />
                             ${currentUSD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
