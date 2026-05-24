@@ -104,6 +104,17 @@ export default function VentasUnidadesSection({
 
     const columns: GridColDef[] = [
         {
+            field: 'Codigo_Articulo',
+            headerName: 'Código',
+            flex: 0.8,
+            minWidth: 110,
+            renderCell: (params) => (
+                <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#475569', fontWeight: 600 }}>
+                    {params.value}
+                </span>
+            ),
+        },
+        {
             field: 'Descripcion_Articulo',
             headerName: 'Artículo',
             flex: 1.5,
@@ -111,9 +122,6 @@ export default function VentasUnidadesSection({
             renderCell: (params) => (
                 <span style={{ fontWeight: 500 }}>
                     {params.value}
-                    <span style={{ color: '#94a3b8', marginLeft: 6, fontSize: '0.7rem' }}>
-                        {params.row.Codigo_Articulo}
-                    </span>
                 </span>
             )
         },
