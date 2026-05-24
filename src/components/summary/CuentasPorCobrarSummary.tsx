@@ -94,7 +94,7 @@ export default function CuentasPorCobrarSummary() {
                                     columnHeaderHeight={40}
                                     initialState={{
                                         pagination: {
-                                            paginationModel: { page: 0, pageSize: 10 },
+                                            paginationModel: { page: 0, pageSize: 7 },
                                         },
                                         // Aquí se aplica el ordenamiento por defecto
                                         sorting: {
@@ -141,6 +141,7 @@ export default function CuentasPorCobrarSummary() {
                 </div>
             }
             filters={
+                <div className="mb-3">
                 <Paper
                     elevation={0}
                     sx={{
@@ -170,6 +171,7 @@ export default function CuentasPorCobrarSummary() {
                         />
                     )}
                 </Paper>
+                </div>
             }
             legend={<></>}
         />
