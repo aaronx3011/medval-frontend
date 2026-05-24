@@ -46,6 +46,14 @@ export default function VentasProductoPage() {
             }));
     }, [ventasData]);
 
+    const period = 'Histórico';
+
+    const selectedProductName = useMemo(() => {
+        if (!selectedProductCode || !ventasData) return '';
+        const item = ventasData.find(i => i.Codigo_Articulo === selectedProductCode);
+        return item ? (item.Descripcion_Articulo || item.Codigo_Articulo) : '';
+    }, [selectedProductCode, ventasData]);
+
     return (
         <motion.main
             initial={{ opacity: 0 }}
@@ -60,10 +68,12 @@ export default function VentasProductoPage() {
                         onSelectProduct={setSelectedProductCode}
                         ventasData={ventasData}
                         isLoadingVentas={isLoadingVentas}
+                        period={period}
+                        selectedProductName={selectedProductName}
                     />
                 </div>
                 <div className="min-h-[300px] lg:min-h-[380px] lg:col-span-2">
-                    <VariacionMensualChart codigoArticulo={selectedProductCode} />
+                    <VariacionMensualChart codigoArticulo={selectedProductCode} period={period} selectedProductName={selectedProductName} />
                 </div>
             </div>
 
@@ -73,10 +83,12 @@ export default function VentasProductoPage() {
                     <VentasTotalesPorPeriodo
                         data={clientesData || []}
                         isLoading={isLoadingClientes}
+                        period={period}
+                        selectedProductName={selectedProductName}
                     />
                 </div>
                 <div className="min-h-[380px]">
-                    <DistribucionDeVentasChart data={clientesData || []} />
+                    <DistribucionDeVentasChart data={clientesData || []} period={period} selectedProductName={selectedProductName} />
                 </div>
                 <div className="min-h-[380px]">
                     <div className='flex flex-col gap-4 h-full'>
@@ -96,10 +108,12 @@ export default function VentasProductoPage() {
                     <VentasTotalesPorPeriodo
                         data={clientesData || []}
                         isLoading={isLoadingClientes}
+                        period={period}
+                        selectedProductName={selectedProductName}
                     />
                 </div>
                 <div className="min-h-[300px]">
-                    <DistribucionDeVentasChart data={clientesData || []} />
+                    <DistribucionDeVentasChart data={clientesData || []} period={period} selectedProductName={selectedProductName} />
                 </div>
                 <div className="min-h-[300px]">
                     <TopProductosMasVendidos data={top5} isLoading={isLoadingVentas} />

@@ -8,9 +8,11 @@ const MONTH_COLORS = ['#0f1b3d', '#1a2a5e', '#243a7a', '#2e4a99', '#3a5fcc', '#4
 
 interface DistribucionVentaProps {
     codigoArticulo: string;
+    period?: string;
+    selectedProductName?: string;
 }
 
-export default function DistribucionVentaAnualPorProducto({ codigoArticulo }: DistribucionVentaProps) {
+export default function DistribucionVentaAnualPorProducto({ codigoArticulo, period, selectedProductName }: DistribucionVentaProps) {
     const { data: apiResponse, loading, error } = useProductoMensual(codigoArticulo)
     const [selectedYear, setSelectedYear] = useState<string>('')
 
@@ -44,9 +46,14 @@ export default function DistribucionVentaAnualPorProducto({ codigoArticulo }: Di
     // 4. Determine if there is actually any data to show
     const isEmpty = !apiResponse?.data || apiResponse.data.length === 0;
 
+    const subtitle = period && selectedProductName
+        ? `${period}  ·  ${selectedProductName}`
+        : period || ''
+
     return (
         <GraphCardWithFilters
             title='Distribución de ventas anuales por producto'
+            subtitle={subtitle}
             filters={
                 <div className="flex items-center gap-2 text-xs text-slate-500">
                     <span>Elige un periodo:</span>

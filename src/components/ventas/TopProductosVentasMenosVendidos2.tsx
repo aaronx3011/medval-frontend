@@ -53,7 +53,7 @@ export default function TopProductosMenosVendidos({ data, isLoading }: Props) {
                                 <p className="text-sm sm:text-base lg:text-lg font-extrabold text-slate-800 leading-none px-1 truncate max-w-full">
                                     ${formatCompact(total, 1)}
                                 </p>
-                                <p className="text-[7px] sm:text-[9px] font-medium text-slate-400 uppercase tracking-tighter mt-0.5">Total Bottom 5</p>
+                                <p className="text-[7px] sm:text-[9px] font-medium text-slate-400 uppercase tracking-tighter mt-0.5">Total</p>
                             </div>
                         </>
                     ) : (

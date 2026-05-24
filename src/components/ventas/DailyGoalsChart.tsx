@@ -10,6 +10,7 @@ interface DailyGoalsChartProps {
     fromMonth: string;
     toYear: string;
     toMonth: string;
+    period?: string;
 }
 
 export default function DailyGoalsChart({
@@ -17,7 +18,8 @@ export default function DailyGoalsChart({
     fromYear,
     fromMonth,
     toYear,
-    toMonth
+    toMonth,
+    period
 }: DailyGoalsChartProps) {
 
     // Fetch the detailed data
@@ -66,6 +68,7 @@ export default function DailyGoalsChart({
     return (
         <GraphCard
             titlle={selectedProduct ? `Acumulado Mensual: ${productName}` : "Venta por producto"}
+            subtitle={period}
             graph={
                 isLoading ? (
                     <div className="flex h-full items-center justify-center text-sm text-slate-500">Cargando gráfico...</div>

@@ -11,9 +11,11 @@ const OTHERS_COLOR = '#FF6600' // Neutral slate for "Otros"
 
 interface Props {
     data: ClientePorProducto[];
+    period?: string;
+    selectedProductName?: string;
 }
 
-export default function DistribucionDeVentasChart({ data = [] }: Props) {
+export default function DistribucionDeVentasChart({ data = [], period, selectedProductName }: Props) {
 
     // Logic for Top 5 + Otros
     const chartData = useMemo(() => {
@@ -50,9 +52,14 @@ export default function DistribucionDeVentasChart({ data = [] }: Props) {
 
     const total = chartData.reduce((s, d) => s + d.value, 0)
 
+    const subtitle = period && selectedProductName
+        ? `${period}  ·  ${selectedProductName}`
+        : period || ''
+
     return (
         <GraphCard
             titlle='Distribución de Ventas por Cliente'
+            subtitle={subtitle}
             graph={
                 <div className="relative w-full h-full flex items-center justify-center">
                     {chartData.length > 0 ? (

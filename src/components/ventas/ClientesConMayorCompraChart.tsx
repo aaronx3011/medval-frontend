@@ -29,7 +29,8 @@ export default function ClientesConMayorCompraChart({ data, isLoading }: Props) 
     return (
         <GraphCardWithFilters
             title='Top 5 Clientes (Mayor Compra)'
-            filters={<span className="text-[10px] text-slate-400 font-bold uppercase">Acumulado Anual</span>}
+            subtitle='Histórico  ·  Acumulado ventas por cliente'
+            filters={<></>}
             graph={
                     isLoading ? (
                         <div className="h-full w-full flex items-center justify-center text-xs text-slate-400 font-medium">

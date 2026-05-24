@@ -10,9 +10,11 @@ import { Search, X, Eye } from 'lucide-react';
 interface Props {
     data: ClientePorProducto[];
     isLoading: boolean;
+    period?: string;
+    selectedProductName?: string;
 }
 
-export default function VentasTotalesPorPeriodo({ data, isLoading }: Props) {
+export default function VentasTotalesPorPeriodo({ data, isLoading, period, selectedProductName }: Props) {
     const [searchText, setSearchText] = useState('')
     const [selectedItem, setSelectedItem] = useState<string | null>(null)
 
@@ -80,9 +82,19 @@ export default function VentasTotalesPorPeriodo({ data, isLoading }: Props) {
             transition={{ delay: 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="chart-card mb-4 h-full flex flex-col"
         >
-            <h2 className="uppercase font-display text-2xl font-bold text-brand-navy text-left mb-3">
-                Clientes por Producto
-            </h2>
+            <div className="flex flex-col mb-3">
+                <h2 className="uppercase font-display text-2xl font-bold text-brand-navy text-left">
+                    Clientes por Producto
+                </h2>
+                {(() => {
+                    const subtitle = period && selectedProductName
+                        ? `${period}  ·  ${selectedProductName}`
+                        : period || '';
+                    return subtitle ? (
+                        <p className="text-[13px] text-slate-400 font-medium">{subtitle}</p>
+                    ) : null;
+                })()}
+            </div>
 
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
                 <Paper

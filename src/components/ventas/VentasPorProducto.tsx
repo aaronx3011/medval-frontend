@@ -13,9 +13,11 @@ interface VentasPorProductoProps {
     onSelectProduct: (codigo: string) => void;
     ventasData: VentaProducto[];
     isLoadingVentas: boolean;
+    period?: string;
+    selectedProductName?: string;
 }
 
-export default function VentasPorProducto({ selectedProduct, onSelectProduct, ventasData, isLoadingVentas }: VentasPorProductoProps) {
+export default function VentasPorProducto({ selectedProduct, onSelectProduct, ventasData, isLoadingVentas, period, selectedProductName }: VentasPorProductoProps) {
     const [searchText, setSearchText] = useState('');
 
     const data = ventasData;
@@ -178,7 +180,6 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
                             columns={columns}
                             loading={isLoading}
                             disableColumnMenu
-                            disableRowSelectionOnClick
                             density="compact"
                             rowHeight={40}
                             columnHeaderHeight={40}
@@ -191,6 +192,7 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
                                 },
                             }}
                             pagination
+                            onRowClick={(params) => onSelectProduct(params.row.Codigo_Articulo)}
                             sx={{
                                 border: 'none',
                                 '& .MuiDataGrid-columnHeaders': {
@@ -221,13 +223,14 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
                                     backgroundColor: alpha('#000', 0.1),
                                     borderRadius: '10px'
                                 },
+                                '& .MuiDataGrid-row': { cursor: 'pointer' },
                             }}
                         />
                     </Paper>
                 </div>
 
                 <div className="h-full min-h-[350px] lg:min-h-0">
-                    <VentasPorProductoChart product={selectedProduct} />
+                    <VentasPorProductoChart product={selectedProduct} period={period} selectedProductName={selectedProductName} />
                 </div>
             </div>
         </motion.div>

@@ -7,6 +7,7 @@ import GraphCardWithFilters from '../utils/graphCardWithFilters';
 interface Props {
     codigoCliente: string | undefined;
     nombreCliente: string | undefined;
+    year?: string;
 }
 
 const columns: GridColDef[] = [
@@ -66,7 +67,7 @@ const columns: GridColDef[] = [
     },
 ];
 
-export default function ProductosPorClienteTable({ codigoCliente, nombreCliente }: Props) {
+export default function ProductosPorClienteTable({ codigoCliente, nombreCliente, year }: Props) {
     const { data, isLoading, error } = useProductosPorCliente(codigoCliente);
 
     const rows = useMemo(() =>
@@ -77,11 +78,8 @@ export default function ProductosPorClienteTable({ codigoCliente, nombreCliente 
     return (
         <GraphCardWithFilters
             title='Productos comprados'
-            filters={
-                <span className="text-[10px] text-slate-400 font-bold uppercase">
-                    {nombreCliente ?? 'Selecciona un cliente'}
-                </span>
-            }
+            subtitle={year && nombreCliente ? `${year}  ·  ${nombreCliente}` : (nombreCliente ?? 'Selecciona un cliente')}
+            filters={<></>}
             graph={
                     <Paper
                         elevation={0}

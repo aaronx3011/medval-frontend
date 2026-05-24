@@ -226,6 +226,7 @@ export default function VentasClientesPage() {
                     <ProductosPorClienteTable
                         codigoCliente={selectedCliente?.Codigo_Cliente}
                         nombreCliente={selectedCliente?.Nombre_Cliente}
+                        year={selectedYear}
                     />
                 </div>
             </div>
@@ -367,6 +368,7 @@ export default function VentasClientesPage() {
                         <ProductosPorClienteTable
                             codigoCliente={selectedCliente?.Codigo_Cliente}
                             nombreCliente={selectedCliente?.Nombre_Cliente}
+                            year={selectedYear}
                         />
                     </div>
                 </div>

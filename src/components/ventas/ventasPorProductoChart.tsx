@@ -5,9 +5,11 @@ import { useProductoMensual } from '../../hooks/useProductoMensual'; // Adjust p
 
 interface VentasPorProductoChartProps {
     product: string;
+    period?: string;
+    selectedProductName?: string;
 }
 
-export default function VentasPorProductoChart({ product }: VentasPorProductoChartProps) {
+export default function VentasPorProductoChart({ product, period, selectedProductName }: VentasPorProductoChartProps) {
     // Uses the cached service to avoid double fetching
     const { data: apiResponse, loading, error } = useProductoMensual(product);
 
@@ -49,7 +51,8 @@ export default function VentasPorProductoChart({ product }: VentasPorProductoCha
 
     return (
         <GraphCard
-            titlle={product || "Seleccione un producto"}
+            titlle={selectedProductName || product || "Seleccione un producto"}
+            subtitle={period || ''}
             graph={
                 loading ? (
                     <div className="flex h-full w-full items-center justify-center text-slate-400 text-sm">

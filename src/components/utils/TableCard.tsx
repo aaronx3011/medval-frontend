@@ -3,12 +3,13 @@ import { ReactElement } from "react"
 
 interface TableCardProps {
     title: string,
+    subtitle?: string,
     graph: ReactElement
     legend: ReactElement
     legendOrientation?: string
 }
 
-export default function TableCard({ title, graph, legend, legendOrientation = 'horizontal' }: TableCardProps) {
+export default function TableCard({ title, subtitle, graph, legend, legendOrientation = 'horizontal' }: TableCardProps) {
     return (
         <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -17,10 +18,13 @@ export default function TableCard({ title, graph, legend, legendOrientation = 'h
             whileHover={{ boxShadow: '0 8px 28px rgba(26,42,94,0.07)' }}
             className="chart-card flex flex-col h-full w-full"
         >
-            <div className="flex-[1] flex items-center justify-between min-h-0">
+            <div className="flex-[1] flex items-start justify-between min-h-0 flex-col gap-0.5">
                 <h3 className="text-l font-bold text-brand-orange uppercase">
                     {title}
                 </h3>
+                {subtitle && (
+                    <p className="text-[11px] text-slate-400 font-medium mb-2">{subtitle}</p>
+                )}
             </div>
 
             {legendOrientation == 'vertical' ?
@@ -28,7 +32,7 @@ export default function TableCard({ title, graph, legend, legendOrientation = 'h
 
                     <div className="flex justify-center flex-row">
 
-                        <div className="flex-[9] min-h-0 w-full pt-4">
+                        <div className="flex-[9] min-h-0 w-full pt-6">
                             {graph}
                         </div>
 
@@ -40,7 +44,7 @@ export default function TableCard({ title, graph, legend, legendOrientation = 'h
                 ) :
                 (
                     <>
-                        <div className="flex-[8] min-h-0 w-full pt-4">
+                        <div className="flex-[8] min-h-0 w-full pt-6">
                             {graph}
                         </div>
 

@@ -12,15 +12,22 @@ interface ChartDataPoint {
 
 interface Props {
     data: ChartDataPoint[];
+    period?: string;
+    selectedProductName?: string;
 }
 
-export default function TopProductosMasVendidos({ data }: Props) {
+export default function TopProductosMasVendidos({ data, period, selectedProductName }: Props) {
 
     const total = data.reduce((s, d) => s + d.value, 0)
+
+    const subtitle = period && selectedProductName
+        ? `${period}  ·  ${selectedProductName}`
+        : period || ''
 
     return (
         <GraphCard
             titlle='Top productos mas vendidos'
+            subtitle={subtitle}
             graph={
                 <div className="relative w-full h-full flex items-center justify-center">
                     {data.length > 0 && (

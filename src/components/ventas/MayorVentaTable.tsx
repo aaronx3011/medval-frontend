@@ -13,12 +13,14 @@ interface TableRowData {
 
 interface Props {
     data: TableRowData[];
+    period?: string;
 }
 
-export default function MayorVentaTable({ data = [] }: Props) {
+export default function MayorVentaTable({ data = [], period }: Props) {
     return (
         <TableCard
             title='Top de productos con mayor venta'
+            subtitle={period}
             graph={
                 <div className="overflow-x-auto rounded-xl border border-slate-100 bg-white">
                     <table className="w-full min-w-[500px] border-collapse">
