@@ -1,8 +1,9 @@
 import { useMemo } from 'react'
 import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart'
 import { getContrastColor } from '../../utils/getContrastColor'
+import { formatCompact } from '../../utils/formatters'
 import GraphCard from '../utils/graphCard'
-import { ClientePorProducto } from '../../types/ventas' // Adjust path if needed
+import { ClientePorProducto } from '../../types/ventas'
 
 // Brand colors for the top 5 clients
 const TOP_COLORS = ['#0F172A', '#334155', '#64748B', '#94A3B8', '#E2E8F0']
@@ -62,7 +63,7 @@ export default function DistribucionDeVentasChart({ data = [] }: Props) {
                                 outerRadius: '80%',
                                 paddingAngle: 2,
                                 cornerRadius: 4,
-                                arcLabel: (item) => `${item.value.toFixed(0)}`,
+                                arcLabel: (item) => `$${formatCompact(item.value, 1)}`,
                                 arcLabelMinAngle: 25,
                             }]}
                             slotProps={{ legend: { hidden: true } }}
@@ -87,7 +88,7 @@ export default function DistribucionDeVentasChart({ data = [] }: Props) {
                     {chartData.length > 0 && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                             <p className="text-sm sm:text-base lg:text-lg font-extrabold text-slate-800 leading-none px-1 truncate max-w-full">
-                                ${total.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+                                ${formatCompact(total, 1)}
                             </p>
                             <p className="text-[7px] sm:text-[9px] font-medium text-slate-400 uppercase tracking-tighter mt-0.5">Total</p>
                         </div>
@@ -100,7 +101,7 @@ export default function DistribucionDeVentasChart({ data = [] }: Props) {
                         <div key={d.label} className="flex items-center gap-3 text-[11px] text-slate-600">
                             <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: d.color }} />
                             <span className="font-bold w-12 text-slate-800">
-                                ${d.value.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+                                ${formatCompact(d.value)}
                             </span>
                             <span className="truncate max-w-[80px]">{d.label}</span>
                         </div>

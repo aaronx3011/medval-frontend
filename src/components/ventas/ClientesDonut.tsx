@@ -1,5 +1,6 @@
 import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart'
 import { getContrastColor } from '../../utils/getContrastColor'
+import { formatCompact } from '../../utils/formatters'
 import GraphCard from '../utils/graphCard'
 
 interface ChartDataPoint {
@@ -30,7 +31,7 @@ export default function ArticuloVsVentas({ data = [] }: Props) {
                                 outerRadius: '80%',
                                 paddingAngle: 2,
                                 cornerRadius: 4,
-                                arcLabel: (item) => `${item.value.toFixed(0)}`,
+                                arcLabel: (item) => `$${formatCompact(item.value, 1)}`,
                                 arcLabelMinAngle: 25,
                             }]}
                             slotProps={{
@@ -60,7 +61,7 @@ export default function ArticuloVsVentas({ data = [] }: Props) {
                     {/* Centered Total Label */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                         <p className="text-sm sm:text-base lg:text-lg font-extrabold text-slate-800 leading-none px-1 truncate max-w-full">
-                            ${total.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+                            ${formatCompact(total, 1)}
                         </p>
                         <p className="text-[7px] sm:text-[9px] font-medium text-slate-400 uppercase tracking-tighter mt-0.5">Total</p>
                     </div>
@@ -75,7 +76,7 @@ export default function ArticuloVsVentas({ data = [] }: Props) {
                                 style={{ background: d.color }}
                             />
                             <span className="font-bold w-16 text-slate-800">
-                                ${d.value.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+                                ${formatCompact(d.value)}
                             </span>
                             <span className="truncate max-w-[120px]">{d.label}</span>
                         </div>
