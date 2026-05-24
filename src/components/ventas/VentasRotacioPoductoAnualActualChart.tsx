@@ -82,18 +82,15 @@ export default function VentasRotacionProductoAnualActualChart({ selectedRow }: 
             }
             legend={
                 isEmpty ? (<></>) : (
-                    <div className='flex items-center justify-center'>
-                        <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
-                            {chartData.map((c, i) => (
-                                <span key={c.name} className="flex items-center gap-1 text-[10px] text-slate-500">
-                                    <span
-                                        className="w-2.5 h-2.5 rounded-sm flex-shrink-0"
-                                        style={{ background: MONTH_COLORS[i] }}
-                                    />
-                                    {c.name}
-                                </span>
-                            ))}
-                        </div>
+                    <div className="flex justify-center mt-1">
+                        <span className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-600">
+                            Total Ventas:{' '}
+                            {new Intl.NumberFormat('en-US', {
+                                notation: 'compact',
+                                compactDisplay: 'short',
+                                maximumFractionDigits: 1,
+                            }).format(chartData.reduce((sum, c) => sum + c.value, 0))}
+                        </span>
                     </div>
                 )
             }
