@@ -40,21 +40,33 @@ const columns: GridColDef[] = [
         headerName: '31-60 Días',
         type: 'number',
         width: 120,
-        valueFormatter: (value: any) => `$${(value ?? 0).toFixed(2)}`
+        renderCell: (params: any) => (
+            <span>
+                ${Number(params.value ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </span>
+        )
     },
     {
         field: 'Vencido_61_A_90_Dias_USD',
         headerName: '61-90 Días',
         type: 'number',
         width: 120,
-        valueFormatter: (value: any) => `$${(value ?? 0).toFixed(2)}`
+        renderCell: (params: any) => (
+            <span>
+                ${Number(params.value ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </span>
+        )
     },
     {
         field: 'Vencido_Mas_De_90_Dias_USD',
         headerName: '> 90 Días',
         type: 'number',
         width: 120,
-        valueFormatter: (value: any) => `$${(value ?? 0).toFixed(2)}`
+        renderCell: (params: any) => (
+            <span>
+                ${Number(params.value ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </span>
+        )
     },
 ];
 
