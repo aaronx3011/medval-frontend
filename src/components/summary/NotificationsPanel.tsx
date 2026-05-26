@@ -1,5 +1,7 @@
-import { motion, AnimatePresence } from 'framer-motion'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
+import { DataGrid, GridColDef } from '@mui/x-data-grid'
+import { Box, Paper, CircularProgress, alpha, InputBase } from '@mui/material'
+import { Search, X } from 'lucide-react'
 import GraphCardWithFilters from '../utils/graphCardWithFilters'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -44,12 +46,12 @@ function ExpiringSoonBadge({ monthsLeft }: { monthsLeft: number }) {
     const expired = monthsLeft <= 0
     const urgent = monthsLeft <= 2 && monthsLeft > 0
     return (
-        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold tracking-wide whitespace-nowrap
+        <span className={`inline-flex items-center gap-1 rounded text-[11px] font-bold tracking-wide whitespace-nowrap
             ${expired
-                ? 'bg-red-50 text-red-600 border border-red-200'
+                ? 'text-red-600'
                 : urgent
-                    ? 'bg-red-50 text-red-500 border border-red-200'
-                    : 'bg-orange-50 text-orange-500 border border-orange-200'
+                    ? 'text-red-500'
+                    : 'text-orange-500'
             }`}
         >
             <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${expired ? 'bg-red-500' : urgent ? 'bg-red-400' : 'bg-orange-400'}`} />
@@ -61,10 +63,10 @@ function ExpiringSoonBadge({ monthsLeft }: { monthsLeft: number }) {
 function LowStockBadge({ months }: { months: number }) {
     const critical = months <= 2
     return (
-        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold tracking-wide whitespace-nowrap
+        <span className={`inline-flex items-center gap-1 rounded text-[11px] font-bold tracking-wide whitespace-nowrap
             ${critical
-                ? 'bg-amber-50 text-amber-600 border border-amber-200'
-                : 'bg-yellow-50 text-yellow-600 border border-yellow-200'
+                ? 'text-amber-600'
+                : 'text-yellow-600'
             }`}
         >
             <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${critical ? 'bg-amber-500' : 'bg-yellow-400'}`} />
@@ -87,17 +89,54 @@ function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: 
     )
 }
 
-// ── Animations ────────────────────────────────────────────────────────────────
-const listVariants = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.03, delayChildren: 0.1 } },
-}
-
-const rowVariants = {
-    hidden: { opacity: 0, x: -10 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.25 } },
-    exit: { opacity: 0, x: 10, transition: { duration: 0.15 } },
-}
+// ── Columns ───────────────────────────────────────────────────────────────────
+const columns: GridColDef[] = [
+    {
+        field: 'Proximo_Vencimiento',
+        headerName: 'Fecha',
+        width: 100,
+        renderCell: (params: any) => (
+            <span className="text-xs text-slate-400 font-medium whitespace-nowrap">
+                {formatDate(params.value)}
+            </span>
+        ),
+    },
+    {
+        field: 'Codigo_Articulo',
+        headerName: 'Código',
+        width: 100,
+    },
+    {
+        field: 'Descripcion_Articulo',
+        headerName: 'Nombre',
+        flex: 1,
+        minWidth: 200,
+    },
+    {
+        field: 'Meses_De_Inventario_Restante',
+        headerName: 'Stock',
+        width: 130,
+        renderCell: (params: any) => {
+            const { lowStock } = getAlerts(params.row)
+            return lowStock ? (
+                <LowStockBadge months={params.value} />
+            ) : null
+        },
+    },
+    {
+        field: 'vencimiento_badge',
+        headerName: 'Vencimiento',
+        width: 130,
+        valueGetter: (_value: any, row: any) => row.Proximo_Vencimiento,
+        renderCell: (params: any) => {
+            const { expiringSoon } = getAlerts(params.row)
+            const monthsLeft = monthsUntil(params.row.Proximo_Vencimiento)
+            return expiringSoon ? (
+                <ExpiringSoonBadge monthsLeft={monthsLeft} />
+            ) : null
+        },
+    },
+]
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function NotificationsPanel() {
@@ -105,6 +144,7 @@ export default function NotificationsPanel() {
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [showExpired, setShowExpired] = useState(false)
+    const [searchText, setSearchText] = useState('')
 
     useEffect(() => {
         let mounted = true
@@ -140,89 +180,148 @@ export default function NotificationsPanel() {
         return () => { mounted = false }
     }, [])
 
-    const visibleItems = showExpired
-        ? allItems
-        : allItems.filter(item => monthsUntil(item.Proximo_Vencimiento) > 0)
+    const filteredRows = useMemo(() => {
+        let items = showExpired
+            ? allItems
+            : allItems.filter(item => monthsUntil(item.Proximo_Vencimiento) > 0)
+
+        if (searchText) {
+            const q = searchText.toLowerCase()
+            items = items.filter(row =>
+                Object.values(row).some(val =>
+                    val?.toString().toLowerCase().includes(q)
+                )
+            )
+        }
+        return items
+    }, [allItems, showExpired, searchText])
 
     const expiredCount = allItems.filter(item => monthsUntil(item.Proximo_Vencimiento) <= 0).length
 
     // ── Filters slot ──────────────────────────────────────────────────────────
     const filtersSlot = (
-        <div className="flex items-center justify-between py-1.5">
-            <Toggle
-                checked={showExpired}
-                onChange={setShowExpired}
-                label="Mostrar vencidos"
-            />
-            {expiredCount > 0 && (
-                <span className="text-[10px] text-red-400 font-semibold">
-                    {expiredCount} vencido{expiredCount !== 1 ? 's' : ''}
-                </span>
-            )}
+        <div className="mb-3">
+        <div className="flex items-center justify-between gap-2 py-1.5">
+            <Paper
+                elevation={0}
+                sx={{
+                    p: '4px 12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: { xs: '100%', sm: '220px' },
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: '10px',
+                    border: '1px solid #E0E4E8',
+                    '&:focus-within': { borderColor: '#FF6600' }
+                }}
+            >
+                <Search size={16} color="#A0AEC0" style={{ marginRight: '8px' }} />
+                <InputBase
+                    placeholder="Buscar producto..."
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    sx={{ fontSize: '0.8rem', flex: 1 }}
+                />
+                {searchText && (
+                    <X
+                        size={16}
+                        color="#A0AEC0"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setSearchText('')}
+                    />
+                )}
+            </Paper>
+            <div className="flex items-center gap-2">
+                <Toggle
+                    checked={showExpired}
+                    onChange={setShowExpired}
+                    label="Mostrar vencidos"
+                />
+                {expiredCount > 0 && (
+                    <span className="text-[10px] text-red-400 font-semibold">
+                        {expiredCount} vencido{expiredCount !== 1 ? 's' : ''}
+                    </span>
+                )}
+            </div>
+        </div>
         </div>
     )
 
-    // ── Table slot — plain overflow scroll, no absolute positioning ───────────
+    // ── Table slot ────────────────────────────────────────────────────────────
     const tableSlot = (
-        <div className="overflow-y-auto overflow-x-auto w-full h-full min-w-0">
-            {isLoading && (
-                <div className="flex items-center justify-center py-10 text-xs text-slate-400">
-                    Cargando...
-                </div>
-            )}
-            {error && (
-                <div className="flex items-center justify-center py-10 text-xs text-red-400">
-                    Error: {error}
-                </div>
-            )}
-            {!isLoading && !error && visibleItems.length === 0 && (
-                <div className="flex items-center justify-center py-10 text-xs text-slate-400">
-                    Sin alertas activas
-                </div>
-            )}
-            {!isLoading && !error && visibleItems.length > 0 && (
-                <motion.table
-                    variants={listVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="w-full border-collapse"
-                >
-                    <tbody>
-                        <AnimatePresence mode="popLayout">
-                            {visibleItems.map((item, i) => {
-                                const { expiringSoon, lowStock } = getAlerts(item)
-                                const monthsLeft = monthsUntil(item.Proximo_Vencimiento)
-                                return (
-                                    <motion.tr
-                                        key={item.Codigo_Articulo}
-                                        variants={rowVariants}
-                                        initial="hidden"
-                                        animate="visible"
-                                        exit="exit"
-                                        layout
-                                        className="border-b border-slate-50 last:border-0 hover:bg-slate-50/60 transition-colors"
-                                    >
-                                        <td className="py-2 pr-3 text-xs text-slate-400 font-medium w-16 align-middle whitespace-nowrap">
-                                            {formatDate(item.Proximo_Vencimiento)}
-                                        </td>
-                                        <td className="py-2 pr-3 text-xs text-brand-navy align-middle min-w-0">
-                                            <span className="text-slate-400 mr-1">{item.Codigo_Articulo}</span>
-                                            <span className="break-words">{item.Descripcion_Articulo}</span>
-                                        </td>
-                                        <td className="py-2 align-middle">
-                                            <div className="flex items-center justify-end gap-1 flex-wrap">
-                                                {expiringSoon && <ExpiringSoonBadge monthsLeft={monthsLeft} />}
-                                                {lowStock && <LowStockBadge months={item.Meses_De_Inventario_Restante} />}
-                                            </div>
-                                        </td>
-                                    </motion.tr>
-                                )
-                            })}
-                        </AnimatePresence>
-                    </tbody>
-                </motion.table>
-            )}
-        </div>
+        <Box sx={{ height: '100%', width: '100%' }}>
+            <Paper elevation={0} sx={{ height: '100%', width: '100%', border: '1px solid #E0E4E8', borderRadius: '12px', overflow: 'hidden' }}>
+                {isLoading ? (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                        <CircularProgress />
+                    </Box>
+                ) : error ? (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: 'error.main', fontSize: '0.8rem' }}>
+                        Error: {error}
+                    </Box>
+                ) : (
+                    <DataGrid
+                        rows={filteredRows}
+                        columns={columns}
+                        getRowId={(row) => row.Codigo_Articulo}
+                        disableColumnMenu
+                        disableRowSelectionOnClick
+                        density="compact"
+                        rowHeight={44}
+                        columnHeaderHeight={40}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { page: 0, pageSize: 5 },
+                            },
+                            sorting: {
+                                sortModel: [{ field: 'Proximo_Vencimiento', sort: 'asc' }],
+                            },
+                        }}
+                        pagination
+                        sx={{
+                            border: 'none',
+                            '& .MuiDataGrid-columnHeaders': {
+                                backgroundColor: '#f8fafc',
+                                fontSize: '0.7rem',
+                                fontWeight: 800,
+                                color: '#1e293b',
+                                textTransform: 'uppercase',
+                                borderBottom: '1px solid #E0E4E8',
+                            },
+                            '& .MuiDataGrid-cell': {
+                                fontSize: '0.75rem',
+                                color: '#475569',
+                                borderBottom: '1px solid #F1F5F9',
+                                display: 'flex',
+                                alignItems: 'center'
+                            },
+                            '& .MuiDataGrid-footerContainer': {
+                                minHeight: '40px',
+                                height: '40px',
+                                borderTop: '1px solid #F1F5F9',
+                            },
+                            '& .MuiTablePagination-root': {
+                                fontSize: '0.7rem',
+                                overflow: 'visible',
+                            },
+                            '& ::-webkit-scrollbar': { width: '6px', height: '6px' },
+                            '& ::-webkit-scrollbar-thumb': {
+                                backgroundColor: alpha('#000', 0.1),
+                                borderRadius: '10px'
+                            },
+                        }}
+                        slotProps={{
+                            noRowsOverlay: {
+                                sx: {
+                                    fontSize: '0.8rem',
+                                    color: '#94a3b8',
+                                }
+                            }
+                        }}
+                    />
+                )}
+            </Paper>
+        </Box>
     )
 
     return (

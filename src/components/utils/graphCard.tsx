@@ -3,12 +3,13 @@ import { ReactElement } from "react"
 
 interface graphCardProps {
     titlle: string,
+    subtitle?: string,
     graph: ReactElement
     legend: ReactElement
     legendOrientation?: 'horizontal' | 'vertical' | string
 }
 
-export default function GraphCard({ titlle, graph, legend, legendOrientation = 'horizontal' }: graphCardProps) {
+export default function GraphCard({ titlle, subtitle, graph, legend, legendOrientation = 'horizontal' }: graphCardProps) {
     return (
         <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -18,10 +19,13 @@ export default function GraphCard({ titlle, graph, legend, legendOrientation = '
             className="chart-card flex flex-col h-full w-full"
         >
             {/* Header section */}
-            <div className="flex-shrink-0 flex items-center justify-between mb-2 min-h-0">
+            <div className="flex-shrink-0 flex items-start justify-between mb-2 min-h-0 flex-col gap-0.5">
                 <h3 className="text-l font-bold text-brand-orange uppercase">
                     {titlle}
                 </h3>
+                {subtitle && (
+                    <p className="text-[11px] text-slate-400 font-medium">{subtitle}</p>
+                )}
             </div>
 
             {/* Main Graph & Legend Container */}

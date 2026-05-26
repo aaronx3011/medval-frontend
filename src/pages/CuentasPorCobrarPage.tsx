@@ -5,6 +5,7 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Paper, alpha } from '@mui/material';
 import { useCuentasPorCobrar2 } from '../hooks/useCuentasPorCobrar';
 import { AgingBucket } from '../types/cuentasPorCobrar';
+import { formatCompact } from '../utils/formatters';
 
 function getBucket(diasVencidos: number): AgingBucket {
     if (diasVencidos <= 0) return 'Al día';
@@ -164,7 +165,7 @@ export default function CuentasPorCobrarPage() {
                     <div className="text-right">
                         <p className="text-xs text-slate-400 uppercase tracking-wide">Saldo total</p>
                         <p className="text-xl font-bold text-brand-navy">
-                            ${totalSaldo.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            ${formatCompact(totalSaldo)}
                         </p>
                         <p className="text-xs text-slate-400">{tableRows.length} documentos</p>
                     </div>
@@ -196,7 +197,7 @@ export default function CuentasPorCobrarPage() {
                                         paddingAngle: 2,
                                         cornerRadius: 3,
                                         valueFormatter: (item) =>
-                                            `$${item.value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+                                            `$${formatCompact(item.value)}`,
                                     }]}
                                     onItemClick={handlePieClick}
                                     slotProps={{ legend: { hidden: true } }}
@@ -244,7 +245,7 @@ export default function CuentasPorCobrarPage() {
                                                     </span>
                                                 </div>
                                                 <span style={{ fontSize: '0.75rem', color: '#1e293b', fontWeight: 600 }}>
-                                                    ${item.value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                                                    ${formatCompact(item.value)}
                                                 </span>
                                             </button>
                                         );

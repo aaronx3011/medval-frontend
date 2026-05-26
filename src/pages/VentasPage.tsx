@@ -16,6 +16,11 @@ import TopProductosMenosVendidos from '../components/ventas/TopProductosMenosVen
 // Complementary colors
 const OTHER_COLORS = ['#0F172A', '#334155', '#475569', '#64748B', '#94A3B8', '#CBD5E1']
 
+const MONTH_NAMES = [
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+];
+
 export default function VentasPage() {
     // 1. FILTER & SELECTION STATE
     const [fromMonth, setFromMonth] = useState<string>('')
@@ -116,6 +121,19 @@ export default function VentasPage() {
         };
     }, [tableData, selectedProduct]);
 
+    const periodText = useMemo(() => {
+        if (!fromMonth || !fromYear || !toMonth || !toYear) return '';
+        const fromLabel = `${MONTH_NAMES[parseInt(fromMonth) - 1]} ${fromYear}`;
+        const toLabel = `${MONTH_NAMES[parseInt(toMonth) - 1]} ${toYear}`;
+        return `${fromLabel} — ${toLabel}`;
+    }, [fromMonth, fromYear, toMonth, toYear]);
+
+    const selectedProductName = useMemo(() => {
+        if (!selectedProduct || !tableData) return '';
+        const item = tableData.find((i: any) => i.Codigo_Articulo === selectedProduct);
+        return item ? (item.Descripcion_Articulo || item.Codigo_Articulo) : '';
+    }, [selectedProduct, tableData]);
+
     return (
         <motion.main
             initial={{ opacity: 0 }}
@@ -138,20 +156,21 @@ export default function VentasPage() {
                 isLoadingFechas={isLoadingFechas}
                 selectedProduct={selectedProduct}
                 setSelectedProduct={setSelectedProduct}
+                period={periodText}
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                 <div className="min-h-[300px] lg:min-h-[380px]">
-                    <TopProductosMasVendidos data={sortedData.top5Charts} />
+                    <TopProductosMasVendidos data={sortedData.top5Charts} period={periodText} selectedProductName={selectedProductName} />
                 </div>
                 <div className="min-h-[300px] lg:min-h-[380px]">
-                    <ArticuloVsVentas data={sortedData.donutData} />
+                    <ArticuloVsVentas data={sortedData.donutData} period={periodText} selectedProductName={selectedProductName} />
                 </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <MayorVentaTable data={sortedData.top5Table} />
-                <MenorVentaTable data={sortedData.bottom5Table} />
+                <MayorVentaTable data={sortedData.top5Table} period={periodText} />
+                <MenorVentaTable data={sortedData.bottom5Table} period={periodText} />
             </div>
         </motion.main>
     )

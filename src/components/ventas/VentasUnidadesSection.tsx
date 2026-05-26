@@ -27,6 +27,7 @@ interface VentasUnidadesSectionProps {
     isLoadingFechas: boolean;
     selectedProduct: string | null;
     setSelectedProduct: (val: string) => void;
+    period?: string;
 }
 
 export default function VentasUnidadesSection({
@@ -36,7 +37,8 @@ export default function VentasUnidadesSection({
     toYear, setToYear,
     tableData, isLoadingTable,
     fechasDisponibles, isLoadingFechas,
-    selectedProduct, setSelectedProduct
+    selectedProduct, setSelectedProduct,
+    period
 }: VentasUnidadesSectionProps) {
 
     const [searchText, setSearchText] = useState('')
@@ -104,6 +106,17 @@ export default function VentasUnidadesSection({
 
     const columns: GridColDef[] = [
         {
+            field: 'Codigo_Articulo',
+            headerName: 'Código',
+            flex: 0.8,
+            minWidth: 110,
+            renderCell: (params) => (
+                <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#475569', fontWeight: 600 }}>
+                    {params.value}
+                </span>
+            ),
+        },
+        {
             field: 'Descripcion_Articulo',
             headerName: 'Artículo',
             flex: 1.5,
@@ -111,9 +124,6 @@ export default function VentasUnidadesSection({
             renderCell: (params) => (
                 <span style={{ fontWeight: 500 }}>
                     {params.value}
-                    <span style={{ color: '#94a3b8', marginLeft: 6, fontSize: '0.7rem' }}>
-                        {params.row.Codigo_Articulo}
-                    </span>
                 </span>
             )
         },
@@ -178,9 +188,14 @@ export default function VentasUnidadesSection({
             transition={{ delay: 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="chart-card mb-4"
         >
-            <h2 className="uppercase font-display text-2xl font-bold text-brand-navy text-left mb-3">
-                Ventas por Producto Mensual
-            </h2>
+            <div className="flex items-baseline gap-3 mb-3">
+                <h2 className="uppercase font-display text-2xl font-bold text-brand-navy text-left">
+                    Ventas por Producto Mensual
+                </h2>
+                {period && (
+                    <p className="text-[13px] text-slate-400 font-medium">{period}</p>
+                )}
+            </div>
 
             <div className="flex flex-col sm:flex-row gap-2 mb-3 text-xs text-slate-500">
                 <div className="flex flex-wrap items-center gap-2">
@@ -333,6 +348,7 @@ export default function VentasUnidadesSection({
                         fromMonth={fromMonth}
                         toYear={toYear}
                         toMonth={toMonth}
+                        period={period}
                     />
                 </div>
             </div>

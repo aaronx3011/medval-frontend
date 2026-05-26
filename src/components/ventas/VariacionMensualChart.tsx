@@ -8,9 +8,11 @@ const MONTH_COLORS = ['#0f1b3d', '#1a2a5e', '#243a7a', '#2e4a99', '#3a5fcc', '#4
 
 interface DistribucionVentaProps {
     codigoArticulo: string;
+    period?: string;
+    selectedProductName?: string;
 }
 
-export default function DistribucionVentaAnualPorProducto({ codigoArticulo }: DistribucionVentaProps) {
+export default function DistribucionVentaAnualPorProducto({ codigoArticulo, period, selectedProductName }: DistribucionVentaProps) {
     const { data: apiResponse, loading, error } = useProductoMensual(codigoArticulo)
     const [selectedYear, setSelectedYear] = useState<string>('')
 
@@ -44,9 +46,14 @@ export default function DistribucionVentaAnualPorProducto({ codigoArticulo }: Di
     // 4. Determine if there is actually any data to show
     const isEmpty = !apiResponse?.data || apiResponse.data.length === 0;
 
+    const subtitle = period && selectedProductName
+        ? `${period}  ·  ${selectedProductName}`
+        : period || ''
+
     return (
         <GraphCardWithFilters
             title='Distribución de ventas anuales por producto'
+            subtitle={subtitle}
             filters={
                 <div className="flex items-center gap-2 text-xs text-slate-500">
                     <span>Elige un periodo:</span>
@@ -122,18 +129,15 @@ export default function DistribucionVentaAnualPorProducto({ codigoArticulo }: Di
             }
             legend={
                 loading || error || isEmpty ? (<></>) : (
-                    <div className='flex items-center justify-center'>
-                        <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
-                            {chartData.map((c, i) => (
-                                <span key={c.name} className="flex items-center gap-1 text-[10px] text-slate-500">
-                                    <span
-                                        className="w-2.5 h-2.5 rounded-sm flex-shrink-0"
-                                        style={{ background: MONTH_COLORS[i] }}
-                                    />
-                                    {c.name}
-                                </span>
-                            ))}
-                        </div>
+                    <div className="flex justify-center mt-1">
+                        <span className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-600">
+                            Total Ventas:{' '}
+                            {new Intl.NumberFormat('en-US', {
+                                notation: 'compact',
+                                compactDisplay: 'short',
+                                maximumFractionDigits: 1,
+                            }).format(chartData.reduce((sum, c) => sum + c.value, 0))}
+                        </span>
                     </div>
                 )
             }

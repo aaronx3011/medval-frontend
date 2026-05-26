@@ -206,23 +206,6 @@ export default function InventarioTreemap() {
                 </h2>
 
                 <div className="flex flex-wrap items-center gap-4">
-                    {/* Legend */}
-                    <div className="flex flex-wrap items-center gap-3">
-                        {Object.entries(SOFT_COLORS)
-                            .filter(([key]) => key !== 'DEFAULT')
-                            .map(([prefix, color]) => (
-                                <div key={prefix} className="flex items-center gap-1.5">
-                                    <div style={{
-                                        width: 10, height: 10, borderRadius: 3,
-                                        backgroundColor: color, flexShrink: 0
-                                    }} />
-                                    <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>
-                                        {prefix}
-                                    </span>
-                                </div>
-                            ))}
-                    </div>
-
                     {/* Toggle */}
                     <FormControlLabel
                         control={

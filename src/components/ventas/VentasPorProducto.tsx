@@ -13,9 +13,11 @@ interface VentasPorProductoProps {
     onSelectProduct: (codigo: string) => void;
     ventasData: VentaProducto[];
     isLoadingVentas: boolean;
+    period?: string;
+    selectedProductName?: string;
 }
 
-export default function VentasPorProducto({ selectedProduct, onSelectProduct, ventasData, isLoadingVentas }: VentasPorProductoProps) {
+export default function VentasPorProducto({ selectedProduct, onSelectProduct, ventasData, isLoadingVentas, period, selectedProductName }: VentasPorProductoProps) {
     const [searchText, setSearchText] = useState('');
 
     const data = ventasData;
@@ -39,6 +41,17 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
 
     const columns: GridColDef[] = [
         {
+            field: 'Codigo_Articulo',
+            headerName: 'Código',
+            flex: 0.8,
+            minWidth: 110,
+            renderCell: (params) => (
+                <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#475569', fontWeight: 600 }}>
+                    {params.value}
+                </span>
+            ),
+        },
+        {
             field: 'Descripcion_Articulo',
             headerName: 'Artículo',
             flex: 1.5,
@@ -46,9 +59,6 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
             renderCell: (params) => (
                 <span style={{ fontWeight: 500 }}>
                     {params.value}
-                    <span style={{ color: '#94a3b8', marginLeft: 6, fontSize: '0.7rem' }}>
-                        {params.row.Codigo_Articulo}
-                    </span>
                 </span>
             )
         },
@@ -170,7 +180,6 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
                             columns={columns}
                             loading={isLoading}
                             disableColumnMenu
-                            disableRowSelectionOnClick
                             density="compact"
                             rowHeight={40}
                             columnHeaderHeight={40}
@@ -183,6 +192,7 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
                                 },
                             }}
                             pagination
+                            onRowClick={(params) => onSelectProduct(params.row.Codigo_Articulo)}
                             sx={{
                                 border: 'none',
                                 '& .MuiDataGrid-columnHeaders': {
@@ -213,13 +223,14 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
                                     backgroundColor: alpha('#000', 0.1),
                                     borderRadius: '10px'
                                 },
+                                '& .MuiDataGrid-row': { cursor: 'pointer' },
                             }}
                         />
                     </Paper>
                 </div>
 
                 <div className="h-full min-h-[350px] lg:min-h-0">
-                    <VentasPorProductoChart product={selectedProduct} />
+                    <VentasPorProductoChart product={selectedProduct} period={period} selectedProductName={selectedProductName} />
                 </div>
             </div>
         </motion.div>

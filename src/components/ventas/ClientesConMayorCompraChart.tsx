@@ -1,6 +1,7 @@
 import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart';
 import GraphCardWithFilters from '../utils/graphCardWithFilters';
 import { getContrastColor } from '../../utils/getContrastColor';
+import { formatCompact } from '../../utils/formatters';
 
 const COLORS = ['#0F172A', '#FF6600', '#334155', '#64748B', '#94A3B8'];
 
@@ -28,7 +29,8 @@ export default function ClientesConMayorCompraChart({ data, isLoading }: Props) 
     return (
         <GraphCardWithFilters
             title='Top 5 Clientes (Mayor Compra)'
-            filters={<span className="text-[10px] text-slate-400 font-bold uppercase">Acumulado Anual</span>}
+            subtitle='Histórico  ·  Acumulado ventas por cliente'
+            filters={<></>}
             graph={
                     isLoading ? (
                         <div className="h-full w-full flex items-center justify-center text-xs text-slate-400 font-medium">
@@ -43,7 +45,7 @@ export default function ClientesConMayorCompraChart({ data, isLoading }: Props) 
                                     outerRadius: '85%',
                                     paddingAngle: 2,
                                     cornerRadius: 4,
-                                    arcLabel: (item) => `$${(item.value / 1000).toFixed(0)}k`,
+                                    arcLabel: (item) => `$${formatCompact(item.value, 1)}`,
                                     arcLabelMinAngle: 35,
                                 }]}
                                 slotProps={{ legend: { hidden: true } }}
@@ -60,7 +62,7 @@ export default function ClientesConMayorCompraChart({ data, isLoading }: Props) 
                             />
                             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                                 <p className="text-sm sm:text-base lg:text-lg font-extrabold text-slate-800 leading-none px-1 truncate max-w-full">
-                                    ${(total / 1000).toFixed(1)}k
+                                    ${formatCompact(total, 1)}
                                 </p>
                                 <p className="text-[7px] sm:text-[9px] font-medium text-slate-400 uppercase tracking-tighter mt-0.5">Total Top 5</p>
                             </div>
@@ -76,7 +78,7 @@ export default function ClientesConMayorCompraChart({ data, isLoading }: Props) 
                     {chartData.map(d => (
                         <div key={d.label} className="flex items-center gap-3 text-[11px] text-slate-600">
                             <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: d.color }} />
-                            <span className="font-bold w-12 text-slate-800">${d.value.toFixed(1)}</span>
+                            <span className="font-bold w-12 text-slate-800">${formatCompact(d.value)}</span>
                             <span className="truncate max-w-[80px]">{d.label}</span>
                         </div>
                     ))}

@@ -7,9 +7,21 @@ import GraphCardWithFilters from '../utils/graphCardWithFilters';
 interface Props {
     codigoCliente: string | undefined;
     nombreCliente: string | undefined;
+    year?: string;
 }
 
 const columns: GridColDef[] = [
+    {
+        field: 'Codigo_Articulo',
+        headerName: 'Código',
+        flex: 0.8,
+        minWidth: 110,
+        renderCell: (params) => (
+            <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#475569', fontWeight: 600 }}>
+                {params.value}
+            </span>
+        ),
+    },
     {
         field: 'Descripcion_Articulo',
         headerName: 'Artículo',
@@ -18,9 +30,6 @@ const columns: GridColDef[] = [
         renderCell: (params) => (
             <span style={{ fontWeight: 500 }}>
                 {params.value}
-                <span style={{ color: '#94a3b8', marginLeft: 6, fontSize: '0.7rem' }}>
-                    {params.row.Codigo_Articulo}
-                </span>
             </span>
         )
     },
@@ -58,7 +67,7 @@ const columns: GridColDef[] = [
     },
 ];
 
-export default function ProductosPorClienteTable({ codigoCliente, nombreCliente }: Props) {
+export default function ProductosPorClienteTable({ codigoCliente, nombreCliente, year }: Props) {
     const { data, isLoading, error } = useProductosPorCliente(codigoCliente);
 
     const rows = useMemo(() =>
@@ -69,11 +78,8 @@ export default function ProductosPorClienteTable({ codigoCliente, nombreCliente 
     return (
         <GraphCardWithFilters
             title='Productos comprados'
-            filters={
-                <span className="text-[10px] text-slate-400 font-bold uppercase">
-                    {nombreCliente ?? 'Selecciona un cliente'}
-                </span>
-            }
+            subtitle={year && nombreCliente ? `${year}  ·  ${nombreCliente}` : (nombreCliente ?? 'Selecciona un cliente')}
+            filters={<></>}
             graph={
                     <Paper
                         elevation={0}

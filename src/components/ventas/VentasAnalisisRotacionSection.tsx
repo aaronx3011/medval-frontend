@@ -61,15 +61,22 @@ export default function VentasAnalisisRotacionSection() {
 
     const columns: GridColDef[] = [
         {
+            field: 'Codigo_Articulo',
+            headerName: 'Código',
+            width: 120,
+            renderCell: (params) => (
+                <span style={{ fontFamily: 'monospace', fontSize: '0.75rem', color: '#475569', fontWeight: 600 }}>
+                    {params.value}
+                </span>
+            ),
+        },
+        {
             field: 'Descripcion_Articulo',
             headerName: 'Artículo',
-            width: 280,
+            width: 240,
             renderCell: (params) => (
                 <span style={{ fontWeight: 500 }}>
                     {params.value}
-                    <span style={{ color: '#94a3b8', marginLeft: 6, fontSize: '0.7rem' }}>
-                        {params.row.Codigo_Articulo}
-                    </span>
                 </span>
             )
         },
