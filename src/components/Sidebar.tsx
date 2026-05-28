@@ -39,6 +39,11 @@ const navItems = [
         label: 'Configuración',
         Icon: Settings,
         path: '/configuration',
+        subItems: [
+            { id: 'metas', label: 'Metas', path: '/configuration' },
+            { id: 'patch-notes', label: 'Notas de Parche', path: '/configuration/patch-notes' },
+            { id: 'issues', label: 'Reportar Problema', path: '/configuration/issues' },
+        ]
     },
 ]
 
