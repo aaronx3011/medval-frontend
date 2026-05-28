@@ -127,7 +127,8 @@ export default function NotificationsDropdown() {
                                                     </span>
                                                 </div>
                                                 <p className="text-xs font-medium text-brand-navy truncate">{issue.title}</p>
-                                                <p className="text-[10px] text-slate-400 truncate">{issue.reporter_name}</p>
+                                                <p className="text-[10px] text-slate-400 line-clamp-2">{issue.description}</p>
+                                                <p className="text-[10px] text-slate-400 mt-0.5">{issue.reporter_name}</p>
                                             </button>
                                         ))}
                                     </div>
