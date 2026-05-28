@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
-import { BellIcon } from './Icons'
 import { Menu } from 'lucide-react'
+import NotificationsDropdown from './system/NotificationsDropdown'
 
 export default function Topbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
     return (
@@ -18,16 +18,8 @@ export default function Topbar({ onToggleSidebar }: { onToggleSidebar: () => voi
                 <Menu size={22} />
             </button>
 
-            {/* Bell */}
-            <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.93 }}
-                className="relative w-11 h-11 rounded-full bg-surface-page flex items-center justify-center
-                   text-brand-navy hover:bg-surface-page transition-colors flex-shrink-0"
-            >
-                <BellIcon size={24} />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-brand-orange border-2 border-white" />
-            </motion.button>
+            {/* Notifications */}
+            <NotificationsDropdown />
 
             {/* User */}
             <div className="flex items-center gap-3 ml-auto">

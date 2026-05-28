@@ -18,6 +18,8 @@ import LoginPage from './pages/LoginPage'
 import InventarioTreemap from './pages/InventarioTreemap'
 import CuentasPorCobrarPage from './pages/CuentasPorCobrarPage'
 import ConfigurationPage from './pages/ConfigurationPage'
+import PatchNotesPage from './pages/PatchNotesPage'
+import IssueReportsPage from './pages/IssueReportsPage'
 
 export default function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -54,6 +56,8 @@ export default function App() {
                             <Route path="/cuentas-por-cobrar" element={<CuentasPorCobrarPage />} />
 
                             <Route path="/configuration" element={<ConfigurationPage />} />
+                            <Route path="/configuration/patch-notes" element={<PatchNotesPage />} />
+                            <Route path="/configuration/issues" element={<IssueReportsPage />} />
 
                             <Route path="*" element={<Navigate to="/" replace />} />
                         </Routes>
