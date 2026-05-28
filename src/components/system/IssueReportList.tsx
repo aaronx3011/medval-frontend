@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { IssueReport } from '../../types/issueReports';
 import { updateIssueReportStatus } from '../../services/issueReportsService';
 
@@ -21,6 +23,8 @@ const STATUS_OPTIONS = [
 ];
 
 export default function IssueReportList({ reports, onRefresh }: { reports: IssueReport[]; onRefresh: () => void }) {
+    const [expandedId, setExpandedId] = useState<number | null>(null);
+
     if (reports.length === 0) {
         return (
             <div className="chart-card">
@@ -39,6 +43,10 @@ export default function IssueReportList({ reports, onRefresh }: { reports: Issue
         }
     };
 
+    const toggleExpand = (id: number) => {
+        setExpandedId(prev => (prev === id ? null : id));
+    };
+
     return (
         <div className="chart-card">
             <h2 className="text-sm sm:text-base font-bold text-brand-orange uppercase mb-4">Historial de Reportes</h2>
@@ -46,6 +54,7 @@ export default function IssueReportList({ reports, onRefresh }: { reports: Issue
                 <table className="w-full text-sm">
                     <thead>
                         <tr className="border-b border-slate-100">
+                            <th className="w-8 py-3 px-1" />
                             <th className="text-left py-3 px-4 sm:px-2 text-xs font-semibold text-slate-500 uppercase whitespace-nowrap">Fecha</th>
                             <th className="text-left py-3 px-4 sm:px-2 text-xs font-semibold text-slate-500 uppercase whitespace-nowrap">Título</th>
                             <th className="text-left py-3 px-4 sm:px-2 text-xs font-semibold text-slate-500 uppercase whitespace-nowrap">Reportó</th>
@@ -56,6 +65,14 @@ export default function IssueReportList({ reports, onRefresh }: { reports: Issue
                     <tbody>
                         {reports.map(report => (
                             <tr key={report.id} className="border-b border-slate-50 hover:bg-surface-muted transition-colors">
+                                <td className="py-3 px-1">
+                                    <button
+                                        onClick={() => toggleExpand(report.id)}
+                                        className="p-0.5 rounded text-slate-400 hover:text-brand-navy transition-colors"
+                                    >
+                                        {expandedId === report.id ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                                    </button>
+                                </td>
                                 <td className="py-3 px-4 sm:px-2 text-slate-500 whitespace-nowrap text-xs">
                                     {new Date(report.created_at).toLocaleDateString('es-ES', {
                                         year: 'numeric',
@@ -90,6 +107,15 @@ export default function IssueReportList({ reports, onRefresh }: { reports: Issue
                     </tbody>
                 </table>
             </div>
+
+            {expandedId !== null && (
+                <div className="mx-2 mt-2 p-4 rounded-xl bg-slate-50 border border-slate-100 max-h-[200px] overflow-y-auto">
+                    <p className="text-xs font-semibold text-slate-500 uppercase mb-2">Descripción</p>
+                    <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                        {reports.find(r => r.id === expandedId)?.description ?? ''}
+                    </p>
+                </div>
+            )}
         </div>
     );
 }
