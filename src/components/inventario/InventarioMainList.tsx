@@ -4,6 +4,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Box, InputBase, Button, Paper, Stack, Menu, MenuItem, alpha, Switch, FormControlLabel } from '@mui/material';
 import { Search, ChevronDown, X } from 'lucide-react';
 import { useInventario } from '../../hooks/useInventario';
+import { useTotalInventario } from '../../hooks/useTotalInventario';
 
 const columns = [
     { field: 'Codigo_Articulo', headerName: 'Código', flex: 1, minWidth: 100 },
@@ -96,6 +97,8 @@ export default function InventarioMainList() {
     }, [rows, searchText, selectedAlmacen, loteSearch, showVencido]);
 
     const hasActiveFilters = selectedAlmacen || loteSearch || searchText;
+
+    const { data: aggregateTotal } = useTotalInventario();
 
     const totals = useMemo(() => {
         const sumUnidades = filteredRows.reduce((acc, r) => acc + (r.Unidades || 0), 0);
@@ -371,7 +374,11 @@ export default function InventarioMainList() {
                     <Box sx={{ width: { xs: '100%', sm: 'calc(50% - 8px)', lg: 'auto' } }}>
                         <Box sx={{ display: 'flex', justifyContent: { xs: 'space-between', sm: 'flex-start' }, flexDirection: 'row', gap: 4 }}>
                             <span style={{ whiteSpace: 'nowrap' }}>Unidades:</span>
-                            <strong style={{ fontSize: '0.95rem', color: '#2D3748' }}>{totals.sumUnidades.toLocaleString('en-US')}</strong>
+                            <strong style={{ fontSize: '0.95rem', color: '#2D3748' }}>
+                                {hasActiveFilters
+                                    ? totals.sumUnidades.toLocaleString('en-US')
+                                    : (aggregateTotal?.Total_Unidades_Fisicas || 0).toLocaleString('en-US')}
+                            </strong>
                         </Box>
                     </Box>
 
@@ -391,7 +398,12 @@ export default function InventarioMainList() {
                     <Box sx={{ width: { xs: '100%', sm: 'calc(50% - 8px)', lg: 'auto' } }}>
                         <Box sx={{ display: 'flex', justifyContent: { xs: 'space-between', sm: 'flex-start' }, flexDirection: 'row', gap: 4 }}>
                             <span style={{ whiteSpace: 'nowrap' }}>Total Venta:</span>
-                            <strong style={{ fontSize: '0.95rem', color: '#2D3748' }}>${totals.sumTotalVenta.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>
+                            <strong style={{ fontSize: '0.95rem', color: '#2D3748' }}>
+                                ${(hasActiveFilters
+                                    ? totals.sumTotalVenta
+                                    : (aggregateTotal?.Valor_Total_Venta_USD || 0)
+                                ).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </strong>
                         </Box>
                     </Box>
 
@@ -400,7 +412,12 @@ export default function InventarioMainList() {
                     <Box sx={{ width: { xs: '100%', sm: 'calc(50% - 8px)', lg: 'auto' } }}>
                         <Box sx={{ display: 'flex', justifyContent: { xs: 'space-between', sm: 'flex-start' }, flexDirection: 'row', gap: 4 }}>
                             <span style={{ whiteSpace: 'nowrap' }}>Total Costo:</span>
-                            <strong style={{ fontSize: '0.95rem', color: '#2D3748' }}>${totals.sumTotalCosto.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>
+                            <strong style={{ fontSize: '0.95rem', color: '#2D3748' }}>
+                                ${(hasActiveFilters
+                                    ? totals.sumTotalCosto
+                                    : (aggregateTotal?.Valor_Total_Costo_USD || 0)
+                                ).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </strong>
                         </Box>
                     </Box>
                 </Paper>

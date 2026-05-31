@@ -106,6 +106,19 @@ export interface InventarioResponse {
 
 
 
+export interface InventarioTotal {
+    Total_Items_Distintos: number;
+    Total_Unidades_Fisicas: number;
+    Valor_Total_Costo_USD: number;
+    Valor_Total_Venta_USD: number;
+    Ganancia_Proyectada_USD: number;
+}
+
+export interface InventarioTotalResponse {
+    metadata: Record<string, never>;
+    data: [InventarioTotal];
+}
+
 export interface InventarioDetalle {
     Codigo_Articulo: string;
     Descripcion_Articulo: string;
