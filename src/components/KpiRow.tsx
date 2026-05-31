@@ -2,7 +2,8 @@ import { motion } from 'framer-motion'
 import AmountCard from './utils/amountCard'
 import ProuctCard from './utils/productCard'
 import { useVentasAnuales } from '../hooks/useVentasAnuales'
-import { useAnalisisReposicion } from '../hooks/useAnalisisReposicion' // <-- Hook actualizado
+import { useAnalisisReposicion } from '../hooks/useAnalisisReposicion'
+import { useTotalInventario } from '../hooks/useTotalInventario'
 import { formatNumber } from '../utils/formatters'
 
 const cardVariants = {
@@ -33,12 +34,12 @@ export default function KpiRow() {
         error: lastYearError
     } = useVentasAnuales(lastYear.toString())
 
-    // Fetch inventory data con el NUEVO hook
+    // Fetch inventory totals from aggregate endpoint
     const {
-        data: invData,
+        data: totalInvData,
         isLoading: invLoading,
         error: invError
-    } = useAnalisisReposicion()
+    } = useTotalInventario()
 
     if (ventasLoading || invLoading || lastYearLoading) {
         return <div className="p-4 text-slate-400">Cargando KPIs...</div>
@@ -51,14 +52,8 @@ export default function KpiRow() {
     const ventasTotals = ventasData?.totals;
     const lastYearTotals = ventasLastYearData?.totals;
 
-    // Cálculo del valor total del inventario en USD
-    // Multiplicamos el stock de cada artículo por su último precio de venta
-    const valorTotalInventarioUSD = invData?.data.reduce((acc, item) => {
-        return acc + (item.Stock_Total * (item.Ultimo_Precio_Venta_USD || 0));
-    }, 0) || 0;
-
-    // Total de unidades físicas viene directamente de los totales del nuevo endpoint
-    const totalUnidadesInventario = invData?.totals?.Stock_Total || 0;
+    const valorTotalInventarioUSD = totalInvData?.Valor_Total_Venta_USD || 0;
+    const totalUnidadesInventario = totalInvData?.Total_Unidades_Fisicas || 0;
 
     // Calculate your monthly average (Last Year Total USD / 12)
     const promedioVentaMensualUSD = lastYearTotals ? (lastYearTotals.Total_USD / 12) : 0;
