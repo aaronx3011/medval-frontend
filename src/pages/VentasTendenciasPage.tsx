@@ -4,6 +4,7 @@ import LineAllTearsByMonth from '../components/ventas/LineAllYearsByMonth'
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import { useFechasDisponibles } from '../hooks/useFechasDisponibles'
+import { apiClient } from '../services/apiClient'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface VentaDetalle {
@@ -22,7 +23,7 @@ const MONTH_NAMES = [
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
 ]
 const DAY_LABELS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
 function getDayKey(year: number, month: number, day: number): string {
     return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
@@ -99,10 +100,7 @@ function MonthCalendar() {
         fetching.current.add(key)
         try {
             const apiMonth = month + 1
-            const url = `${API_BASE_URL}/ventas/detalle-ventas-por-mes-por-anio?year=${year}&month=${apiMonth}`
-            const res = await fetch(url)
-            if (!res.ok) throw new Error(`HTTP ${res.status}`)
-            const json: ApiResponse = await res.json()
+            const json: ApiResponse = await apiClient(`/ventas/detalle-ventas-por-mes-por-anio?year=${year}&month=${apiMonth}`)
             cache.current.set(key, aggregateToDailyMap(json.data ?? []))
         } catch (err) {
             console.error(`Error fetching ${key}:`, err)

@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Pencil, Check, X } from 'lucide-react';
+import { Plus, Pencil, Check, X, ShieldBan } from 'lucide-react';
 import { useSalesGoals } from '../hooks/useSalesGoals';
 import { updateSalesGoal } from '../services/salesGoalsService';
 import { SalesGoal } from '../types/salesGoals';
 import AddGoalModal from '../components/sales-goals/AddGoalModal';
+import { useAuth } from '../contexts/AuthContext';
 
 const MONTH_NAMES = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -12,7 +13,9 @@ const MONTH_NAMES = [
 ];
 
 export default function ConfigurationPage() {
+    const { user } = useAuth();
     const { data: goals, loading, error, refetch } = useSalesGoals();
+    const isAdmin = user?.role === 'admin';
     const [addModalOpen, setAddModalOpen] = useState(false);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editValue, setEditValue] = useState<string>('');
@@ -70,8 +73,26 @@ export default function ConfigurationPage() {
             transition={{ duration: 0.3 }}
             className="flex-1 overflow-y-auto p-4 lg:p-6"
         >
-            <h1 className="text-xl sm:text-2xl font-bold text-brand-navy mb-6">Configuración</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-brand-navy mb-6">Metas de Venta</h1>
 
+            {!isAdmin && (
+                <motion.div
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    className="kpi-card mb-6"
+                >
+                    <div className="flex items-center gap-3 py-6">
+                        <ShieldBan size={24} className="text-slate-300" />
+                        <div>
+                            <h2 className="text-sm font-semibold text-brand-navy">Sección restringida</h2>
+                            <p className="text-xs text-slate-400 mt-0.5">Solo los administradores pueden gestionar las metas de ventas.</p>
+                        </div>
+                    </div>
+                </motion.div>
+            )}
+
+            {isAdmin && (<>
             {/* Current Goal Section */}
             <motion.div
                 initial={{ opacity: 0, y: 24 }}
@@ -204,6 +225,7 @@ export default function ConfigurationPage() {
                 onClose={() => setAddModalOpen(false)}
                 onSuccess={refetch}
             />
+            </>)}
         </motion.main>
     );
 }

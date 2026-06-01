@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HomeIcon, SalesIcon, InventoryIcon, LogoutIcon, ChevronIcon } from './Icons'
@@ -40,7 +40,8 @@ const navItems = [
         Icon: Settings,
         path: '/configuration',
         subItems: [
-            { id: 'metas', label: 'Metas', path: '/configuration' },
+            { id: 'metas', label: 'Metas de Venta', path: '/configuration' },
+            { id: 'users', label: 'Usuarios', path: '/configuration/users' },
             { id: 'patch-notes', label: 'Notas de Parche', path: '/configuration/patch-notes' },
             { id: 'issues', label: 'Reportar Problema', path: '/configuration/issues' },
         ]
@@ -57,11 +58,20 @@ export default function Sidebar({ onLogout, isOpen, onClose }: { onLogout: () =>
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const location = useLocation();
 
+    const autoExpandedId = useMemo(() => {
+        for (const item of navItems) {
+            if (!item.subItems) continue;
+            const isOnSubPage = item.subItems.some(sub => location.pathname === sub.path);
+            if (isOnSubPage) return item.id;
+        }
+        return null;
+    }, [location.pathname]);
+
     const toggleExpand = (id: string) => {
         setExpandedId(prev => prev === id ? null : id);
     };
 
-    const isExpanded = (id: string) => hoveredId === id || expandedId === id;
+    const isExpanded = (id: string) => hoveredId === id || expandedId === id || autoExpandedId === id;
 
     const navContent = (
         <>
@@ -88,7 +98,7 @@ export default function Sidebar({ onLogout, isOpen, onClose }: { onLogout: () =>
                                 <div className={`nav-link flex items-center justify-between ${isParentActive ? 'active' : ''}`}>
                                     <NavLink
                                         to={path}
-                                        onClick={() => { onClose(); setExpandedId(null); }}
+                                        onClick={onClose}
                                         className="flex items-center gap-3 flex-1"
                                     >
                                         <Icon size={18} />
@@ -104,7 +114,7 @@ export default function Sidebar({ onLogout, isOpen, onClose }: { onLogout: () =>
                             ) : (
                                 <NavLink
                                     to={path}
-                                    onClick={() => { onClose(); setExpandedId(null); }}
+                                    onClick={onClose}
                                     className={({ isActive }) =>
                                         `nav-link flex items-center justify-between ${isActive || isParentActive ? 'active' : ''}`
                                     }
@@ -128,9 +138,10 @@ export default function Sidebar({ onLogout, isOpen, onClose }: { onLogout: () =>
                                             <NavLink
                                                 key={sub.id}
                                                 to={sub.path}
-                                                onClick={() => { onClose(); setExpandedId(null); }}
+                                                end={sub.path === path}
+                                                onClick={onClose}
                                                 className={({ isActive }) =>
-                                                    `block py-2 px-3 text-xs transition-colors ${isActive ? 'text-brand-navy font-bold' : 'text-slate-500 hover:text-brand-navy'}`
+                                                    `block py-2 px-3 text-xs rounded-lg transition-colors ${isActive ? 'text-brand-navy font-bold bg-orange-50' : 'text-slate-500 hover:text-brand-navy hover:bg-orange-50 hover:font-semibold'}`
                                                 }
                                             >
                                                 {sub.label}
