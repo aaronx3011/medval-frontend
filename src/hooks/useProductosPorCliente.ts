@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { ClientePorProducto2, ClientesPorProductoResponse2 } from '../types/ventas';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+import { apiClient } from '../services/apiClient';
+import type { ClientePorProducto2, ClientesPorProductoResponse2 } from '../types/ventas';
 
 export function useProductosPorCliente(codigoCliente: string | undefined) {
     const [data, setData] = useState<ClientePorProducto2[]>([]);
@@ -20,13 +19,7 @@ export function useProductosPorCliente(codigoCliente: string | undefined) {
         const loadData = async () => {
             try {
                 setIsLoading(true);
-                const response = await fetch(
-                    `${API_BASE_URL}/ventas/producto-por-cliente/${codigoCliente}`
-                );
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const json: ClientesPorProductoResponse2 = await response.json();
+                const json: ClientesPorProductoResponse2 = await apiClient(`/ventas/producto-por-cliente/${codigoCliente}`);
                 if (isMounted) {
                     setData(json.data);
                     setError(null);

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { InventarioTotal } from '../types/inventario';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+import { apiClient } from '../services/apiClient';
+import type { InventarioTotal, InventarioTotalResponse } from '../types/inventario';
 
 export function useTotalInventario() {
     const [data, setData] = useState<InventarioTotal | null>(null);
@@ -14,9 +13,7 @@ export function useTotalInventario() {
         const load = async () => {
             try {
                 setIsLoading(true);
-                const res = await fetch(`${API_BASE_URL}/inventario/total/`);
-                if (!res.ok) throw new Error(`Error ${res.status}`);
-                const json = await res.json();
+                const json: InventarioTotalResponse = await apiClient('/inventario/total/');
                 if (mounted) setData(json.data[0]);
             } catch (e: any) {
                 if (mounted) setError(e.message);

@@ -3,6 +3,7 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { Box, Paper, CircularProgress, alpha, InputBase } from '@mui/material'
 import { Search, X } from 'lucide-react'
 import GraphCardWithFilters from '../utils/graphCardWithFilters'
+import { apiClient } from '../../services/apiClient'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface InventarioItem {
@@ -18,8 +19,6 @@ interface InventarioItem {
 interface ApiResponse {
     data: InventarioItem[]
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 // ── Badge logic ───────────────────────────────────────────────────────────────
 function monthsUntil(isoDate: string): number {
@@ -150,11 +149,7 @@ export default function NotificationsPanel() {
         let mounted = true
         const fetchData = async () => {
             try {
-                const res = await fetch(
-                    `${API_BASE_URL}/view/aaron_view_AnalisisReposicionInventario?limit=100000`
-                )
-                if (!res.ok) throw new Error(`HTTP ${res.status}`)
-                const json: ApiResponse = await res.json()
+                const json: ApiResponse = await apiClient('/view/aaron_view_AnalisisReposicionInventario?limit=100000')
                 if (mounted) {
                     const filtered = json.data.filter(item => {
                         const { expiringSoon, lowStock } = getAlerts(item)

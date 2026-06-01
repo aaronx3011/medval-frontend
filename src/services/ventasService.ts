@@ -1,27 +1,13 @@
-import { VentasAnualClienteResponse, ClientesPorProductoResponse, TopClientsResponse, DetalleProductoMensualFechasResponse, AgrupadoProductoResponse, VentasAnualesResponse, FechasDisponiblesResponse } from '../types/ventas';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+import { apiClient } from './apiClient';
+import type { VentasAnualClienteResponse, ClientesPorProductoResponse, TopClientsResponse, DetalleProductoMensualFechasResponse, AgrupadoProductoResponse, VentasAnualesResponse, FechasDisponiblesResponse } from '../types/ventas';
 
 export const getVentasAnuales = async (year: string | number): Promise<VentasAnualesResponse> => {
-    const response = await fetch(`${API_BASE_URL}/ventas/total-anual/${year}`);
-
-    if (!response.ok) {
-        throw new Error(`Failed to fetch: ${response.statusText}`);
-    }
-
-    return response.json();
+    return apiClient(`/ventas/total-anual/${year}`);
 };
 
 export const getFechasDisponibles = async (): Promise<FechasDisponiblesResponse> => {
-    const response = await fetch(`${API_BASE_URL}/ventas/fechas-disponibles`);
-
-    if (!response.ok) {
-        throw new Error(`Failed to fetch: ${response.statusText}`);
-    }
-
-    return response.json();
+    return apiClient('/ventas/fechas-disponibles');
 };
-
 
 export const getAgrupadoProductoMensual = async (
     startYear: number,
@@ -29,15 +15,7 @@ export const getAgrupadoProductoMensual = async (
     endYear: number,
     endMonth: number
 ): Promise<AgrupadoProductoResponse> => {
-    const response = await fetch(
-        `${API_BASE_URL}/ventas/agrupado-producto-mensual?startYear=${startYear}&startMonth=${startMonth}&endYear=${endYear}&endMonth=${endMonth}`
-    );
-
-    if (!response.ok) {
-        throw new Error(`Failed to fetch grouped data: ${response.statusText}`);
-    }
-
-    return response.json();
+    return apiClient(`/ventas/agrupado-producto-mensual?startYear=${startYear}&startMonth=${startMonth}&endYear=${endYear}&endMonth=${endMonth}`);
 };
 
 export const getChartDataPorProducto = async (
@@ -47,19 +25,8 @@ export const getChartDataPorProducto = async (
     endMonth: number,
     codigoArticulo: string
 ) => {
-    const response = await fetch(
-        `${API_BASE_URL}/ventas/agrupado-producto-mensual?startYear=${startYear}&startMonth=${startMonth}&endYear=${endYear}&endMonth=${endMonth}&codigoArticulo=${codigoArticulo}`
-    );
-
-    if (!response.ok) {
-        throw new Error(`Failed to fetch chart data: ${response.statusText}`);
-    }
-
-    return response.json();
+    return apiClient(`/ventas/agrupado-producto-mensual?startYear=${startYear}&startMonth=${startMonth}&endYear=${endYear}&endMonth=${endMonth}&codigoArticulo=${codigoArticulo}`);
 };
-
-
-
 
 export const getDetalleProductoMensualFechas = async (
     startYear: string | number,
@@ -68,50 +35,19 @@ export const getDetalleProductoMensualFechas = async (
     endMonth: string | number,
     producto: string
 ): Promise<DetalleProductoMensualFechasResponse> => {
-    const response = await fetch(
-        `${API_BASE_URL}/ventas/detalle-producto-mensual-fechas?startYear=${startYear}&startMonth=${startMonth}&endYear=${endYear}&endMonth=${endMonth}&producto=${producto}`
-    );
-
-    if (!response.ok) {
-        throw new Error(`Failed to fetch product chart data: ${response.statusText}`);
-    }
-
-    return response.json();
+    return apiClient(`/ventas/detalle-producto-mensual-fechas?startYear=${startYear}&startMonth=${startMonth}&endYear=${endYear}&endMonth=${endMonth}&producto=${producto}`);
 };
-
-
-
 
 export const getTopClients = async (): Promise<TopClientsResponse> => {
-    const API_URL = `${API_BASE_URL}/ventas/top-clientes-actual`;
-    const response = await fetch(API_URL);
-    if (!response.ok) {
-        throw new Error('Failed to fetch top clients data');
-    }
-    return response.json();
+    return apiClient('/ventas/top-clientes-actual');
 };
-
 
 export const ventasService = {
     getClientesPorProducto: async (codigoProducto: string): Promise<ClientesPorProductoResponse> => {
-        const response = await fetch(`${API_BASE_URL}/ventas/clientes-por-producto/${codigoProducto}`);
-
-        if (!response.ok) {
-            throw new Error(`Error ${response.status}: No se pudo obtener la información del producto`);
-        }
-
-        return await response.json();
+        return apiClient(`/ventas/clientes-por-producto/${codigoProducto}`);
     },
 
-
     getVentasAnualClientes: async (): Promise<VentasAnualClienteResponse> => {
-        const response = await fetch(`${API_BASE_URL}/ventas/agrupado-ventas-por-cliente-anual`);
-        if (!response.ok) {
-            throw new Error(`Error ${response.status}: No se pudo obtener el resumen anual`);
-        }
-        return await response.json();
+        return apiClient('/ventas/agrupado-ventas-por-cliente-anual');
     }
-
 };
-
-

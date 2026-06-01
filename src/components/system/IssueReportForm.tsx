@@ -1,13 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createIssueReport } from '../../services/issueReportsService';
+import { useAuth } from '../../contexts/AuthContext';
 
 const SEVERITIES = ['Critical', 'High', 'Medium', 'Low'];
 
 export default function IssueReportForm({ onSuccess }: { onSuccess: () => void }) {
+    const { user } = useAuth();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [reporterName, setReporterName] = useState('');
     const [reporterEmail, setReporterEmail] = useState('');
+
+    useEffect(() => {
+        if (user) {
+            setReporterName(user.full_name);
+            setReporterEmail(user.email);
+        }
+    }, [user]);
     const [severity, setSeverity] = useState('Medium');
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -69,23 +78,25 @@ export default function IssueReportForm({ onSuccess }: { onSuccess: () => void }
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div>
-                    <label className="block text-xs text-slate-500 mb-1">Nombre</label>
+                        <label className="block text-xs text-slate-500 mb-1">Nombre</label>
                     <input
                         type="text"
                         value={reporterName}
                         onChange={e => setReporterName(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/30 focus:border-brand-orange"
+                        className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/30 focus:border-brand-orange bg-slate-50 text-slate-600 cursor-not-allowed"
                         placeholder="Tu nombre"
+                        readOnly
                     />
                 </div>
                 <div>
-                    <label className="block text-xs text-slate-500 mb-1">Correo</label>
+                        <label className="block text-xs text-slate-500 mb-1">Correo</label>
                     <input
                         type="email"
                         value={reporterEmail}
                         onChange={e => setReporterEmail(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/30 focus:border-brand-orange"
+                        className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/30 focus:border-brand-orange bg-slate-50 text-slate-600 cursor-not-allowed"
                         placeholder="tu@correo.com"
+                        readOnly
                     />
                 </div>
             </div>
