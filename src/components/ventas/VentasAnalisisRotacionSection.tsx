@@ -1,11 +1,12 @@
 import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
 import { Box, InputBase, Select, MenuItem, SelectChangeEvent } from '@mui/material';
 import { Search } from 'lucide-react';
 
 import { useVentasRotacion } from '../../hooks/useInventarioRotacion';
 import GraphCardWithFilters from '../utils/graphCardWithFilters';
+import DownloadCsvButton, { sanitizeFilename } from '../utils/DownloadCsvButton';
 import VentasRotacionProductoAnualChart from './VentasRotacionProductoAnualChart';
 import VentasRotacionProductoAnualActualChart from './VentasRotacioPoductoAnualActualChart';
 
@@ -28,6 +29,14 @@ export default function VentasAnalisisRotacionSection() {
         if (!selectedRowData) return [];
         return data.filter(item => item.Codigo_Articulo === selectedRowData.Codigo_Articulo);
     }, [data, selectedRowData]);
+
+    const apiRef = useGridApiRef();
+
+    const csvFilename = [
+        'rotacion-mensual',
+        selectedAnio,
+        searchTerm
+    ].filter(Boolean).map(s => sanitizeFilename(s)).join('_') || 'rotacion-mensual';
 
     const uniqueAnios = useMemo(() => {
         const anios = Array.from(new Set(data.map(item => item.Anio)));
@@ -110,6 +119,8 @@ export default function VentasAnalisisRotacionSection() {
 
                 <GraphCardWithFilters
                     title='Desglose de Ventas Mensuales por Producto'
+                    actions={<DownloadCsvButton apiRef={apiRef} filename={csvFilename} />}
+                    graph={<div />}
                     filters={
                         <div className="flex items-center gap-3">
                             <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '8px', px: 2, py: 0.5, width: 250, height: '36px' }}>
@@ -148,6 +159,7 @@ export default function VentasAnalisisRotacionSection() {
                     legend={
                         <div style={{ height: 600, width: '100%', marginTop: '20px' }}>
                             <DataGrid
+                                apiRef={apiRef}
                                 rows={filteredData}
                                 columns={columns}
                                 loading={isLoading}

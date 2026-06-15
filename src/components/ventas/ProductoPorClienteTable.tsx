@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
 import { Paper, alpha } from '@mui/material';
 import { useProductosPorCliente } from '../../hooks/useProductosPorCliente';
 import GraphCardWithFilters from '../utils/graphCardWithFilters';
+import DownloadCsvButton, { sanitizeFilename } from '../utils/DownloadCsvButton';
 
 interface Props {
     codigoCliente: string | undefined;
@@ -75,10 +76,20 @@ export default function ProductosPorClienteTable({ codigoCliente, nombreCliente,
         [data]
     );
 
+    const apiRef = useGridApiRef();
+
+    const csvFilename = [
+        'productos-por-cliente',
+        codigoCliente,
+        nombreCliente ? sanitizeFilename(nombreCliente, '') : '',
+        year
+    ].filter(Boolean).map(s => sanitizeFilename(s)).join('_') || 'productos-por-cliente';
+
     return (
         <GraphCardWithFilters
             title='Productos comprados'
             subtitle={year && nombreCliente ? `${year}  ·  ${nombreCliente}` : (nombreCliente ?? 'Selecciona un cliente')}
+            actions={<DownloadCsvButton apiRef={apiRef} filename={csvFilename} />}
             filters={<></>}
             graph={
                     <Paper
@@ -105,6 +116,7 @@ export default function ProductosPorClienteTable({ codigoCliente, nombreCliente,
                             </div>
                         ) : (
                             <DataGrid
+                                apiRef={apiRef}
                                 rows={rows}
                                 columns={columns}
                                 loading={isLoading}

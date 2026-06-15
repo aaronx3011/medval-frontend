@@ -1,9 +1,10 @@
 import { useEffect, useState, useMemo } from 'react'
-import { DataGrid, GridColDef } from '@mui/x-data-grid'
+import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid'
 import { Box, Paper, CircularProgress, alpha, InputBase } from '@mui/material'
 import { Search, X } from 'lucide-react'
 import GraphCardWithFilters from '../utils/graphCardWithFilters'
 import { apiClient } from '../../services/apiClient'
+import DownloadCsvButton, { sanitizeFilename } from '../utils/DownloadCsvButton'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface InventarioItem {
@@ -36,8 +37,9 @@ function getAlerts(item: InventarioItem): { expiringSoon: boolean; lowStock: boo
 }
 
 function formatDate(iso: string): string {
-    const d = new Date(iso)
-    return d.toLocaleDateString('es-VE', { day: '2-digit', month: '2-digit', year: '2-digit' })
+    const datePart = iso.includes('T') ? iso.split('T')[0] : iso;
+    const [year, month, day] = datePart.split('-');
+    return `${day}/${month}/${year}`;
 }
 
 // ── Badges ────────────────────────────────────────────────────────────────────
@@ -54,7 +56,7 @@ function ExpiringSoonBadge({ monthsLeft }: { monthsLeft: number }) {
             }`}
         >
             <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${expired ? 'bg-red-500' : urgent ? 'bg-red-400' : 'bg-orange-400'}`} />
-            {expired ? 'VENCIDO' : `VENCE ${monthsLeft}m`}
+            {expired ? 'VENCIDO' : `VENCE ${monthsLeft} meses`}
         </span>
     )
 }
@@ -69,7 +71,7 @@ function LowStockBadge({ months }: { months: number }) {
             }`}
         >
             <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${critical ? 'bg-amber-500' : 'bg-yellow-400'}`} />
-            {`STOCK ${months.toFixed(1)}m`}
+            {`STOCK ${months.toFixed(1)} meses`}
         </span>
     )
 }
@@ -193,6 +195,14 @@ export default function NotificationsPanel() {
 
     const expiredCount = allItems.filter(item => monthsUntil(item.Proximo_Vencimiento) <= 0).length
 
+    const apiRef = useGridApiRef();
+
+    const csvFilename = [
+        'notificaciones',
+        showExpired ? 'mostrando-vencidos' : 'sin-vencidos',
+        searchText
+    ].filter(Boolean).map(s => sanitizeFilename(s)).join('_') || 'notificaciones';
+
     // ── Filters slot ──────────────────────────────────────────────────────────
     const filtersSlot = (
         <div className="mb-3">
@@ -256,6 +266,7 @@ export default function NotificationsPanel() {
                     </Box>
                 ) : (
                     <DataGrid
+                        apiRef={apiRef}
                         rows={filteredRows}
                         columns={columns}
                         getRowId={(row) => row.Codigo_Articulo}
@@ -322,6 +333,7 @@ export default function NotificationsPanel() {
     return (
         <GraphCardWithFilters
             title="Notificaciones"
+            actions={<DownloadCsvButton apiRef={apiRef} filename={csvFilename} />}
             filters={filtersSlot}
             graph={tableSlot}
             legend={<></>}

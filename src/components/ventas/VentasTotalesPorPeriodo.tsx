@@ -3,9 +3,10 @@ import { motion } from 'framer-motion'
 import { ClientePorProducto } from '../../types/ventas'
 
 // MUI & Icons
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
 import { InputBase, Paper, Stack, alpha, Button } from '@mui/material';
 import { Search, X, Eye } from 'lucide-react';
+import DownloadCsvButton, { sanitizeFilename } from '../utils/DownloadCsvButton';
 
 interface Props {
     data: ClientePorProducto[];
@@ -17,6 +18,15 @@ interface Props {
 export default function VentasTotalesPorPeriodo({ data, isLoading, period, selectedProductName }: Props) {
     const [searchText, setSearchText] = useState('')
     const [selectedItem, setSelectedItem] = useState<string | null>(null)
+
+    const apiRef = useGridApiRef();
+
+    const csvFilename = [
+        'clientes-por-producto',
+        period ? sanitizeFilename(period, 'o') : '',
+        selectedProductName ? sanitizeFilename(selectedProductName, 'o') : '',
+        searchText
+    ].filter(Boolean).map(s => sanitizeFilename(s)).join('_') || 'clientes-por-producto';
 
     // Preparar datos con IDs únicos requeridos por MUI DataGrid
     const rows = useMemo(() => {
@@ -82,11 +92,12 @@ export default function VentasTotalesPorPeriodo({ data, isLoading, period, selec
             transition={{ delay: 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="chart-card mb-4 h-full flex flex-col"
         >
-            <div className="flex flex-col mb-3">
-                <h2 className="uppercase font-display text-2xl font-bold text-brand-navy text-left">
-                    Clientes por Producto
-                </h2>
-                {(() => {
+            <div className="flex items-start justify-between mb-3">
+                <div className="flex flex-col">
+                    <h2 className="uppercase font-display text-2xl font-bold text-brand-navy text-left">
+                        Clientes por Producto
+                    </h2>
+                    {(() => {
                     const subtitle = period && selectedProductName
                         ? `${period}  ·  ${selectedProductName}`
                         : period || '';
@@ -94,6 +105,10 @@ export default function VentasTotalesPorPeriodo({ data, isLoading, period, selec
                         <p className="text-[13px] text-slate-400 font-medium">{subtitle}</p>
                     ) : null;
                 })()}
+                </div>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                    <DownloadCsvButton apiRef={apiRef} filename={csvFilename} />
+                </div>
             </div>
 
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
@@ -143,6 +158,7 @@ export default function VentasTotalesPorPeriodo({ data, isLoading, period, selec
                 }}
             >
                 <DataGrid
+                    apiRef={apiRef}
                     rows={filteredRows}
                     columns={columns}
                     loading={isLoading}

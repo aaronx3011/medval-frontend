@@ -1,11 +1,12 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { PieChart } from '@mui/x-charts/PieChart';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
 import { Paper, alpha } from '@mui/material';
 import { useCuentasPorCobrar2 } from '../hooks/useCuentasPorCobrar';
 import { AgingBucket } from '../types/cuentasPorCobrar';
 import { formatCompact } from '../utils/formatters';
+import DownloadCsvButton, { sanitizeFilename } from '../components/utils/DownloadCsvButton';
 
 function getBucket(diasVencidos: number): AgingBucket {
     if (diasVencidos <= 0) return 'Al día';
@@ -125,6 +126,13 @@ export default function CuentasPorCobrarPage() {
         [tableRows]
     );
 
+    const apiRef = useGridApiRef();
+
+    const csvFilename = [
+        'cuentas-por-cobrar-detalle',
+        selectedBucket
+    ].filter(Boolean).map(s => sanitizeFilename(s)).join('_') || 'cuentas-por-cobrar-detalle';
+
     const handlePieClick = (_: unknown, itemData: { dataIndex: number }) => {
         const clickedLabel = pieData[itemData.dataIndex]?.label as AgingBucket;
         setSelectedBucket(prev => prev === clickedLabel ? null : clickedLabel);
@@ -143,31 +151,12 @@ export default function CuentasPorCobrarPage() {
                 transition={{ delay: 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 className="chart-card mb-4"
             >
-                <div className="flex flex-col sm:flex-row items-start justify-between mb-4 gap-2">
-                    <div>
-                        <h2 className="uppercase font-display text-xl lg:text-2xl font-bold text-brand-navy text-left">
-                            Cuentas por Cobrar
-                        </h2>
-                        {selectedBucket && (
-                            <p className="text-sm text-slate-500 mt-1">
-                                Filtrando por:{' '}
-                                <span
-                                    className="font-semibold cursor-pointer hover:underline"
-                                    style={{ color: BUCKET_COLORS[selectedBucket] }}
-                                    onClick={() => setSelectedBucket(null)}
-                                >
-                                    {selectedBucket}
-                                </span>
-                                {' '}— click para limpiar
-                            </p>
-                        )}
-                    </div>
-                    <div className="text-right">
-                        <p className="text-xs text-slate-400 uppercase tracking-wide">Saldo total</p>
-                        <p className="text-xl font-bold text-brand-navy">
-                            ${formatCompact(totalSaldo)}
-                        </p>
-                        <p className="text-xs text-slate-400">{tableRows.length} documentos</p>
+                <div className="flex items-start justify-between mb-4">
+                    <h2 className="uppercase font-display text-xl lg:text-2xl font-bold text-brand-navy text-left">
+                        Cuentas por Cobrar
+                    </h2>
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                        <DownloadCsvButton apiRef={apiRef} filename={csvFilename} />
                     </div>
                 </div>
 
@@ -253,6 +242,30 @@ export default function CuentasPorCobrarPage() {
                                 </div>
                             </>
                         )}
+
+                        {selectedBucket && (
+                            <p className="text-sm text-slate-500 mt-3">
+                                Filtrando por:{' '}
+                                <span
+                                    className="font-semibold cursor-pointer hover:underline"
+                                    style={{ color: BUCKET_COLORS[selectedBucket] }}
+                                    onClick={() => setSelectedBucket(null)}
+                                >
+                                    {selectedBucket}
+                                </span>
+                                {' '}— click para limpiar
+                            </p>
+                        )}
+
+                        <div className="mt-auto pt-4 flex items-center justify-between">
+                            <div className="flex items-baseline gap-2">
+                                <p className="text-xs text-slate-400 uppercase tracking-wide">Saldo total</p>
+                                <p className="text-xs text-slate-400">— {tableRows.length} documentos</p>
+                            </div>
+                            <p className="text-xl font-bold text-brand-navy">
+                                ${formatCompact(totalSaldo)}
+                            </p>
+                        </div>
                     </div>
 
                     {/* Right — Table */}
@@ -271,6 +284,7 @@ export default function CuentasPorCobrarPage() {
                         }}
                     >
                         <DataGrid
+                            apiRef={apiRef}
                             rows={tableRows}
                             columns={columns}
                             loading={isLoading}
