@@ -5,8 +5,8 @@ import { VentaProducto } from '../../types/ventas';
 
 // MUI & Icons
 import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
-import { InputBase, Paper, Stack, alpha } from '@mui/material';
-import { Search, X } from 'lucide-react';
+import { InputBase, Paper, Stack, alpha, Button } from '@mui/material';
+import { Search, X, Eye } from 'lucide-react';
 import DownloadCsvButton, { sanitizeFilename } from '../utils/DownloadCsvButton';
 
 interface VentasPorProductoProps {
@@ -81,6 +81,37 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
                 <strong style={{ color: '#1e293b' }}>
                     ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </strong>
+            )
+        },
+        {
+            field: 'actions',
+            headerName: 'Acción',
+            minWidth: 70,
+            flex: 0.8,
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            renderCell: (params) => (
+                <Button
+                    size="small"
+                    variant={selectedProduct === params.row.Codigo_Articulo ? "contained" : "outlined"}
+                    color="primary"
+                    onClick={() => onSelectProduct(params.row.Codigo_Articulo)}
+                    sx={{
+                        minWidth: 'auto',
+                        p: '4px',
+                        borderRadius: '8px',
+                        backgroundColor: selectedProduct === params.row.Codigo_Articulo ? '#FF6600' : 'transparent',
+                        borderColor: selectedProduct === params.row.Codigo_Articulo ? '#FF6600' : '#E2E8F0',
+                        color: selectedProduct === params.row.Codigo_Articulo ? '#FFF' : '#64748B',
+                        '&:hover': {
+                            backgroundColor: selectedProduct === params.row.Codigo_Articulo ? '#E65C00' : '#F1F5F9',
+                            borderColor: selectedProduct === params.row.Codigo_Articulo ? '#E65C00' : '#CBD5E1',
+                        }
+                    }}
+                >
+                    <Eye size={16} />
+                </Button>
             )
         },
     ];

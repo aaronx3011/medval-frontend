@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import { ReactElement, ReactNode } from "react"
+import { ReactElement } from "react"
 
 interface graphCardWithFiltersProps {
     title: string,
@@ -8,10 +8,9 @@ interface graphCardWithFiltersProps {
     graph: ReactElement
     legend: ReactElement
     legendOrientation?: 'horizontal' | 'vertical'
-    actions?: ReactNode
 }
 
-export default function GraphCardWithFilters({ title, subtitle, graph, legend, legendOrientation = 'horizontal', filters, actions }: graphCardWithFiltersProps) {
+export default function GraphCardWithFilters({ title, subtitle, graph, legend, legendOrientation = 'horizontal', filters }: graphCardWithFiltersProps) {
     return (
         <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -20,19 +19,12 @@ export default function GraphCardWithFilters({ title, subtitle, graph, legend, l
             whileHover={{ boxShadow: '0 8px 28px rgba(26,42,94,0.07)' }}
             className="chart-card flex flex-col h-full w-full p-4 bg-white rounded-xl"
         >
-            <div className="flex items-start justify-between mb-2 flex-shrink-0">
-                <div className="flex flex-col gap-0.5">
-                    <h3 className="text-sm font-bold text-brand-orange uppercase tracking-wider">
-                        {title}
-                    </h3>
-                    {subtitle && (
-                        <p className="text-[11px] text-slate-400 font-medium">{subtitle}</p>
-                    )}
-                </div>
-                {actions && (
-                    <div className="flex items-center gap-1 flex-shrink-0">
-                        {actions}
-                    </div>
+            <div className="flex items-start justify-between mb-2 flex-shrink-0 flex-col gap-0.5">
+                <h3 className="text-sm font-bold text-brand-orange uppercase tracking-wider">
+                    {title}
+                </h3>
+                {subtitle && (
+                    <p className="text-[11px] text-slate-400 font-medium">{subtitle}</p>
                 )}
             </div>
 

@@ -95,7 +95,7 @@ export default function VentasClientesPage() {
                 <div className="min-h-[350px]">
                     <ClientesConMayorCompraChart data={top5Clientes} isLoading={isLoadingAnual} />
                 </div>
-                <div className="min-h-[450px]">
+                <div className="h-[450px]">
                     <GraphCardWithFilters
                         title='Evolución de ventas y unidades'
                         filters={
@@ -233,7 +233,7 @@ export default function VentasClientesPage() {
 
             {/* Desktop: line chart on top, pie + table side by side below */}
             <div className="hidden lg:flex lg:flex-col gap-4 pb-10">
-                <div className="min-h-[500px]">
+                <div className="h-[500px]">
                     <GraphCardWithFilters
                         title='Evolución de ventas y unidades'
                         filters={
