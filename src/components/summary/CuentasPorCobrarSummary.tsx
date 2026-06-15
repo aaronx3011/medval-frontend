@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
 import { Box, Paper, Typography, CircularProgress, alpha, InputBase } from '@mui/material';
 import { Search, X } from 'lucide-react';
 import GraphCardWithFilters from '../utils/graphCardWithFilters'; // Asegúrate de que esta ruta coincida con tu proyecto
 import { useCuentasPorCobrar } from '../../hooks/useCuentasPorCobrar';
+import DownloadCsvButton, { sanitizeFilename } from '../utils/DownloadCsvButton';
 
 const columns: GridColDef[] = [
     {
@@ -33,8 +34,12 @@ const columns: GridColDef[] = [
             </strong>
         )
     },
-    { field: 'Total_Documentos_Pendientes', headerName: 'Facturas Pendientes', type: 'number', width: 140 },
-    { field: 'Dias_Maximo_Atraso', headerName: 'Máx. Días Atraso', type: 'number', width: 140 },
+    { field: 'Total_Documentos_Pendientes', headerName: 'Facturas Pendientes', type: 'number', width: 140,
+        valueFormatter: (value: number | null) => value ?? 0
+    },
+    { field: 'Dias_Maximo_Atraso', headerName: 'Máx. Días Atraso', type: 'number', width: 140,
+        valueFormatter: (value: number | null) => value ?? 0
+    },
     {
         field: 'Vencido_31_A_60_Dias_USD',
         headerName: '31-60 Días',
@@ -84,11 +89,17 @@ export default function CuentasPorCobrarSummary() {
         });
     }, [searchText, data]);
 
+    const apiRef = useGridApiRef();
+
+    const csvFilename = ['cuentas-por-cobrar-resumen', searchText]
+        .filter(Boolean).map(s => sanitizeFilename(s)).join('_') || 'cuentas-por-cobrar-resumen';
+
     if (error) return <Typography color="error">Error: {error}</Typography>;
 
     return (
         <GraphCardWithFilters
             title="Resumen de Cuentas por Cobrar"
+            actions={<DownloadCsvButton apiRef={apiRef} filename={csvFilename} />}
             graph={
                 <div className="flex flex-col h-full w-full">
                     <Box sx={{ height: '100%', width: '100%' }}>
@@ -99,6 +110,7 @@ export default function CuentasPorCobrarSummary() {
                                 </Box>
                             ) : (
                                 <DataGrid
+                                    apiRef={apiRef}
                                     rows={filteredRows}
                                     columns={columns}
                                     getRowId={(row) => row.Codigo_Cliente}

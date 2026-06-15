@@ -4,9 +4,10 @@ import VentasPorProductoChart from './ventasPorProductoChart';
 import { VentaProducto } from '../../types/ventas';
 
 // MUI & Icons
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { InputBase, Paper, Stack, alpha, Button } from '@mui/material';
-import { Search, X, Eye } from 'lucide-react';
+import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
+import { InputBase, Paper, Stack, alpha } from '@mui/material';
+import { Search, X } from 'lucide-react';
+import DownloadCsvButton, { sanitizeFilename } from '../utils/DownloadCsvButton';
 
 interface VentasPorProductoProps {
     selectedProduct: string;
@@ -19,6 +20,13 @@ interface VentasPorProductoProps {
 
 export default function VentasPorProducto({ selectedProduct, onSelectProduct, ventasData, isLoadingVentas, period, selectedProductName }: VentasPorProductoProps) {
     const [searchText, setSearchText] = useState('');
+
+    const apiRef = useGridApiRef();
+
+    const csvFilename = [
+        'ventas-por-producto',
+        searchText
+    ].filter(Boolean).map(s => sanitizeFilename(s)).join('_') || 'ventas-por-producto';
 
     const data = ventasData;
     const isLoading = isLoadingVentas;
@@ -75,37 +83,6 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
                 </strong>
             )
         },
-        {
-            field: 'actions',
-            headerName: 'Acción',
-            minWidth: 70,
-            flex: 0.8,
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            renderCell: (params) => (
-                <Button
-                    size="small"
-                    variant={selectedProduct === params.row.Codigo_Articulo ? "contained" : "outlined"}
-                    color="primary"
-                    onClick={() => onSelectProduct(params.row.Codigo_Articulo)}
-                    sx={{
-                        minWidth: 'auto',
-                        p: '4px',
-                        borderRadius: '8px',
-                        backgroundColor: selectedProduct === params.row.Codigo_Articulo ? '#FF6600' : 'transparent',
-                        borderColor: selectedProduct === params.row.Codigo_Articulo ? '#FF6600' : '#E2E8F0',
-                        color: selectedProduct === params.row.Codigo_Articulo ? '#FFF' : '#64748B',
-                        '&:hover': {
-                            backgroundColor: selectedProduct === params.row.Codigo_Articulo ? '#E65C00' : '#F1F5F9',
-                            borderColor: selectedProduct === params.row.Codigo_Articulo ? '#E65C00' : '#CBD5E1',
-                        }
-                    }}
-                >
-                    <Eye size={16} />
-                </Button>
-            )
-        }
     ];
 
     const filteredRows = useMemo(() => {
@@ -123,9 +100,14 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
             transition={{ delay: 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="chart-card mb-4"
         >
-            <h2 className="uppercase font-display text-2xl font-bold text-brand-navy text-left mb-3">
-                Ventas por Producto
-            </h2>
+                <div className="flex items-center justify-between mb-3">
+                    <h2 className="uppercase font-display text-2xl font-bold text-brand-navy text-left">
+                        Ventas por Producto
+                    </h2>
+                    <div className="flex items-center gap-1">
+                        <DownloadCsvButton apiRef={apiRef} filename={csvFilename} />
+                    </div>
+                </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 min-h-[560px]">
                 <div className="flex flex-col h-full w-full">
@@ -176,6 +158,7 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
                         }}
                     >
                         <DataGrid
+                            apiRef={apiRef}
                             rows={filteredRows}
                             columns={columns}
                             loading={isLoading}

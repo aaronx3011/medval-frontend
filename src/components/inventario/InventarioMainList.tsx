@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 import { Box, InputBase, Button, Paper, Stack, Menu, MenuItem, alpha, Switch, FormControlLabel } from '@mui/material';
 import { Search, ChevronDown, X } from 'lucide-react';
 import { useInventario } from '../../hooks/useInventario';
 import { useTotalInventario } from '../../hooks/useTotalInventario';
+import DownloadCsvButton, { sanitizeFilename } from '../utils/DownloadCsvButton';
 
 const columns = [
     { field: 'Codigo_Articulo', headerName: 'Código', flex: 1, minWidth: 100 },
@@ -115,6 +116,16 @@ export default function InventarioMainList() {
         return { sumUnidades, sumTotalVenta, sumTotalCosto, nearestExpiry };
     }, [filteredRows]);
 
+    const apiRef = useGridApiRef();
+
+    const csvFilename = [
+        'inventario',
+        selectedAlmacen,
+        loteSearch,
+        searchText,
+        showVencido ? 'con-vencidos' : ''
+    ].filter(Boolean).map(s => sanitizeFilename(s)).join('_') || 'inventario';
+
     const formatExpiry = (date: Date | null) => {
         if (!date) return '—';
         return date.toLocaleDateString('es-VE', {
@@ -148,7 +159,8 @@ export default function InventarioMainList() {
                     <h3 className="text-sm font-bold text-brand-orange uppercase tracking-wider">
                         Inventario
                     </h3>
-                    <div className='flex justify-end flex-row'>
+                    <div className='flex justify-end flex-row items-center gap-1'>
+                        <DownloadCsvButton apiRef={apiRef} filename={csvFilename} />
                         <Menu
                             anchorEl={anchorElAlmacen}
                             open={Boolean(anchorElAlmacen)}
@@ -303,6 +315,7 @@ export default function InventarioMainList() {
                         </div>
                     ) : (
                         <DataGrid
+                            apiRef={apiRef}
                             rows={filteredRows}
                             columns={columns}
                             loading={isLoading}
