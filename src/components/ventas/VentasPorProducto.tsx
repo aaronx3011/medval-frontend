@@ -129,7 +129,7 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="chart-card mb-4"
+            className="chart-card mb-4 h-full flex flex-col"
         >
                 <div className="flex items-center justify-between mb-3">
                     <h2 className="uppercase font-display text-2xl font-bold text-brand-navy text-left">
@@ -140,8 +140,8 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
                     </div>
                 </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 min-h-[560px]">
-                <div className="flex flex-col h-full w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+                <div className="flex flex-col h-full w-full min-h-0">
                     <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2, flexShrink: 0 }}>
                         <Paper
                             elevation={0}

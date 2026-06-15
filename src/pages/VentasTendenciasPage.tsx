@@ -345,10 +345,10 @@ export default function HeatmapSummaryView() {
             </motion.div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 w-full gap-4 min-w-0">
-                <div className="min-h-[300px] lg:min-h-[380px]">
+                <div className="h-[560px]">
                     <DistribucionVentaAnualPorProducto />
                 </div>
-                <div className="min-h-[300px] lg:min-h-[380px]">
+                <div className="h-[560px]">
                     <LineAllTearsByMonth />
                 </div>
             </div>
