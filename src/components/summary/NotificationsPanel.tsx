@@ -36,7 +36,8 @@ function getAlerts(item: InventarioItem): { expiringSoon: boolean; lowStock: boo
     }
 }
 
-function formatDate(iso: string): string {
+function formatDate(iso: string | null): string {
+    if (!iso) return '—';
     const datePart = iso.includes('T') ? iso.split('T')[0] : iso;
     const [year, month, day] = datePart.split('-');
     return `${day}/${month}/${year}`;
