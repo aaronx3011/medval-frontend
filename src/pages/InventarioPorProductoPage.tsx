@@ -124,8 +124,9 @@ export default function InventarioPorProductoPage() {
             type: 'number' as const,
             align: 'left' as const,
             headerAlign: 'left' as const,
+            valueGetter: (_: any, row: any) => (row.Total_Valor_Venta_USD ?? 0) - (row.Total_Valor_Costo_USD ?? 0),
             renderCell: (params: any) => {
-                const ganancia = (params.row.Total_Valor_Venta_USD ?? 0) - (params.row.Total_Valor_Costo_USD ?? 0);
+                const ganancia = params.value;
                 return (
                     <strong style={{ color: ganancia >= 0 ? '#16a34a' : '#dc2626' }}>
                         ${ganancia.toLocaleString('en-US', { minimumFractionDigits: 2 })}
