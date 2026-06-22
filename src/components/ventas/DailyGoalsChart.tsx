@@ -87,7 +87,7 @@ export default function DailyGoalsChart({
                                 area: true,
                                 curve: 'catmullRom',
                                 valueFormatter: (v: number | null) =>
-                                    v ? `$${new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(v)}` : '$0'
+                                    v ? `$${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v)}` : '$0'
                             },
                             {
                                 data: chartData.unidades,

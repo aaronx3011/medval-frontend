@@ -79,7 +79,7 @@ export default function VentasTotalesPorPeriodo({ data, isLoading, period, selec
             minWidth: 110,
             renderCell: (params) => (
                 <strong style={{ color: '#1e293b' }}>
-                    ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </strong>
             )
         },

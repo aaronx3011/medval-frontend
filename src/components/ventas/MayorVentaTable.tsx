@@ -40,7 +40,7 @@ export default function MayorVentaTable({ data = [], period }: Props) {
                                     <td className="py-1.5 px-2 text-slate-500 text-[11px] whitespace-nowrap">{row.Total_Unidades}</td>
                                     <td className="py-1.5 px-2 text-slate-500 text-[11px] whitespace-nowrap">{row.Total_Facturas}</td>
                                     <td className="py-1.5 px-2 font-bold text-slate-900 text-[11px] whitespace-nowrap">
-                                        ${Number(row.Total_USD).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                                        ${Number(row.Total_USD).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </td>
                                 </tr>
                             ))}

@@ -98,7 +98,7 @@ export default function InventarioPorProductoPage() {
             headerAlign: 'left' as const,
             renderCell: (params: any) => (
                 <strong style={{ color: '#1e293b' }}>
-                    ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </strong>
             ),
         },
@@ -112,7 +112,7 @@ export default function InventarioPorProductoPage() {
             headerAlign: 'left' as const,
             renderCell: (params: any) => (
                 <span style={{ color: '#475569' }}>
-                    ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
             ),
         },
@@ -129,7 +129,7 @@ export default function InventarioPorProductoPage() {
                 const ganancia = params.value;
                 return (
                     <strong style={{ color: ganancia >= 0 ? '#16a34a' : '#dc2626' }}>
-                        ${ganancia.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        ${ganancia.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </strong>
                 );
             },

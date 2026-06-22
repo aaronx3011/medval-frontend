@@ -63,19 +63,19 @@ export default function KpiRow() {
         {
             type: 'amount',
             label: 'Unidades vendidas durante el año',
-            value: ventasTotals ? ventasTotals.Total_USD.toLocaleString('en-US', { maximumFractionDigits: 2 }) : '0',
+            value: ventasTotals ? ventasTotals.Total_USD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0',
             units: ventasTotals ? formatNumber(ventasTotals.Total_Unidades) : '0'
         },
         {
             type: 'amount',
             label: 'Inventario Actual',
-            value: valorTotalInventarioUSD.toLocaleString('en-US', { maximumFractionDigits: 2 }), // Valor calculado ($)
+            value: valorTotalInventarioUSD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), // Valor calculado ($)
             units: formatNumber(totalUnidadesInventario)  // Total de stock (Unidades)
         },
         {
             type: 'amount',
             label: 'Promedio de venta mensual',
-            value: promedioVentaMensualUSD.toLocaleString('en-US', { maximumFractionDigits: 2 }),
+            value: promedioVentaMensualUSD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
             units: formatNumber(promedioVentaMensualUnidades)
         },
         {

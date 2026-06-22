@@ -91,7 +91,7 @@ export default function InventarioPorVencimientoPage() {
             headerAlign: 'left' as const,
             renderCell: (params: any) => (
                 <strong style={{ color: '#1e293b' }}>
-                    ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </strong>
             ),
         },
@@ -105,7 +105,7 @@ export default function InventarioPorVencimientoPage() {
             headerAlign: 'left' as const,
             renderCell: (params: any) => (
                 <span style={{ color: '#475569' }}>
-                    ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
             ),
         },

@@ -215,7 +215,7 @@ function MonthCalendar() {
                     <p className="text-xs text-slate-400 mt-0.5">
                         Total:{' '}
                         <span className="font-semibold text-slate-600">
-                            ${monthTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                            ${monthTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                     </p>
                 </div>
@@ -314,7 +314,7 @@ function MonthCalendar() {
                     }}>
                         <div style={{ color: '#94a3b8', marginBottom: 3 }}>{tooltip.date}</div>
                         <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>
-                            ${tooltip.value.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                            ${tooltip.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
                     </div>
                 </div>
