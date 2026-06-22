@@ -124,6 +124,7 @@ export interface InventarioPorProducto {
     Nombre_Articulo: string;
     Almacenes_Distintos: number;
     Total_Unidades: number;
+    Proximo_Vencimiento: string | null;
     Total_Valor_Venta_USD: number;
     Total_Valor_Costo_USD: number;
 }
