@@ -4,6 +4,8 @@
 
 This document provides a comprehensive plan for handling API response changes across the MedVal Dashboard application. It details which files need to be updated, the order of updates, testing requirements, and potential risks.
 
+> **See also:** [documentation/](../documentation/README.md) for per-endpoint dependency graphs and change impact analysis. The endpoint docs in `documentation/` trace every field from SQL view to UI component — use them alongside this plan when making structural changes.
+
 ## Table of Contents
 
 1. [Understanding API Response Changes](#understanding-api-response-changes)
