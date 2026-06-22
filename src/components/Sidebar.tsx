@@ -26,6 +26,8 @@ const navItems = [
         path: '/inventario',
         subItems: [
             { id: 'stock', label: 'Stock Actual', path: '/inventario/stock' },
+            { id: 'por-producto', label: 'Por Producto', path: '/inventario/por-producto' },
+            { id: 'por-vencimiento', label: 'Por Vencimiento', path: '/inventario/por-vencimiento' },
         ]
     },
     {

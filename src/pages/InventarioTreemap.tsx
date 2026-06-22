@@ -1,11 +1,11 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Treemap, ResponsiveContainer, Tooltip } from 'recharts';
-import { Switch, FormControlLabel, Paper, alpha } from '@mui/material';
+import { Select, MenuItem, SelectChangeEvent, Paper, alpha } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import { useInventario } from '../hooks/useInventario';
+import { useInventarioCompleto } from '../hooks/useInventarioCompleto';
 
-type ViewMode = 'units' | 'usd';
+type ViewMode = 'units' | 'usd' | 'products';
 
 const SOFT_COLORS = [
     '#0D0A6E',
@@ -54,7 +54,7 @@ function CustomNode(props: CustomNodeProps) {
     const tooSmall = width < 30 || height < 20;
 
     const label =
-        viewMode === 'units'
+        viewMode === 'units' || viewMode === 'products'
             ? `${value.toLocaleString()} u`
             : `$${value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 
@@ -140,7 +140,7 @@ function CustomTooltip({ active, payload, viewMode }: {
             <p style={{ fontWeight: 700, marginBottom: 4, color: getPrefixColor(d.prefix) }}>{d.name}</p>
             <p style={{ color: '#94a3b8', marginBottom: 6 }}>{d.descripcion}</p>
             <p style={{ fontWeight: 600 }}>
-                {viewMode === 'units'
+                {viewMode === 'units' || viewMode === 'products'
                     ? `${d.value.toLocaleString()} unidades`
                     : `$${d.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`
                 }
@@ -150,7 +150,7 @@ function CustomTooltip({ active, payload, viewMode }: {
 }
 
 export default function InventarioTreemap() {
-    const { data, isLoading, error } = useInventario();
+    const { data, isLoading, error } = useInventarioCompleto();
     const [viewMode, setViewMode] = useState<ViewMode>('units');
 
     const warehouseRows = useMemo(() => {
@@ -164,7 +164,7 @@ export default function InventarioTreemap() {
                 groups[almacen] = { unidades: 0, usd: 0 };
             }
             groups[almacen].unidades += item.Unidades ?? 0;
-            groups[almacen].usd += item.Unidades * (item.Ultimo_Precio_Venta_USD ?? 0);
+            groups[almacen].usd += item.Total_Ultimo_Precio_Venta_USD ?? 0;
         }
 
         const totalUnidades = Object.values(groups).reduce((s, g) => s + g.unidades, 0);
@@ -182,16 +182,52 @@ export default function InventarioTreemap() {
             .filter(row => row.unidades > 0);
     }, [data]);
 
-    const treeData = useMemo(() =>
-        warehouseRows.map(w => ({
+    const productRows = useMemo(() => {
+        if (!data.length) return [];
+
+        const groups: Record<string, { nombre: string; unidades: number; usd: number }> = {};
+
+        for (const item of data) {
+            const codigo = item.Codigo_Articulo;
+            if (!groups[codigo]) {
+                groups[codigo] = { nombre: item.Nombre_Articulo, unidades: 0, usd: 0 };
+            }
+            groups[codigo].unidades += item.Unidades ?? 0;
+            groups[codigo].usd += item.Total_Ultimo_Precio_Venta_USD ?? 0;
+        }
+
+        const totalUnidades = Object.values(groups).reduce((s, g) => s + g.unidades, 0);
+
+        return Object.entries(groups)
+            .map(([codigo, vals]) => ({
+                id: codigo,
+                codigo,
+                nombre: vals.nombre,
+                unidades: vals.unidades,
+                usd: vals.usd,
+                pctUnidades: totalUnidades > 0 ? (vals.unidades / totalUnidades) * 100 : 0,
+            }))
+            .filter(row => row.unidades > 0);
+    }, [data]);
+
+    const treeData = useMemo(() => {
+        if (viewMode === 'products') {
+            return productRows.map(p => ({
+                name: p.nombre,
+                descripcion: p.codigo,
+                value: p.unidades,
+                prefix: p.codigo,
+            })).filter(item => item.value > 0);
+        }
+        return warehouseRows.map(w => ({
             name: w.almacen,
             descripcion: w.almacen,
             value: viewMode === 'units' ? w.unidades : w.usd,
             prefix: w.almacen,
-        })).filter(item => item.value > 0),
-    [warehouseRows, viewMode]);
+        })).filter(item => item.value > 0);
+    }, [warehouseRows, productRows, viewMode]);
 
-    const columns = useMemo(() => [
+    const warehouseColumns = useMemo(() => [
         {
             field: 'almacen',
             headerName: 'Almacén',
@@ -245,6 +281,89 @@ export default function InventarioTreemap() {
         },
     ], [viewMode]);
 
+    const productColumns = useMemo(() => [
+        {
+            field: 'codigo',
+            headerName: 'Código',
+            flex: 1,
+            minWidth: 110,
+            renderCell: (params: any) => (
+                <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#475569', fontWeight: 600 }}>
+                    {params.value}
+                </span>
+            ),
+        },
+        {
+            field: 'nombre',
+            headerName: 'Producto',
+            flex: 2,
+            minWidth: 200,
+        },
+        {
+            field: 'unidades',
+            headerName: 'Unidades',
+            flex: 0.8,
+            minWidth: 100,
+            type: 'number' as const,
+            align: 'left' as const,
+            headerAlign: 'left' as const,
+        },
+        {
+            field: 'usd',
+            headerName: 'Valor USD',
+            flex: 1,
+            minWidth: 120,
+            type: 'number' as const,
+            align: 'left' as const,
+            headerAlign: 'left' as const,
+            renderCell: (params: any) => (
+                <strong style={{ color: '#1e293b' }}>
+                    ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                </strong>
+            ),
+        },
+        {
+            field: 'pct',
+            headerName: '% del Total',
+            flex: 0.8,
+            minWidth: 100,
+            type: 'number' as const,
+            align: 'left' as const,
+            headerAlign: 'left' as const,
+            renderCell: (params: any) => (
+                <span style={{ color: '#475569', fontWeight: 500 }}>
+                    {params.row.pctUnidades.toFixed(1)}%
+                </span>
+            ),
+        },
+    ], []);
+
+    const handleViewModeChange = (event: SelectChangeEvent) => {
+        setViewMode(event.target.value as ViewMode);
+    };
+
+    const subtitleMap: Record<ViewMode, string> = {
+        units: 'Medido en - Unidades',
+        usd: 'Medido en - USD',
+        products: 'Por Producto',
+    };
+
+    const tableTitleMap: Record<ViewMode, string> = {
+        units: 'Resumen por Almacén',
+        usd: 'Resumen por Almacén',
+        products: 'Resumen por Producto',
+    };
+
+    const isWarehouseMode = viewMode === 'units' || viewMode === 'usd';
+    const tableRows = isWarehouseMode ? warehouseRows : productRows;
+    const tableColumns = isWarehouseMode ? warehouseColumns : productColumns;
+
+    const totals = useMemo(() => {
+        const sumUnidades = tableRows.reduce((acc, r) => acc + (r.unidades || 0), 0);
+        const sumUSD = tableRows.reduce((acc, r) => acc + (r.usd || 0), 0);
+        return { sumUnidades, sumUSD };
+    }, [tableRows]);
+
     return (
         <motion.main
             initial={{ opacity: 0 }}
@@ -265,31 +384,30 @@ export default function InventarioTreemap() {
                             Inventario
                         </h2>
                         <p className="text-[11px] text-slate-400 font-medium">
-                            {viewMode === 'usd' ? 'Medido en - USD' : 'Medido en - Unidades'}
+                            {subtitleMap[viewMode]}
                         </p>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-4">
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={viewMode === 'usd'}
-                                    onChange={(e) => setViewMode(e.target.checked ? 'usd' : 'units')}
-                                    size="small"
-                                    sx={{
-                                        '& .MuiSwitch-switchBase.Mui-checked': { color: '#FF6600' },
-                                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { backgroundColor: '#FF6600' },
-                                    }}
-                                />
-                            }
-                            label={
-                                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: viewMode === 'usd' ? '#FF6600' : '#A0AEC0' }}>
-                                    USD
-                                </span>
-                            }
-                            sx={{ mr: 0 }}
-                        />
-                    </div>
+                    <Select
+                        value={viewMode}
+                        onChange={handleViewModeChange}
+                        size="small"
+                        sx={{
+                            bgcolor: '#F8FAFC',
+                            border: '1px solid #E2E8F0',
+                            color: '#475569',
+                            borderRadius: '8px',
+                            height: '36px',
+                            fontSize: '0.85rem',
+                            minWidth: 140,
+                            '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                            '&:hover': { bgcolor: '#F1F5F9' },
+                        }}
+                    >
+                        <MenuItem sx={{ fontSize: '0.85rem' }} value="units">Unidades</MenuItem>
+                        <MenuItem sx={{ fontSize: '0.85rem' }} value="usd">USD</MenuItem>
+                        <MenuItem sx={{ fontSize: '0.85rem' }} value="products">Productos</MenuItem>
+                    </Select>
                 </div>
 
                 <div style={{ width: '100%', height: 560 }}>
@@ -332,10 +450,10 @@ export default function InventarioTreemap() {
                 <div className="flex items-center justify-between mb-4">
                     <div>
                         <h2 className="uppercase font-display text-xl lg:text-2xl font-bold text-brand-navy">
-                            Resumen por Almacén
+                            {tableTitleMap[viewMode]}
                         </h2>
                         <p className="text-[11px] text-slate-400 font-medium">
-                            {viewMode === 'usd' ? 'Medido en - USD' : 'Medido en - Unidades'}
+                            {subtitleMap[viewMode]}
                         </p>
                     </div>
                 </div>
@@ -353,8 +471,8 @@ export default function InventarioTreemap() {
                     }}
                 >
                     <DataGrid
-                        rows={warehouseRows}
-                        columns={columns}
+                        rows={tableRows as any}
+                        columns={tableColumns}
                         loading={isLoading}
                         disableColumnMenu
                         disableRowSelectionOnClick
@@ -363,7 +481,7 @@ export default function InventarioTreemap() {
                         columnHeaderHeight={40}
                         initialState={{
                             sorting: {
-                                sortModel: [{ field: viewMode === 'units' ? 'unidades' : 'usd', sort: 'desc' }],
+                                sortModel: [{ field: viewMode === 'products' ? 'unidades' : (viewMode === 'usd' ? 'usd' : 'unidades'), sort: 'desc' }],
                             },
                             pagination: {
                                 paginationModel: { page: 0, pageSize: 10 },
@@ -403,6 +521,25 @@ export default function InventarioTreemap() {
                         }}
                     />
                 </Paper>
+
+                <div className="flex flex-wrap items-center justify-between gap-3 px-2 py-3 border-t border-slate-100">
+                    <span className="text-[11px] font-bold text-brand-orange uppercase tracking-wide">Totales</span>
+                    <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-600">
+                        <span>
+                            Unidades:{' '}
+                            <strong className="text-slate-800">
+                                {totals.sumUnidades.toLocaleString('en-US')}
+                            </strong>
+                        </span>
+                        <span className="hidden lg:inline text-slate-200">|</span>
+                        <span>
+                            Valor USD:{' '}
+                            <strong className="text-slate-800">
+                                ${totals.sumUSD.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                            </strong>
+                        </span>
+                    </div>
+                </div>
             </motion.div>
         </motion.main>
     );

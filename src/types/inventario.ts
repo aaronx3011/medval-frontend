@@ -119,6 +119,46 @@ export interface InventarioTotalResponse {
     data: [InventarioTotal];
 }
 
+export interface InventarioPorProducto {
+    Codigo_Articulo: string;
+    Nombre_Articulo: string;
+    Almacenes_Distintos: number;
+    Total_Unidades: number;
+    Total_Valor_Venta_USD: number;
+    Total_Valor_Costo_USD: number;
+}
+
+export interface InventarioPorProductoResponse {
+    metadata: {
+        view: string;
+        page: number;
+        limit: number;
+        count: number;
+    };
+    totals: Record<string, number>;
+    data: InventarioPorProducto[];
+}
+
+export interface InventarioPorVencimiento {
+    Anio: number;
+    Mes: number;
+    Productos_Distintos: number;
+    Total_Unidades: number;
+    Total_Valor_Venta_USD: number;
+    Total_Valor_Costo_USD: number;
+}
+
+export interface InventarioPorVencimientoResponse {
+    metadata: {
+        view: string;
+        page: number;
+        limit: number;
+        count: number;
+    };
+    totals: Record<string, number>;
+    data: InventarioPorVencimiento[];
+}
+
 export interface InventarioDetalle {
     Codigo_Articulo: string;
     Descripcion_Articulo: string;
