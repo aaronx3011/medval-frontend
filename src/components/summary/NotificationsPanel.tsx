@@ -22,17 +22,19 @@ interface ApiResponse {
 }
 
 // ── Badge logic ───────────────────────────────────────────────────────────────
-function monthsUntil(isoDate: string): number {
+function monthsUntil(isoDate: string | null): number {
+    if (!isoDate) return Infinity;
     const now = new Date()
     const target = new Date(isoDate)
     return (target.getFullYear() - now.getFullYear()) * 12 + (target.getMonth() - now.getMonth())
 }
 
-function getAlerts(item: InventarioItem): { expiringSoon: boolean; lowStock: boolean } {
+function getAlerts(item: InventarioItem): { expiringSoon: boolean; lowStock: boolean; sinStock: boolean } {
     const monthsToExpiry = monthsUntil(item.Proximo_Vencimiento)
     return {
         expiringSoon: monthsToExpiry <= 6,
-        lowStock: item.Meses_De_Inventario_Restante < 8 && item.Meses_De_Inventario_Restante > 0,
+        lowStock: (item.Meses_De_Inventario_Restante === null || item.Meses_De_Inventario_Restante < 8) && item.Stock_Total > 0,
+        sinStock: item.Stock_Total <= 0,
     }
 }
 
@@ -40,6 +42,9 @@ function formatDate(iso: string | null): string {
     if (!iso) return '—';
     const datePart = iso.includes('T') ? iso.split('T')[0] : iso;
     const [year, month, day] = datePart.split('-');
+    if (!year || !month || !day || year.length !== 4) return '—';
+    const y = +year;
+    if (y < 1900 || y > 2100) return '—';
     return `${day}/${month}/${year}`;
 }
 
@@ -62,8 +67,8 @@ function ExpiringSoonBadge({ monthsLeft }: { monthsLeft: number }) {
     )
 }
 
-function LowStockBadge({ months }: { months: number }) {
-    const critical = months <= 2
+function LowStockBadge({ months }: { months: number | null }) {
+    const critical = months !== null && months <= 2
     return (
         <span className={`inline-flex items-center gap-1 rounded text-[11px] font-bold tracking-wide whitespace-nowrap
             ${critical
@@ -72,7 +77,16 @@ function LowStockBadge({ months }: { months: number }) {
             }`}
         >
             <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${critical ? 'bg-amber-500' : 'bg-yellow-400'}`} />
-            {`STOCK ${months.toFixed(1)} meses`}
+            {months !== null ? `STOCK ${months.toFixed(1)} meses` : 'STOCK N/A'}
+        </span>
+    )
+}
+
+function SinStockBadge() {
+    return (
+        <span className="inline-flex items-center gap-1 rounded text-[11px] font-bold tracking-wide whitespace-nowrap text-red-700">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-600 flex-shrink-0" />
+            SIN STOCK
         </span>
     )
 }
@@ -119,17 +133,17 @@ const columns: GridColDef[] = [
         headerName: 'Stock',
         width: 130,
         renderCell: (params: any) => {
-            const { lowStock } = getAlerts(params.row)
-            return lowStock ? (
-                <LowStockBadge months={params.value} />
-            ) : null
+            const { lowStock, sinStock } = getAlerts(params.row)
+            if (sinStock) return <SinStockBadge />
+            if (lowStock) return <LowStockBadge months={params.value} />
+            return null
         },
     },
     {
         field: 'vencimiento_badge',
         headerName: 'Vencimiento',
         width: 130,
-        valueGetter: (_value: any, row: any) => row.Proximo_Vencimiento,
+        valueGetter: (_value: any, row: any) => row.Proximo_Vencimiento || '9999-12-31',
         renderCell: (params: any) => {
             const { expiringSoon } = getAlerts(params.row)
             const monthsLeft = monthsUntil(params.row.Proximo_Vencimiento)
@@ -155,14 +169,14 @@ export default function NotificationsPanel() {
                 const json: ApiResponse = await apiClient('/view/aaron_view_AnalisisReposicionInventario?limit=100000')
                 if (mounted) {
                     const filtered = json.data.filter(item => {
-                        const { expiringSoon, lowStock } = getAlerts(item)
-                        return expiringSoon || lowStock
+                        const { expiringSoon, lowStock, sinStock } = getAlerts(item)
+                        return expiringSoon || lowStock || sinStock
                     })
                     const sorted = filtered.sort((a, b) => {
                         const aAlerts = getAlerts(a)
                         const bAlerts = getAlerts(b)
-                        const aScore = (aAlerts.expiringSoon ? 1 : 0) + (aAlerts.lowStock ? 1 : 0)
-                        const bScore = (bAlerts.expiringSoon ? 1 : 0) + (bAlerts.lowStock ? 1 : 0)
+                        const aScore = (aAlerts.expiringSoon ? 1 : 0) + (aAlerts.lowStock ? 1 : 0) + (aAlerts.sinStock ? 1 : 0)
+                        const bScore = (bAlerts.expiringSoon ? 1 : 0) + (bAlerts.lowStock ? 1 : 0) + (bAlerts.sinStock ? 1 : 0)
                         if (bScore !== aScore) return bScore - aScore
                         return monthsUntil(a.Proximo_Vencimiento) - monthsUntil(b.Proximo_Vencimiento)
                     })

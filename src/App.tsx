@@ -15,6 +15,8 @@ import InventarioPage from './pages/InventarioPage'
 import LoginPage from './pages/LoginPage'
 import SignUpPage from './pages/SignUp'
 import InventarioTreemap from './pages/InventarioTreemap'
+import InventarioPorProductoPage from './pages/InventarioPorProductoPage'
+import InventarioPorVencimientoPage from './pages/InventarioPorVencimientoPage'
 import CuentasPorCobrarPage from './pages/CuentasPorCobrarPage'
 import ConfigurationPage from './pages/ConfigurationPage'
 import UserManagementPage from './pages/UserManagementPage'
@@ -78,6 +80,8 @@ function DashboardLayout() {
 
             <Route path="/inventario" element={<InventarioTreemap />} />
             <Route path="/inventario/stock" element={<InventarioPage />} />
+            <Route path="/inventario/por-producto" element={<InventarioPorProductoPage />} />
+            <Route path="/inventario/por-vencimiento" element={<InventarioPorVencimientoPage />} />
 
             <Route path="/cuentas-por-cobrar" element={<CuentasPorCobrarPage />} />
 

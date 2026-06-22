@@ -97,7 +97,7 @@ export default function InventarioMainList() {
         });
     }, [rows, searchText, selectedAlmacen, loteSearch, showVencido]);
 
-    const hasActiveFilters = selectedAlmacen || loteSearch || searchText;
+    const hasActiveFilters = selectedAlmacen || loteSearch || searchText || showVencido;
 
     const { data: aggregateTotal } = useTotalInventario();
 

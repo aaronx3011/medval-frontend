@@ -2,7 +2,9 @@
 
 ## Overview
 
-This document provides comprehensive documentation for all API endpoints used in the MedVal Dashboard application.
+This document provides a Swagger-style reference for all API endpoints used in the MedVal Dashboard application.
+
+> **See also:** [documentation/](../documentation/README.md) for detailed endpoint-by-endpoint impact analysis with full dependency graphs, SQL view schemas, and change impact per component.
 
 ## Base URL
 
@@ -12,7 +14,9 @@ http://10.8.0.5:3000/api
 
 ## Authentication
 
-No authentication is currently required for these endpoints.
+JWT Bearer token is required for all dashboard data endpoints. Tokens are obtained via `POST /api/auth/login` and must be sent in the `Authorization` header as `Bearer <token>`. Session validation is performed server-side on each request.
+
+Auth-related endpoints (`/api/auth/*`) are public and do not require a token.
 
 ## Endpoints
 
@@ -159,10 +163,10 @@ No authentication is currently required for these endpoints.
 ### 3. Sales (Ventas)
 
 #### Get Annual Sales Summary
-**Endpoint:** `/ventas/total-anual/{year}`
+**Endpoint:** `/ventas/total-anual/{year?}`
 **Method:** GET
 **Parameters:**
-- `year` (path): Year to get sales for
+- `year` (optional path): Year to get sales for. Omit to get all years.
 
 **Response Type:** `VentasAnualesResponse`
 ```typescript
@@ -355,8 +359,10 @@ No authentication is currently required for these endpoints.
 ```
 
 #### Get Monthly Sales Summary
-**Endpoint:** `/ventas/total-mensual/`
+**Endpoint:** `/ventas/total-mensual/{year?}`
 **Method:** GET
+**Parameters:**
+- `year` (optional path): Year to filter by. Omit to get all years.
 
 **Response Type:** `VentasMensualesResponse`
 ```typescript
@@ -403,7 +409,29 @@ No authentication is currently required for these endpoints.
 }
 ```
 
-### 4. Clients (Clientes)
+### 4. Inventory Summary
+
+#### Get Inventory Totals
+**Endpoint:** `/inventario/total/`
+**Method:** GET
+
+**Response Type:** `InventarioTotalResponse`
+```typescript
+{
+  metadata: Record<string, never>;
+  data: [{
+    Total_Items_Distintos: number;
+    Total_Unidades_Fisicas: number;
+    Valor_Total_Costo_USD: number;
+    Valor_Total_Venta_USD: number;
+    Ganancia_Proyectada_USD: number;
+  }];
+}
+```
+
+**Reference:** See [documentation/15-inventario-total.md](../documentation/15-inventario-total.md) for full dependency chain.
+
+### 5. Clients (Clientes)
 
 #### Get All Clients
 **Endpoint:** `/clientes/`
@@ -415,6 +443,117 @@ No authentication is currently required for these endpoints.
   data: Cliente[];
 }
 ```
+
+**Reference:** See [documentation/14-clientes-list.md](../documentation/14-clientes-list.md) for full dependency chain.
+
+### 6. Authentication (Auth)
+
+These endpoints are **public** (no JWT required).
+
+#### Register
+**Endpoint:** `POST /auth/register`
+**Request Body:** `{ username, email, password, full_name, role? }`
+
+#### Login
+**Endpoint:** `POST /auth/login`
+**Request Body:** `{ username, password }`
+**Response:** `{ token, user }` — JWT token for subsequent requests.
+
+#### Logout
+**Endpoint:** `POST /auth/logout`
+**Headers:** `Authorization: Bearer <token>`
+
+#### Get Current User
+**Endpoint:** `GET /auth/me`
+**Headers:** `Authorization: Bearer <token>`
+
+#### Check Password Reset
+**Endpoint:** `POST /auth/check-reset`
+**Request Body:** `{ username }`
+
+### 7. Users
+
+#### List All Users
+**Endpoint:** `GET /users`
+**Headers:** `Authorization: Bearer <token>`
+
+### 8. Sales Goals
+
+#### List All Sales Goals
+**Endpoint:** `GET /sales-goals`
+
+#### Get Sales Goal by ID
+**Endpoint:** `GET /sales-goals/:id`
+
+#### Create Sales Goal
+**Endpoint:** `POST /sales-goals`
+**Request Body:** `{ year, month, goal_amount }`
+
+#### Update Sales Goal
+**Endpoint:** `PUT /sales-goals/:id`
+**Request Body:** `{ goal_amount }`
+
+#### Delete Sales Goal
+**Endpoint:** `DELETE /sales-goals/:id`
+
+### 9. Patch Notes
+
+#### List All Patch Notes
+**Endpoint:** `GET /patch-notes`
+
+#### Get Patch Note by ID
+**Endpoint:** `GET /patch-notes/:id`
+
+### 10. Issue Reports
+
+#### List All Issue Reports
+**Endpoint:** `GET /issue-reports`
+
+#### Get Issue Report by ID
+**Endpoint:** `GET /issue-reports/:id`
+
+#### Create Issue Report
+**Endpoint:** `POST /issue-reports`
+**Request Body:** `{ title, description, reporter_name, reporter_email, severity? }`
+
+#### Update Issue Report
+**Endpoint:** `PUT /issue-reports/:id`
+**Request Body:** `{ status }`
+
+#### Delete Issue Report
+**Endpoint:** `DELETE /issue-reports/:id`
+
+### 11. Generic View Access
+
+#### Get Available Views
+**Endpoint:** `GET /views`
+**Headers:** `Authorization: Bearer <token>`
+
+**Response:** List of whitelisted SQL view names.
+
+#### Query Any Allowed View
+**Endpoint:** `GET /view/:viewName`
+**Parameters:**
+- `viewName` (path): Validated against a whitelist of allowed views.
+- `limit` (optional): Records per page (default: 50).
+- `page` (optional): Page number (default: 1).
+
+**Response Type:**
+```typescript
+{
+  metadata: { view: string; page: number; limit: number; count: number; };
+  totals: Record<string, number>;
+  data: Record<string, unknown>[];
+}
+```
+
+This generic handler powers endpoints 16–21. See individual docs:
+- [16-view-analisis-reposicion.md](../documentation/16-view-analisis-reposicion.md)
+- [17-view-inventario-lote-vencimiento.md](../documentation/17-view-inventario-lote-vencimiento.md)
+- [18-view-inventario-detalle.md](../documentation/18-view-inventario-detalle.md)
+- [19-view-cuentas-por-cobrar-cliente.md](../documentation/19-view-cuentas-por-cobrar-cliente.md)
+- [20-view-cuentas-por-cobrar-detalle.md](../documentation/20-view-cuentas-por-cobrar-detalle.md)
+- [21-view-ventas-producto.md](../documentation/21-view-ventas-producto.md)
 
 ## Data Types Reference
 

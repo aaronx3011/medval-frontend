@@ -53,7 +53,7 @@ const columns: GridColDef[] = [
         headerAlign: 'left',
         renderCell: (params) => (
             <strong style={{ color: '#1e293b' }}>
-                ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </strong>
         ),
     },
