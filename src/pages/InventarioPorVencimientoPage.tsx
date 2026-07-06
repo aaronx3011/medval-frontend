@@ -109,6 +109,29 @@ export default function InventarioPorVencimientoPage() {
                 </span>
             ),
         },
+        {
+            field: 'margen',
+            headerName: 'Margen %',
+            flex: 0.8,
+            minWidth: 90,
+            type: 'number' as const,
+            align: 'left' as const,
+            headerAlign: 'left' as const,
+            valueGetter: (_: any, row: any) => {
+                const venta = row.Total_Valor_Venta_USD ?? 0;
+                const costo = row.Total_Valor_Costo_USD ?? 0;
+                if (venta === 0) return 0;
+                return ((venta - costo) / venta) * 100;
+            },
+            renderCell: (params: any) => {
+                const margen = params.value;
+                return (
+                    <strong style={{ color: margen >= 0 ? '#16a34a' : '#dc2626' }}>
+                        {margen.toFixed(1)}%
+                    </strong>
+                );
+            },
+        },
     ], []);
 
     return (

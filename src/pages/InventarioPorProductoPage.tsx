@@ -117,19 +117,24 @@ export default function InventarioPorProductoPage() {
             ),
         },
         {
-            field: 'ganancia',
-            headerName: 'Ganancia USD',
-            flex: 1,
-            minWidth: 120,
+            field: 'margen',
+            headerName: 'Margen %',
+            flex: 0.8,
+            minWidth: 100,
             type: 'number' as const,
             align: 'left' as const,
             headerAlign: 'left' as const,
-            valueGetter: (_: any, row: any) => (row.Total_Valor_Venta_USD ?? 0) - (row.Total_Valor_Costo_USD ?? 0),
+            valueGetter: (_: any, row: any) => {
+                const venta = row.Total_Valor_Venta_USD ?? 0;
+                const costo = row.Total_Valor_Costo_USD ?? 0;
+                if (venta === 0) return 0;
+                return ((venta - costo) / venta) * 100;
+            },
             renderCell: (params: any) => {
-                const ganancia = params.value;
+                const margen = params.value;
                 return (
-                    <strong style={{ color: ganancia >= 0 ? '#16a34a' : '#dc2626' }}>
-                        ${ganancia.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    <strong style={{ color: margen >= 0 ? '#16a34a' : '#dc2626' }}>
+                        {margen.toFixed(1)}%
                     </strong>
                 );
             },
