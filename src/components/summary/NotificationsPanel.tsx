@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid'
 import { Box, Paper, CircularProgress, alpha, InputBase } from '@mui/material'
 import { Search, X } from 'lucide-react'
@@ -15,10 +16,29 @@ interface InventarioItem {
     Stock_Total: number
     Venta_Promedio_Mensual_Actual: number
     Meses_De_Inventario_Restante: number
+    Meta_Venta_Mensual_Para_No_Perder: number
+    Ultimo_Precio_Venta_USD: number | null
+    Ultimo_Costo_Compra_USD: number | null
 }
 
 interface ApiResponse {
     data: InventarioItem[]
+}
+
+interface LotInventoryItem {
+    Codigo_Articulo: string
+    Codigo_Almacen: string
+    Nombre_Almacen: string
+    Unidades: number
+    Fecha_Vencimiento: string | null
+    Lote: string
+}
+
+interface GroupedLot {
+    Lote: string
+    Unidades: number
+    Fecha_Vencimiento: string | null
+    Almacenes: string[]
 }
 
 // ── Badge logic ───────────────────────────────────────────────────────────────
@@ -154,6 +174,23 @@ const columns: GridColDef[] = [
     },
 ]
 
+// ── Modal Field ────────────────────────────────────────────────────────────────
+function Field({ label, value, highlight, color }: { label: string; value: string; highlight?: boolean; color?: string }) {
+    return (
+        <div className="flex items-center justify-between py-2 border-b border-slate-100 last:border-b-0">
+            <span className="text-xs text-slate-500 font-medium">{label}</span>
+            <span
+                className="text-sm font-semibold text-right"
+                style={{
+                    color: color || (highlight ? (value.includes('CRITICO') || value.includes('VENCIDO') ? '#dc2626' : '#1e293b') : '#1e293b')
+                }}
+            >
+                {value}
+            </span>
+        </div>
+    )
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function NotificationsPanel() {
     const [allItems, setAllItems] = useState<InventarioItem[]>([])
@@ -161,6 +198,9 @@ export default function NotificationsPanel() {
     const [error, setError] = useState<string | null>(null)
     const [showExpired, setShowExpired] = useState(false)
     const [searchText, setSearchText] = useState('')
+    const [selectedItem, setSelectedItem] = useState<InventarioItem | null>(null)
+    const [lotRows, setLotRows] = useState<GroupedLot[]>([])
+    const [lotsLoading, setLotsLoading] = useState(false)
 
     useEffect(() => {
         let mounted = true
@@ -169,8 +209,8 @@ export default function NotificationsPanel() {
                 const json: ApiResponse = await apiClient('/view/aaron_view_AnalisisReposicionInventario?limit=100000')
                 if (mounted) {
                     const filtered = json.data.filter(item => {
-                        const { expiringSoon, lowStock, sinStock } = getAlerts(item)
-                        return expiringSoon || lowStock || sinStock
+                        const { expiringSoon, lowStock } = getAlerts(item)
+                        return expiringSoon || lowStock
                     })
                     const sorted = filtered.sort((a, b) => {
                         const aAlerts = getAlerts(a)
@@ -191,6 +231,44 @@ export default function NotificationsPanel() {
         fetchData()
         return () => { mounted = false }
     }, [])
+
+    useEffect(() => {
+        if (!selectedItem) return
+        let mounted = true
+        setLotRows([])
+        setLotsLoading(true)
+        const fetchLots = async () => {
+            try {
+                const json: { data: LotInventoryItem[] } = await apiClient('/view/aaron_view_DetalleInventarioAlmacenLoteVencimientoDolarizado?limit=1000000')
+                if (!mounted) return
+                const filtered = json.data.filter(item => item.Codigo_Articulo === selectedItem.Codigo_Articulo)
+                const grouped: Record<string, GroupedLot> = {}
+                for (const item of filtered) {
+                    if (!grouped[item.Lote]) {
+                        grouped[item.Lote] = { Lote: item.Lote, Unidades: 0, Fecha_Vencimiento: item.Fecha_Vencimiento, Almacenes: [] }
+                    }
+                    grouped[item.Lote].Unidades += item.Unidades
+                    if (item.Fecha_Vencimiento && (!grouped[item.Lote].Fecha_Vencimiento || item.Fecha_Vencimiento < grouped[item.Lote].Fecha_Vencimiento!)) {
+                        grouped[item.Lote].Fecha_Vencimiento = item.Fecha_Vencimiento
+                    }
+                    if (!grouped[item.Lote].Almacenes.includes(item.Nombre_Almacen)) {
+                        grouped[item.Lote].Almacenes.push(item.Nombre_Almacen)
+                    }
+                }
+                setLotRows(Object.values(grouped).sort((a, b) => {
+                    const aDate = a.Fecha_Vencimiento ?? '9999-12-31'
+                    const bDate = b.Fecha_Vencimiento ?? '9999-12-31'
+                    return aDate.localeCompare(bDate)
+                }))
+            } catch {
+                if (mounted) setLotRows([])
+            } finally {
+                if (mounted) setLotsLoading(false)
+            }
+        }
+        fetchLots()
+        return () => { mounted = false }
+    }, [selectedItem])
 
     const filteredRows = useMemo(() => {
         let items = showExpired
@@ -285,6 +363,7 @@ export default function NotificationsPanel() {
                         rows={filteredRows}
                         columns={columns}
                         getRowId={(row) => row.Codigo_Articulo}
+                        onRowClick={(params) => setSelectedItem(params.row as InventarioItem)}
                         disableColumnMenu
                         disableRowSelectionOnClick
                         density="compact"
@@ -346,12 +425,141 @@ export default function NotificationsPanel() {
     )
 
     return (
-        <GraphCardWithFilters
-            title="Notificaciones"
-            actions={<DownloadCsvButton apiRef={apiRef} filename={csvFilename} />}
-            filters={filtersSlot}
-            graph={tableSlot}
-            legend={<></>}
-        />
+        <>
+            <GraphCardWithFilters
+                title="Notificaciones"
+                actions={<DownloadCsvButton apiRef={apiRef} filename={csvFilename} />}
+                filters={filtersSlot}
+                graph={tableSlot}
+                legend={<></>}
+            />
+
+            <AnimatePresence>
+                {selectedItem && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        <div className="fixed inset-0 bg-black/30" onClick={() => setSelectedItem(null)} />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="relative bg-white rounded-2xl p-6 w-full max-w-md mx-auto shadow-xl overflow-y-auto max-h-[90vh]"
+                        >
+                            <div className="flex items-center justify-between mb-5">
+                                <h2 className="text-lg font-bold text-brand-navy">Detalle del Producto</h2>
+                                <button onClick={() => setSelectedItem(null)} className="p-1.5 rounded-lg hover:bg-surface-page text-slate-400 transition-colors">
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            <div className="space-y-4">
+                                <Field label="Código" value={selectedItem.Codigo_Articulo} />
+                                <Field label="Producto" value={selectedItem.Descripcion_Articulo} />
+                                <Field label="Stock Total" value={selectedItem.Stock_Total.toLocaleString()} />
+                                <Field
+                                    label="Valor Total Venta"
+                                    value={`$${((selectedItem.Ultimo_Precio_Venta_USD ?? 0) * selectedItem.Stock_Total).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+                                />
+                                <Field
+                                    label="Valor Total Costo"
+                                    value={`$${((selectedItem.Ultimo_Costo_Compra_USD ?? 0) * selectedItem.Stock_Total).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+                                />
+                                <Field label="Estado de Stock" value={selectedItem.Estado_Stock} highlight />
+                                <Field label="Próximo Vencimiento" value={formatDate(selectedItem.Proximo_Vencimiento)} />
+                                <Field
+                                    label="Meses de Inventario Restante"
+                                    value={selectedItem.Meses_De_Inventario_Restante !== null ? `${selectedItem.Meses_De_Inventario_Restante.toFixed(1)} meses` : 'N/A'}
+                                />
+                                <Field
+                                    label="Venta Promedio Mensual"
+                                    value={`$${selectedItem.Venta_Promedio_Mensual_Actual.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+                                />
+                                <Field
+                                    label="Meta Mensual para No Perder"
+                                    value={(() => {
+                                        const meses = selectedItem.Meses_De_Inventario_Restante;
+                                        const precio = selectedItem.Ultimo_Precio_Venta_USD;
+                                        if (meses === null || meses === 0 || precio === null) return '—';
+                                        const total = (selectedItem.Stock_Total * precio) / meses;
+                                        return `$${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                                    })()}
+                                />
+                                <Field
+                                    label="Meta Mensual en Unidades"
+                                    value={(() => {
+                                        const meses = selectedItem.Meses_De_Inventario_Restante;
+                                        if (meses === null || meses === 0) return '—';
+                                        return `${Math.ceil(selectedItem.Stock_Total / meses)}`;
+                                    })()}
+                                />
+                                <Field
+                                    label="Último Precio de Venta"
+                                    value={selectedItem.Ultimo_Precio_Venta_USD !== null ? `$${selectedItem.Ultimo_Precio_Venta_USD.toFixed(2)}` : '—'}
+                                />
+                                <Field
+                                    label="Último Costo de Compra"
+                                    value={selectedItem.Ultimo_Costo_Compra_USD !== null ? `$${selectedItem.Ultimo_Costo_Compra_USD.toFixed(2)}` : '—'}
+                                />
+                                {(() => {
+                                    const precio = selectedItem.Ultimo_Precio_Venta_USD ?? 0;
+                                    const costo = selectedItem.Ultimo_Costo_Compra_USD ?? 0;
+                                    const margen = precio !== 0 ? ((precio - costo) / precio) * 100 : 0;
+                                    return (
+                                        <Field
+                                            label="Margen"
+                                            value={`${margen.toFixed(1)}%`}
+                                            highlight
+                                            color={margen >= 0 ? '#16a34a' : '#dc2626'}
+                                        />
+                                    );
+                                })()}
+                            </div>
+
+                            <div className="mt-6">
+                                <h3 className="text-sm font-bold text-brand-navy uppercase tracking-wider mb-3">
+                                    Lotes ({lotRows.length})
+                                </h3>
+                                {lotsLoading ? (
+                                    <div className="flex items-center justify-center py-6">
+                                        <CircularProgress size={20} />
+                                    </div>
+                                ) : lotRows.length === 0 ? (
+                                    <p className="text-xs text-slate-400 text-center py-4">Sin información de lotes</p>
+                                ) : (
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-xs">
+                                            <thead>
+                                                <tr className="border-b border-slate-200">
+                                                    <th className="text-left py-2 pr-3 font-semibold text-slate-500">Lote</th>
+                                                    <th className="text-right py-2 px-3 font-semibold text-slate-500">Unid.</th>
+                                                    <th className="text-left py-2 px-3 font-semibold text-slate-500">Venc.</th>
+                                                    <th className="text-left py-2 pl-3 font-semibold text-slate-500">Almacén</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {lotRows.map((lot) => (
+                                                    <tr key={lot.Lote} className="border-b border-slate-50">
+                                                        <td className="py-2 pr-3 font-mono text-slate-700 font-medium">{lot.Lote}</td>
+                                                        <td className="text-right py-2 px-3 font-semibold text-slate-900">{lot.Unidades.toLocaleString()}</td>
+                                                        <td className="py-2 px-3 text-slate-500">{formatDate(lot.Fecha_Vencimiento)}</td>
+                                                        <td className="py-2 pl-3 text-slate-500">{lot.Almacenes.join(', ')}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                )}
+                            </div>
+
+                            <button
+                                onClick={() => setSelectedItem(null)}
+                                className="w-full mt-6 px-4 py-2.5 rounded-xl bg-brand-orange text-white text-sm font-medium hover:bg-orange-600 transition-colors"
+                            >
+                                Cerrar
+                            </button>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+        </>
     )
 }
