@@ -60,6 +60,29 @@ const columns = [
         valueFormatter: (value: number | null) =>
             value != null ? `$${value.toFixed(2)}` : '—'
     },
+    {
+        field: 'margen',
+        headerName: 'Margen %',
+        flex: 0.8,
+        minWidth: 90,
+        type: 'number',
+        align: 'left',
+        headerAlign: 'left',
+        valueGetter: (_: any, row: any) => {
+            const precio = row.Ultimo_Precio_Venta_USD ?? 0;
+            const costo = row.Ultimo_Costo_Compra_USD ?? 0;
+            if (precio === 0) return 0;
+            return ((precio - costo) / precio) * 100;
+        },
+        renderCell: (params: any) => {
+            const margen = params.value;
+            return (
+                <strong style={{ color: margen >= 0 ? '#16a34a' : '#dc2626' }}>
+                    {margen.toFixed(1)}%
+                </strong>
+            );
+        }
+    },
 ];
 
 export default function InventarioMainList() {
