@@ -141,7 +141,7 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
                 </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
-                <div className="flex flex-col h-full w-full min-h-0">
+                <div className="flex flex-col w-full max-lg:min-h-[400px] lg:min-h-0">
                     <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2, flexShrink: 0 }}>
                         <Paper
                             elevation={0}
@@ -243,7 +243,7 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
                     </Paper>
                 </div>
 
-                <div className="h-full min-h-[350px] lg:min-h-0">
+                <div className="min-h-[350px] lg:min-h-0">
                     <VentasPorProductoChart product={selectedProduct} period={period} selectedProductName={selectedProductName} />
                 </div>
             </div>
