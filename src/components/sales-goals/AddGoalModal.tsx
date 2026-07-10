@@ -98,7 +98,7 @@ export default function AddGoalModal({ open, onClose, onSuccess }: AddGoalModalP
                                 <button
                                     type="submit"
                                     disabled={saving}
-                                    className="w-full sm:flex-1 px-4 py-2.5 rounded-xl bg-brand-orange text-white text-sm font-medium hover:bg-orange-600 transition-colors disabled:opacity-50"
+                                    className="w-full sm:flex-1 px-4 py-2.5 rounded-xl bg-brand-orange text-white text-sm font-medium hover:bg-amber-500 transition-colors disabled:opacity-50"
                                 >
                                     {saving ? 'Guardando...' : 'Guardar'}
                                 </button>

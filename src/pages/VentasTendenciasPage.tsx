@@ -5,6 +5,7 @@ import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import { useFechasDisponibles } from '../hooks/useFechasDisponibles'
 import { apiClient } from '../services/apiClient'
+import { chart, component, axis, slate } from '../config/colors'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface VentaDetalle {
@@ -53,10 +54,10 @@ function aggregateToDailyMap(data: VentaDetalle[]): Record<string, number> {
 
 // ── Color scale ───────────────────────────────────────────────────────────────
 const THRESHOLDS = [1, 500, 2000, 5000, 10000, 20000]
-const COLORS = ['#f1f5f9', '#cce0ff', '#99baf0', '#5b7fcc', '#2d3f7a', '#1a2a5e']
+const COLORS = chart.heatmap
 
 function getColor(value: number | undefined): string {
-    if (!value) return '#f8fafc'
+    if (!value) return component.heatmapDefaultCell
     for (let i = THRESHOLDS.length - 1; i >= 0; i--) {
         if (value >= THRESHOLDS[i]) return COLORS[Math.min(i, COLORS.length - 1)]
     }
@@ -64,8 +65,8 @@ function getColor(value: number | undefined): string {
 }
 
 function getTextColor(bg: string): string {
-    const dark = ['#2d3f7a', '#1a2a5e', '#5b7fcc']
-    return dark.includes(bg) ? '#fff' : '#1e293b'
+    const dark: string[] = [chart.heatmap[3], chart.heatmap[4], chart.heatmap[5]]
+    return dark.includes(bg) ? component.treemapText : slate[800]
 }
 
 // ── Calendar component ────────────────────────────────────────────────────────
@@ -232,7 +233,7 @@ function MonthCalendar() {
             {/* Day headers */}
             <div className="grid grid-cols-7 mb-1">
                 {DAY_LABELS.map(d => (
-                    <div key={d} className="text-center py-0.5 sm:py-1 text-[8px] sm:text-[10px]" style={{ fontWeight: 600, color: '#94a3b8' }}>
+                    <div key={d} className="text-center py-0.5 sm:py-1 text-[8px] sm:text-[10px]" style={{ fontWeight: 600, color: component.heatmapDayHeader }}>
                         {d}
                     </div>
                 ))}
@@ -263,7 +264,7 @@ function MonthCalendar() {
                                     className="rounded-lg flex flex-col items-center justify-center transition-all duration-150 cursor-pointer h-10 sm:h-14"
                                     style={{
                                         backgroundColor: color,
-                                        border: isToday ? '2px solid #FF6600' : '2px solid transparent',
+                                        border: isToday ? `2px solid ${component.heatmapTodayBorder}` : '2px solid transparent',
                                     }}
                                     onMouseEnter={(e) => {
                                         if (value !== undefined)
@@ -280,7 +281,7 @@ function MonthCalendar() {
                                         </span>
                                     )}
                                     {value === undefined && (
-                                        <span className="text-[6px] sm:text-[8px]" style={{ color: '#cbd5e1', marginTop: 1 }}>—</span>
+                                        <span className="text-[6px] sm:text-[8px]" style={{ color: component.heatmapEmptyDash, marginTop: 1 }}>—</span>
                                     )}
                                 </div>
                             )
@@ -296,7 +297,7 @@ function MonthCalendar() {
                     {COLORS.map((color, i) => (
                         <div key={i} className="flex flex-col items-center gap-0.5">
                             <span className="w-5 h-3 rounded-sm block" style={{ background: color }} />
-                            <span style={{ fontSize: 7, color: '#9ca3af' }}>
+                            <span style={{ fontSize: 7, color: axis.tickLabel }}>
                                 {i === 0 ? '$0' : `$${THRESHOLDS[i] >= 1000 ? `${THRESHOLDS[i] / 1000}k` : THRESHOLDS[i]}`}
                             </span>
                         </div>
@@ -309,10 +310,10 @@ function MonthCalendar() {
             {tooltip && (
                 <div className="fixed z-50 pointer-events-none" style={{ left: tooltip.x + 14, top: tooltip.y - 56 }}>
                     <div style={{
-                        background: '#1e293b', borderRadius: 8, padding: '8px 12px',
-                        color: '#fff', fontSize: '0.72rem', boxShadow: '0 4px 16px rgba(0,0,0,0.25)', whiteSpace: 'nowrap',
+                        background: slate[800], borderRadius: 8, padding: '8px 12px',
+                        color: component.treemapText, fontSize: '0.72rem', boxShadow: `0 4px 16px ${component.tooltipShadowDark}`, whiteSpace: 'nowrap',
                     }}>
-                        <div style={{ color: '#94a3b8', marginBottom: 3 }}>{tooltip.date}</div>
+                        <div style={{ color: component.heatmapDayHeader, marginBottom: 3 }}>{tooltip.date}</div>
                         <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>
                             ${tooltip.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>

@@ -66,10 +66,12 @@ export const ConfigIcon = ({ className, size = 18 }: IconProps) => (
     </svg>
 )
 
+import { component } from '../config/colors';
+
 export const MedvalLogo = ({ size = 36 }: { size?: number }) => (
     <svg width={size} height={size} viewBox="0 0 36 36" fill="none">
-        <rect width="36" height="36" rx="10" fill="#1a2a5e" />
-        <path d="M6 22l5-10 4 7 3-5 4 8 5-12" stroke="#e96c2a" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <circle cx="18" cy="13" r="3" fill="#fff" opacity={0.15} />
+        <rect width="36" height="36" rx="10" fill={component.logoBg} />
+        <path d="M6 22l5-10 4 7 3-5 4 8 5-12" stroke={component.logoStroke} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <circle cx="18" cy="13" r="3" fill={component.logoDot} opacity={0.15} />
     </svg>
 )

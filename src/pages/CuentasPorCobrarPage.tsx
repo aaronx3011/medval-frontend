@@ -7,6 +7,7 @@ import { useCuentasPorCobrar2 } from '../hooks/useCuentasPorCobrar';
 import { AgingBucket } from '../types/cuentasPorCobrar';
 import { formatCompact } from '../utils/formatters';
 import DownloadCsvButton, { sanitizeFilename } from '../components/utils/DownloadCsvButton';
+import { cxc, status, component, surface, table } from '../config/colors';
 
 function getBucket(diasVencidos: number): AgingBucket {
     if (diasVencidos <= 0) return 'Al día';
@@ -29,13 +30,13 @@ const BUCKET_ORDER: AgingBucket[] = [
 ];
 
 const BUCKET_COLORS: Record<AgingBucket, string> = {
-    'Al día': '#1A56DB',
-    'Por vencer (≤15d)': '#4A90D9',
-    'Vencido ≤30d': '#7FB3E0',
-    'Vencido 30–60d': '#F4A261',
-    'Vencido 60–90d': '#E76F3B',
-    'Vencido 90–120d': '#D4500A',
-    'Vencido 120d+': '#9C3200',
+    'Al día': cxc.alDia,
+    'Por vencer (≤15d)': cxc.porVencer15d,
+    'Vencido ≤30d': cxc.vencido30d,
+    'Vencido 30–60d': cxc.vencido60d,
+    'Vencido 60–90d': cxc.vencido90d,
+    'Vencido 90–120d': cxc.vencido120d,
+    'Vencido 120d+': cxc.vencido120dPlus,
 };
 
 const columns: GridColDef[] = [
@@ -78,7 +79,7 @@ const columns: GridColDef[] = [
         headerAlign: 'left',
         renderCell: (params) => {
             const v: number = params.value;
-            const color = v <= 0 ? '#16a34a' : v <= 30 ? '#d97706' : '#dc2626';
+            const color = v <= 0 ? status.success : v <= 30 ? status.warning : status.error;
             return <span style={{ color, fontWeight: 600 }}>{v}</span>;
         },
     },
@@ -229,11 +230,11 @@ export default function CuentasPorCobrarPage() {
                                                         width: 10, height: 10, borderRadius: 2,
                                                         backgroundColor: item.color, flexShrink: 0
                                                     }} />
-                                                    <span style={{ fontSize: '0.75rem', color: '#475569', fontWeight: isSelected ? 700 : 400 }}>
+                                                    <span style={{ fontSize: '0.75rem', color: component.legendLabel, fontWeight: isSelected ? 700 : 400 }}>
                                                         {item.label}
                                                     </span>
                                                 </div>
-                                                <span style={{ fontSize: '0.75rem', color: '#1e293b', fontWeight: 600 }}>
+                                                <span style={{ fontSize: '0.75rem', color: component.legendValue, fontWeight: 600 }}>
                                                     ${formatCompact(item.value)}
                                                 </span>
                                             </button>
@@ -275,10 +276,10 @@ export default function CuentasPorCobrarPage() {
                             flex: 1,
                             minWidth: 0,
                             minHeight: 0,
-                            backgroundColor: '#FFFFFF',
+                            backgroundColor: surface.white,
                             borderRadius: '16px',
                             p: 1,
-                            border: '1px solid #E0E4E8',
+                            border: `1px solid ${table.paperBorder}`,
                             display: 'flex',
                             flexDirection: 'column',
                         }}
@@ -301,23 +302,23 @@ export default function CuentasPorCobrarPage() {
                             sx={{
                                 border: 'none',
                                 '& .MuiDataGrid-columnHeaders': {
-                                    backgroundColor: '#f8fafc',
+                                    backgroundColor: table.headerBg,
                                     fontSize: '0.7rem',
                                     fontWeight: 800,
-                                    color: '#1e293b',
+                                    color: component.legendValue,
                                     textTransform: 'uppercase',
                                 },
                                 '& .MuiDataGrid-cell': {
                                     fontSize: '0.75rem',
-                                    color: '#475569',
-                                    borderBottom: '1px solid #F1F5F9',
+                                    color: component.legendLabel,
+                                    borderBottom: `1px solid ${table.cellBorder}`,
                                     display: 'flex',
                                     alignItems: 'center',
                                 },
                                 '& .MuiDataGrid-footerContainer': {
                                     minHeight: '40px',
                                     height: '40px',
-                                    borderTop: '1px solid #F1F5F9',
+                                    borderTop: `1px solid ${table.cellBorder}`,
                                 },
                                 '& .MuiTablePagination-root': {
                                     fontSize: '0.7rem',

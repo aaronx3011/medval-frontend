@@ -2,29 +2,21 @@ import { useMemo } from 'react'
 import GraphCardWithFilters from '../utils/graphCardWithFilters'
 import { LineChart } from '@mui/x-charts/LineChart'
 import { useVentasMensuales } from '../../hooks/useVentasMensuales'
+import { chart, axis } from '../../config/colors'
 
 const MONTH_NAMES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
 
-const YEAR_COLORS = [
-    '#1a2a5e',
-    '#FF6600',
-    '#16a34a',
-    '#9333ea',
-    '#e11d48',
-    '#0891b2',
-]
+const YEAR_COLORS = chart.yearColors
 
 export default function LineAllYearsByMonth() {
     const { data: apiResponse, loading, error } = useVentasMensuales()
 
-    // 1. Extract all available years sorted descending
     const availableYears = useMemo(() => {
         if (!apiResponse?.data) return []
         const years = Array.from(new Set(apiResponse.data.map(d => d.Anio)))
         return years.sort((a, b) => b - a)
     }, [apiResponse])
 
-    // 2. Build one series per year — each is a 12-slot array (null for missing months)
     const series = useMemo(() => {
         if (!apiResponse?.data || availableYears.length === 0) return []
 
@@ -73,14 +65,14 @@ export default function LineAllYearsByMonth() {
                         xAxis={[{
                             data: MONTH_NAMES,
                             scaleType: 'point',
-                            tickLabelStyle: { fontSize: 9, fill: '#9ca3af' },
+                            tickLabelStyle: { fontSize: 9, fill: axis.tickLabel },
                             sx: {
-                                '& .MuiChartsAxis-line': { stroke: '#e2e8f0' },
-                                '& .MuiChartsAxis-tick': { stroke: '#e2e8f0' },
+                                '& .MuiChartsAxis-line': { stroke: axis.line },
+                                '& .MuiChartsAxis-tick': { stroke: axis.line },
                             }
                         }]}
                         yAxis={[{
-                            tickLabelStyle: { fontSize: 10, fill: '#9ca3af' },
+                            tickLabelStyle: { fontSize: 10, fill: axis.tickLabel },
                             valueFormatter: (value) =>
                                 new Intl.NumberFormat('en-US', {
                                     notation: 'compact',
@@ -92,9 +84,9 @@ export default function LineAllYearsByMonth() {
                         margin={{ left: 60, right: 12, top: 8, bottom: 32 }}
                         grid={{ horizontal: true }}
                         sx={{
-                            '& .MuiChartsAxis-line': { stroke: '#e2e8f0' },
-                            '& .MuiChartsAxis-tick': { stroke: '#e2e8f0' },
-                            '& .MuiChartsGrid-line': { stroke: '#f1f5f9', strokeDasharray: '4 3' },
+                            '& .MuiChartsAxis-line': { stroke: axis.line },
+                            '& .MuiChartsAxis-tick': { stroke: axis.line },
+                            '& .MuiChartsGrid-line': { stroke: axis.grid, strokeDasharray: '4 3' },
                         }}
                     />
                 )

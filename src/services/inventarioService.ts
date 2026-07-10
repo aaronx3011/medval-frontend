@@ -1,9 +1,25 @@
 import { apiClient } from './apiClient';
-import type { InventarioDetalle, InventarioDetalleResponse, InventarioItem, InventarioPorProducto, InventarioPorProductoResponse, InventarioPorVencimiento, InventarioPorVencimientoResponse, InventarioResponse, VentasRotacionApiResponse, AnalisisReposicionResponse } from '../types/inventario';
+import type { AnalisisReposicionResponse, InventarioDetalle, InventarioDetalleResponse, InventarioItem, InventarioPorProducto, InventarioPorProductoResponse, InventarioPorVencimiento, InventarioPorVencimientoResponse, InventarioResponse, VentasRotacionApiResponse } from '../types/inventario';
 
 export const inventarioService = {
     getAnalisisReposicion: async (): Promise<AnalisisReposicionResponse> => {
         return apiClient('/view/aaron_view_AnalisisReposicionInventario?limit=100000');
+    },
+
+    getAnalisisCritico: async (): Promise<AnalisisReposicionResponse> => {
+        return apiClient('/view/aaron_view_AnalisisReposicionCritico?limit=10000');
+    },
+
+    getAnalisisStockBajo: async (): Promise<AnalisisReposicionResponse> => {
+        return apiClient('/view/aaron_view_AnalisisReposicionStockBajo?limit=10000');
+    },
+
+    getAnalisisActivo: async (): Promise<AnalisisReposicionResponse> => {
+        return apiClient('/view/aaron_view_AnalisisReposicionActivo?limit=10000');
+    },
+
+    getLotesByProducto: async (codigoArticulo: string): Promise<{ data: any[] }> => {
+        return apiClient(`/inventario/lotes/${encodeURIComponent(codigoArticulo)}`);
     },
 
     getRotacionProductoAnual: async (): Promise<VentasRotacionApiResponse> => {
@@ -33,5 +49,26 @@ export const inventarioService = {
     fetchInventarioCompleto: async (): Promise<InventarioItem[]> => {
         const json: InventarioResponse = await apiClient('/view/aaron_view_DetalleInventarioCompletoDolarizado?limit=1000000');
         return json.data;
-    }
+    },
+
+    getAlmacenesList: async (): Promise<{ data: { Codigo_Almacen: string; Nombre_Almacen: string }[] }> => {
+        return apiClient('/inventario/almacenes');
+    },
+
+    getAlmacenesExcluidos: async (): Promise<{ data: { Codigo_Almacen: string }[] }> => {
+        return apiClient('/inventario/almacenes-excluidos');
+    },
+
+    addAlmacenExcluido: async (codigoAlmacen: string): Promise<void> => {
+        await apiClient('/inventario/almacenes-excluidos', {
+            method: 'POST',
+            body: JSON.stringify({ codigo_almacen: codigoAlmacen }),
+        });
+    },
+
+    removeAlmacenExcluido: async (codigoAlmacen: string): Promise<void> => {
+        await apiClient(`/inventario/almacenes-excluidos/${encodeURIComponent(codigoAlmacen)}`, {
+            method: 'DELETE',
+        });
+    },
 };

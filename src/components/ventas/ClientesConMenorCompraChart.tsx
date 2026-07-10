@@ -1,8 +1,8 @@
 import { PieChart } from '@mui/x-charts/PieChart';
 import GraphCardWithFilters from '../utils/graphCardWithFilters';
+import { chart } from '../../config/colors';
 
-// Paleta de colores más suave para los de menor compra
-const SOFT_COLORS = ['#94A3B8', '#CBD5E1', '#E2E8F0', '#F1F5F9', '#F8FAFC'];
+const SOFT_COLORS = chart.softColors;
 
 interface VentasAnualCliente {
     Codigo_Cliente: string;

@@ -158,7 +158,7 @@ export default function UserManagementPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="w-full h-10 bg-brand-orange text-white rounded-lg text-sm font-semibold hover:bg-orange-600 transition-colors disabled:opacity-50"
+                  className="w-full h-10 bg-brand-orange text-white rounded-lg text-sm font-semibold hover:bg-amber-500 transition-colors disabled:opacity-50"
                 >
                   {saving ? 'Creando...' : 'Crear Usuario'}
                 </button>

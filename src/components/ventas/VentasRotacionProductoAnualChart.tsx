@@ -2,13 +2,13 @@ import { useMemo } from 'react'
 import { LineChart } from '@mui/x-charts/LineChart'
 import GraphCardWithFilters from '../utils/graphCardWithFilters'
 import { VentasMesesFrontend } from '../../types/inventario'
+import { chart, brand, axis } from '../../config/colors'
 
 const MONTH_NAMES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
 const MONTH_KEYS = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'] as const;
 
-// Paleta de azules para los años anteriores (del más oscuro al más claro)
-const BLUE_PALETTE = ['#1a2a5e', '#2e4a99', '#4a7ae0', '#7ac8ff', '#aad8ff'];
-const ACTIVE_ORANGE = '#e96c2a';
+const BLUE_PALETTE = chart.bluePalette;
+const ACTIVE_ORANGE = brand.orangeSecondary;
 
 interface VentasRotacionProductoAnualChartProps {
     productHistory: VentasMesesFrontend[];
@@ -18,13 +18,11 @@ interface VentasRotacionProductoAnualChartProps {
 export default function VentasRotacionProductoAnualChart({ productHistory, activeYear }: VentasRotacionProductoAnualChartProps) {
 
     const isEmpty = !productHistory || productHistory.length === 0;
-    const productName = productHistory.length > 0 ? productHistory[0].Descripcion_Articulo || productHistory[0].Codigo_Articulo : '';
+    const productName = productHistory.length > 0 ? productHistory[0].Descripcion_Articulo || productHistory[0].Ref_Articulo || productHistory[0].Codigo_Articulo : '';
 
-    // 1. Mapeamos la data para convertirla en series del LineChart
     const chartData = useMemo(() => {
         if (isEmpty) return { series: [], legendItems: [] };
 
-        // Ordenamos los años para que el año activo quede siempre de primero visualmente (opcional) o por fecha
         const sortedHistory = [...productHistory].sort((a, b) => b.Anio - a.Anio);
 
         let blueIndex = 0;
@@ -33,7 +31,6 @@ export default function VentasRotacionProductoAnualChart({ productHistory, activ
         const series = sortedHistory.map((yearData) => {
             const isSelectedYear = yearData.Anio.toString() === activeYear.toString();
 
-            // Asignamos naranja al año activo, y un azul secuencial a los demás
             let color = '';
             if (isSelectedYear) {
                 color = ACTIVE_ORANGE;
@@ -48,14 +45,12 @@ export default function VentasRotacionProductoAnualChart({ productHistory, activ
                 data: MONTH_KEYS.map(m => yearData[m] || 0),
                 label: yearData.Anio.toString(),
                 color: color,
-                showMark: false, // <-- CAMBIO AQUÍ: Oculta los puntos de la línea
-                curve: 'catmullRom' as const, // curva suave
-                // Hacemos la línea activa un poco más gruesa para que destaque
+                showMark: false,
+                curve: 'catmullRom' as const,
                 strokeWidth: isSelectedYear ? 3 : 2,
             };
         });
 
-        // Ordenamos la leyenda para que el año actual aparezca primero
         legendItems.sort((a, b) => a.label === activeYear ? -1 : b.label === activeYear ? 1 : Number(b.label) - Number(a.label));
 
         return { series, legendItems };
@@ -64,7 +59,7 @@ export default function VentasRotacionProductoAnualChart({ productHistory, activ
     return (
         <GraphCardWithFilters
             title={`Evolución interanual ${productName ? `- ${productName}` : ''}`}
-            filters={<div className="h-6"></div>} // Para mantener la alineación de la tarjeta
+            filters={<div className="h-6"></div>}
             graph={
                 isEmpty ? (
                     <div className="flex h-full w-full items-center justify-center text-slate-400 text-sm">
@@ -76,13 +71,13 @@ export default function VentasRotacionProductoAnualChart({ productHistory, activ
                         xAxis={[
                             {
                                 data: MONTH_NAMES,
-                                scaleType: 'point', // Ideal para gráficos de línea
-                                tickLabelStyle: { fontSize: 10, fill: '#9ca3af' },
+                                scaleType: 'point',
+                                tickLabelStyle: { fontSize: 10, fill: axis.tickLabel },
                             },
                         ]}
                         yAxis={[
                             {
-                                tickLabelStyle: { fontSize: 10, fill: '#9ca3af' },
+                                tickLabelStyle: { fontSize: 10, fill: axis.tickLabel },
                                 valueFormatter: (value) =>
                                     new Intl.NumberFormat('en-US', {
                                         notation: 'compact',
@@ -94,10 +89,9 @@ export default function VentasRotacionProductoAnualChart({ productHistory, activ
                         slotProps={{ legend: { hidden: true } }}
                         margin={{ left: 52, right: 20, top: 20, bottom: 28 }}
                         sx={{
-                            '& .MuiChartsAxis-line': { stroke: '#e2e8f0' },
-                            '& .MuiChartsAxis-tick': { stroke: '#e2e8f0' },
-                            '& .MuiChartsGrid-line': { stroke: '#f1f5f9', strokeDasharray: '4 3' },
-                            // Efecto hover sutil en las líneas
+                            '& .MuiChartsAxis-line': { stroke: axis.line },
+                            '& .MuiChartsAxis-tick': { stroke: axis.line },
+                            '& .MuiChartsGrid-line': { stroke: axis.grid, strokeDasharray: '4 3' },
                             '& .MuiLineElement-root': { transition: 'stroke-width 0.2s' },
                         }}
                     />

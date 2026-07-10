@@ -2,9 +2,10 @@ import { useState, useMemo } from 'react';
 import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
 import { Box, Paper, Typography, CircularProgress, alpha, InputBase } from '@mui/material';
 import { Search, X } from 'lucide-react';
-import GraphCardWithFilters from '../utils/graphCardWithFilters'; // Asegúrate de que esta ruta coincida con tu proyecto
+import GraphCardWithFilters from '../utils/graphCardWithFilters';
 import { useCuentasPorCobrar } from '../../hooks/useCuentasPorCobrar';
 import DownloadCsvButton, { sanitizeFilename } from '../utils/DownloadCsvButton';
+import { search as searchColors, table as tableColors, slate } from '../../config/colors';
 
 const columns: GridColDef[] = [
     {
@@ -12,7 +13,7 @@ const columns: GridColDef[] = [
         headerName: 'Código',
         width: 110,
         renderCell: (params: any) => (
-            <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#475569', fontWeight: 600 }}>
+            <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: tableColors.cellText, fontWeight: 600 }}>
                 {params.value}
             </span>
         ),
@@ -29,7 +30,7 @@ const columns: GridColDef[] = [
     },
     { field: 'Deuda_Total_USD', headerName: 'Deuda Total', type: 'number', width: 150,
         renderCell: (params: any) => (
-            <strong style={{ color: '#1e293b' }}>
+            <strong style={{ color: slate[800] }}>
                 ${Number(params.value ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </strong>
         )
@@ -103,7 +104,7 @@ export default function CuentasPorCobrarSummary() {
             graph={
                 <div className="flex flex-col h-full w-full">
                     <Box sx={{ height: '100%', width: '100%' }}>
-                        <Paper elevation={0} sx={{ height: '100%', width: '100%', border: '1px solid #E0E4E8', borderRadius: '12px', overflow: 'hidden' }}>
+                        <Paper elevation={0} sx={{ height: '100%', width: '100%', border: `1px solid ${tableColors.paperBorder}`, borderRadius: '12px', overflow: 'hidden' }}>
                             {loading ? (
                                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                                     <CircularProgress />
@@ -132,24 +133,24 @@ export default function CuentasPorCobrarSummary() {
                                     sx={{
                                         border: 'none',
                                         '& .MuiDataGrid-columnHeaders': {
-                                            backgroundColor: '#f8fafc',
+                                            backgroundColor: tableColors.headerBg,
                                             fontSize: '0.7rem',
                                             fontWeight: 800,
-                                            color: '#1e293b',
+                                            color: tableColors.headerText,
                                             textTransform: 'uppercase',
-                                            borderBottom: '1px solid #E0E4E8',
+                                            borderBottom: `1px solid ${tableColors.paperBorder}`,
                                         },
                                         '& .MuiDataGrid-cell': {
                                             fontSize: '0.75rem',
-                                            color: '#475569',
-                                            borderBottom: '1px solid #F1F5F9',
+                                            color: tableColors.cellText,
+                                            borderBottom: `1px solid ${tableColors.cellBorder}`,
                                             display: 'flex',
                                             alignItems: 'center'
                                         },
                                         '& .MuiDataGrid-footerContainer': {
                                             minHeight: '40px',
                                             height: '40px',
-                                            borderTop: '1px solid #F1F5F9',
+                                            borderTop: `1px solid ${tableColors.footerBorder}`,
                                         },
                                         '& .MuiTablePagination-root': {
                                             fontSize: '0.7rem',
@@ -176,27 +177,27 @@ export default function CuentasPorCobrarSummary() {
                         display: 'flex',
                         alignItems: 'center',
                         width: { xs: '100%', sm: '250px' },
-                        backgroundColor: '#FFFFFF',
-                        borderRadius: '10px',
-                        border: '1px solid #E0E4E8',
-                        '&:focus-within': { borderColor: '#FF6600' }
-                    }}
-                >
-                    <Search size={16} color="#A0AEC0" style={{ marginRight: '8px' }} />
-                    <InputBase
-                        placeholder="Buscar cliente, monto..."
-                        value={searchText}
-                        onChange={(e) => setSearchText(e.target.value)}
-                        sx={{ fontSize: '0.8rem', flex: 1 }}
+                    backgroundColor: searchColors.bg,
+                    borderRadius: '10px',
+                    border: `1px solid ${searchColors.border}`,
+                    '&:focus-within': { borderColor: searchColors.focusBorder }
+                }}
+            >
+                <Search size={16} color={searchColors.iconColor} style={{ marginRight: '8px' }} />
+                <InputBase
+                    placeholder="Buscar cliente, monto..."
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    sx={{ fontSize: '0.8rem', flex: 1 }}
+                />
+                {searchText && (
+                    <X
+                        size={16}
+                        color={searchColors.clearColor}
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setSearchText('')}
                     />
-                    {searchText && (
-                        <X
-                            size={16}
-                            color="#A0AEC0"
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => setSearchText('')}
-                        />
-                    )}
+                )}
                 </Paper>
                 </div>
             }

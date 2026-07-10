@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { PieChart } from '@mui/x-charts/PieChart'
+import { component } from '../../config/colors'
 import { donutData } from '../../data/ventasData'
 
 export default function RotacionAnualDonut() {
@@ -8,7 +9,7 @@ export default function RotacionAnualDonut() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.42, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            whileHover={{ boxShadow: '0 8px 28px rgba(26,42,94,0.07)' }}
+            whileHover={{ boxShadow: `0 8px 28px ${component.cardShadow}` }}
             className="chart-card"
         >
             <h3 className="text-sm font-bold text-brand-orange mb-3">
@@ -35,7 +36,7 @@ export default function RotacionAnualDonut() {
                 slotProps={{ legend: { hidden: true } }}
                 margin={{ left: 8, right: 8, top: 8, bottom: 8 }}
                 sx={{
-                    '& .MuiChartsArcLabel-root': { fontSize: '9px', fill: '#fff', fontWeight: 600 },
+                    '& .MuiChartsArcLabel-root': { fontSize: '9px', fill: component.donutArcLabel, fontWeight: 600 },
                 }}
             />
 

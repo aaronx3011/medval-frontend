@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { LineChart } from '@mui/x-charts/LineChart'
+import { axis } from '../../config/colors'
 import { MONTHS, PRODUCTS, PRODUCT_COLORS, rotacionData } from '../../data/ventasData'
 
 const MONTHS_LIST = [
@@ -59,18 +60,18 @@ export default function RotacionChart() {
                 xAxis={[{
                     data: MONTHS,
                     scaleType: 'band',
-                    tickLabelStyle: { fontSize: 11, fill: '#6b7280' },
+                    tickLabelStyle: { fontSize: 11, fill: axis.label },
                 }]}
                 yAxis={[{
-                    tickLabelStyle: { fontSize: 10, fill: '#9ca3af' },
+                    tickLabelStyle: { fontSize: 10, fill: axis.tickLabel },
                     valueFormatter: (v: number) => v.toLocaleString(),
                 }]}
                 slotProps={{ legend: { hidden: true } }}
                 margin={{ left: 64, right: 16, top: 12, bottom: 12 }}
                 sx={{
-                    '& .MuiChartsAxis-line': { stroke: '#e2e8f0' },
-                    '& .MuiChartsAxis-tick': { stroke: '#e2e8f0' },
-                    '& .MuiChartsGrid-line': { stroke: '#f1f5f9', strokeDasharray: '4 3' },
+                    '& .MuiChartsAxis-line': { stroke: axis.line },
+                    '& .MuiChartsAxis-tick': { stroke: axis.line },
+                    '& .MuiChartsGrid-line': { stroke: axis.grid, strokeDasharray: '4 3' },
                 }}
             />
 

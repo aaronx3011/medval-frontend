@@ -1,5 +1,6 @@
 export interface AnalisisReposicion {
     Codigo_Articulo: string;
+    Ref_Articulo: string;
     Descripcion_Articulo: string;
     Stock_Total: number;
     Proximo_Vencimiento: string;
@@ -29,6 +30,7 @@ export interface AnalisisReposicionResponse {
 
 export interface VentasRotacionApiItem {
     Codigo_Articulo: string;
+    Ref_Articulo: string;
     Descripcion_Articulo: string;
     Anio: number;
     Enero: number | null;
@@ -43,6 +45,18 @@ export interface VentasRotacionApiItem {
     Octubre: number | null;
     Noviembre: number | null;
     Diciembre: number | null;
+    Enero_Unidades: number | null;
+    Febrero_Unidades: number | null;
+    Marzo_Unidades: number | null;
+    Abril_Unidades: number | null;
+    Mayo_Unidades: number | null;
+    Junio_Unidades: number | null;
+    Julio_Unidades: number | null;
+    Agosto_Unidades: number | null;
+    Septiembre_Unidades: number | null;
+    Octubre_Unidades: number | null;
+    Noviembre_Unidades: number | null;
+    Diciembre_Unidades: number | null;
 }
 
 export interface VentasRotacionApiResponse {
@@ -54,8 +68,9 @@ export interface VentasRotacionApiResponse {
 export interface VentasMesesFrontend {
     id: string;
     Codigo_Articulo: string;
+    Ref_Articulo: string;
     Descripcion_Articulo: string;
-    Anio: number; // Lo mantenemos para el filtro interno, aunque no se muestre
+    Anio: number;
     Enero: number;
     Febrero: number;
     Marzo: number;
@@ -68,13 +83,27 @@ export interface VentasMesesFrontend {
     Octubre: number;
     Noviembre: number;
     Diciembre: number;
-    Total: number; // NUEVO CAMPO: Suma de todos los meses
+    Total: number;
+    Enero_Unidades: number;
+    Febrero_Unidades: number;
+    Marzo_Unidades: number;
+    Abril_Unidades: number;
+    Mayo_Unidades: number;
+    Junio_Unidades: number;
+    Julio_Unidades: number;
+    Agosto_Unidades: number;
+    Septiembre_Unidades: number;
+    Octubre_Unidades: number;
+    Noviembre_Unidades: number;
+    Diciembre_Unidades: number;
+    Total_Unidades: number;
 }
 
 
 
 export interface InventarioItem {
     Codigo_Articulo: string;
+    Ref_Articulo: string;
     Nombre_Articulo: string;
     Codigo_Almacen: string;
     Nombre_Almacen: string;
@@ -121,6 +150,7 @@ export interface InventarioTotalResponse {
 
 export interface InventarioPorProducto {
     Codigo_Articulo: string;
+    Ref_Articulo: string;
     Nombre_Articulo: string;
     Almacenes_Distintos: number;
     Total_Unidades: number;
@@ -162,6 +192,7 @@ export interface InventarioPorVencimientoResponse {
 
 export interface InventarioDetalle {
     Codigo_Articulo: string;
+    Ref_Articulo: string;
     Descripcion_Articulo: string;
     Stock_Total: number;
     Proximo_Vencimiento: string | null;

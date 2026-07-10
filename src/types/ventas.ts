@@ -35,6 +35,7 @@ export interface VentasMensualesResponse {
 
 export interface ProductoMensualData {
     Codigo_Articulo: string;
+    Ref_Articulo: string;
     Descripcion_Articulo: string;
     Anio: number;
     Mes: number;
@@ -56,6 +57,7 @@ export interface ProductoMensualResponse {
 
 export interface VentaProducto {
     Codigo_Articulo: string;
+    Ref_Articulo: string;
     Descripcion_Articulo: string;
     Total_Unidades: number;
     Total_VES: number;
@@ -93,6 +95,7 @@ export interface FechasDisponiblesResponse {
 
 export interface AgrupadoProductoData {
     Codigo_Articulo: string;
+    Ref_Articulo: string;
     Descripcion_Articulo: string;
     Total_USD: number;
     Total_Facturas: number;
@@ -118,6 +121,7 @@ export interface AgrupadoProductoResponse {
 
 export interface DetalleProductoMensualFechasData {
     Codigo_Articulo: string;
+    Ref_Articulo: string;
     Descripcion_Articulo: string;
     Anio: number;
     Mes: number;
@@ -158,6 +162,7 @@ export interface TopClientsResponse {
 
 export interface ClientePorProducto {
     Codigo_Articulo: string;
+    Ref_Articulo: string;
     Descripcion_Articulo: string;
     Codigo_Cliente: string;
     Nombre_Cliente: string;
@@ -196,6 +201,7 @@ export interface VentasAnualClienteResponse {
 
 export interface ClientePorProducto2 {
     Codigo_Articulo: string;
+    Ref_Articulo: string;
     Descripcion_Articulo: string;
     Codigo_Cliente: string;
     Nombre_Cliente: string;

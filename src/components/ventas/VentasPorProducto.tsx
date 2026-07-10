@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import VentasPorProductoChart from './ventasPorProductoChart';
 import { VentaProducto } from '../../types/ventas';
+import { brand, surface, table, search, slate } from '../../config/colors'
 
 // MUI & Icons
 import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
@@ -47,14 +48,16 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
         }));
     }, [data]);
 
+    const tableColors = table;
+
     const columns: GridColDef[] = [
         {
-            field: 'Codigo_Articulo',
-            headerName: 'Código',
+            field: 'Ref_Articulo',
+            headerName: 'Ref',
             flex: 0.8,
             minWidth: 110,
             renderCell: (params) => (
-                <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#475569', fontWeight: 600 }}>
+                <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: tableColors.cellText, fontWeight: 600 }}>
                     {params.value}
                 </span>
             ),
@@ -78,7 +81,7 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
             flex: 1,
             minWidth: 110,
             renderCell: (params) => (
-                <strong style={{ color: '#1e293b' }}>
+                <strong style={{ color: slate[800] }}>
                     ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </strong>
             )
@@ -101,12 +104,12 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
                         minWidth: 'auto',
                         p: '4px',
                         borderRadius: '8px',
-                        backgroundColor: selectedProduct === params.row.Codigo_Articulo ? '#FF6600' : 'transparent',
-                        borderColor: selectedProduct === params.row.Codigo_Articulo ? '#FF6600' : '#E2E8F0',
-                        color: selectedProduct === params.row.Codigo_Articulo ? '#FFF' : '#64748B',
+                        backgroundColor: selectedProduct === params.row.Codigo_Articulo ? brand.orange : 'transparent',
+                        borderColor: selectedProduct === params.row.Codigo_Articulo ? brand.orange : slate[200],
+                        color: selectedProduct === params.row.Codigo_Articulo ? surface.white : slate[500],
                         '&:hover': {
-                            backgroundColor: selectedProduct === params.row.Codigo_Articulo ? '#E65C00' : '#F1F5F9',
-                            borderColor: selectedProduct === params.row.Codigo_Articulo ? '#E65C00' : '#CBD5E1',
+                            backgroundColor: selectedProduct === params.row.Codigo_Articulo ? brand.orangeHover : table.cellBorder,
+                            borderColor: selectedProduct === params.row.Codigo_Articulo ? brand.orangeHover : slate[300],
                         }
                     }}
                 >
@@ -150,13 +153,13 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
                                 display: 'flex',
                                 alignItems: 'center',
                                 width: '100%',
-                                backgroundColor: '#FFFFFF',
+                                backgroundColor: surface.white,
                                 borderRadius: '10px',
-                                border: '1px solid #E0E4E8',
-                                '&:focus-within': { borderColor: '#FF6600' }
+                                border: `1px solid ${table.paperBorder}`,
+                                '&:focus-within': { borderColor: brand.orange }
                             }}
                         >
-                            <Search size={16} color="#A0AEC0" style={{ marginRight: '8px' }} />
+                            <Search size={16} color={search.iconColor} style={{ marginRight: '8px' }} />
                             <InputBase
                                 placeholder="Buscar artículo..."
                                 value={searchText}
@@ -166,7 +169,7 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
                             {searchText && (
                                 <X
                                     size={16}
-                                    color="#A0AEC0"
+                                    color={search.iconColor}
                                     style={{ cursor: 'pointer' }}
                                     onClick={() => setSearchText('')}
                                 />
@@ -180,10 +183,10 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
                             flex: 1,
                             minHeight: 0,
                             width: '100%',
-                            backgroundColor: '#FFFFFF',
+                            backgroundColor: surface.white,
                             borderRadius: '16px',
                             p: 1,
-                            border: '1px solid #E0E4E8',
+                            border: `1px solid ${table.paperBorder}`,
                             display: 'flex',
                             flexDirection: 'column'
                         }}
@@ -210,23 +213,23 @@ export default function VentasPorProducto({ selectedProduct, onSelectProduct, ve
                             sx={{
                                 border: 'none',
                                 '& .MuiDataGrid-columnHeaders': {
-                                    backgroundColor: '#f8fafc',
+                                    backgroundColor: table.headerBg,
                                     fontSize: '0.7rem',
                                     fontWeight: 800,
-                                    color: '#1e293b',
+                                    color: slate[800],
                                     textTransform: 'uppercase',
                                 },
                                 '& .MuiDataGrid-cell': {
                                     fontSize: '0.75rem',
-                                    color: '#475569',
-                                    borderBottom: '1px solid #F1F5F9',
+                                    color: tableColors.cellText,
+                                    borderBottom: `1px solid ${table.cellBorder}`,
                                     display: 'flex',
                                     alignItems: 'center'
                                 },
                                 '& .MuiDataGrid-footerContainer': {
                                     minHeight: '40px',
                                     height: '40px',
-                                    borderTop: '1px solid #F1F5F9',
+                                    borderTop: `1px solid ${table.cellBorder}`,
                                 },
                                 '& .MuiTablePagination-root': {
                                     fontSize: '0.7rem',

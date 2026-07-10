@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useClientesPorProducto } from '../hooks/useClientesPorProducto'
 import { useVentasProductos } from '../hooks/useVentasProducto'
+import { chart } from '../config/colors'
 
 import VentasPorProducto from '../components/ventas/VentasPorProducto'
 import VariacionMensualChart from '../components/ventas/VariacionMensualChart'
@@ -9,9 +10,6 @@ import VentasTotalesPorPeriodo from '../components/ventas/VentasTotalesPorPeriod
 import DistribucionDeVentasChart from '../components/ventas/DistribucionDeVentasChart'
 import TopProductosMasVendidos from '../components/ventas/TopProductosVentasMasVendido2'
 import TopProductosMenosVendidos from '../components/ventas/TopProductosVentasMenosVendidos2'
-
-const COLORS_TOP = ['#0F172A', '#334155', '#64748B', '#94A3B8', '#CBD5E1']
-const COLORS_BOTTOM = ['#FF6600', '#FF983F', '#FFB347', '#FFC876', '#FFE0A3']
 
 export default function VentasProductoPage() {
     const [selectedProductCode, setSelectedProductCode] = useState<string>('');
@@ -27,8 +25,8 @@ export default function VentasProductoPage() {
             .map((item, i) => ({
                 id: i,
                 value: item.Total_USD,
-                label: item.Descripcion_Articulo || item.Codigo_Articulo,
-                color: COLORS_TOP[i],
+                label: item.Descripcion_Articulo || item.Ref_Articulo || item.Codigo_Articulo,
+                color: chart.topProducts[i],
             }));
     }, [ventasData]);
 
@@ -41,8 +39,8 @@ export default function VentasProductoPage() {
             .map((item, i) => ({
                 id: i,
                 value: item.Total_USD,
-                label: item.Descripcion_Articulo || item.Codigo_Articulo,
-                color: COLORS_BOTTOM[i],
+                label: item.Descripcion_Articulo || item.Ref_Articulo || item.Codigo_Articulo,
+                color: chart.bottomProducts[i],
             }));
     }, [ventasData]);
 
@@ -51,7 +49,7 @@ export default function VentasProductoPage() {
     const selectedProductName = useMemo(() => {
         if (!selectedProductCode || !ventasData) return '';
         const item = ventasData.find(i => i.Codigo_Articulo === selectedProductCode);
-        return item ? (item.Descripcion_Articulo || item.Codigo_Articulo) : '';
+        return item ? (item.Descripcion_Articulo || item.Ref_Articulo || item.Codigo_Articulo) : '';
     }, [selectedProductCode, ventasData]);
 
     return (
