@@ -6,9 +6,10 @@ import { Search, ChevronDown, X } from 'lucide-react';
 import { useInventario } from '../../hooks/useInventario';
 import { useTotalInventario } from '../../hooks/useTotalInventario';
 import DownloadCsvButton, { sanitizeFilename } from '../utils/DownloadCsvButton';
+import { brand, surface, status, table, search, toggle, component, custom } from '../../config/colors';
 
 const columns = [
-    { field: 'Codigo_Articulo', headerName: 'Código', flex: 1, minWidth: 100 },
+    { field: 'Ref_Articulo', headerName: 'Ref', flex: 1, minWidth: 100 },
     { field: 'Nombre_Articulo', headerName: 'Artículo', flex: 2, minWidth: 180 },
     { field: 'Codigo_Almacen', headerName: 'Cód. Almacén', flex: 1, minWidth: 100 },
     { field: 'Nombre_Almacen', headerName: 'Almacén', flex: 1.2, minWidth: 120 },
@@ -31,7 +32,7 @@ const columns = [
             sixMonthsFromNow.setMonth(sixMonthsFromNow.getMonth() + 6);
             const isSoon = expiry <= sixMonthsFromNow;
             return (
-                <span style={{ color: isSoon ? '#EF4444' : 'inherit', fontWeight: isSoon ? 600 : 'inherit' }}>
+                <span style={{ color: isSoon ? status.errorText : 'inherit', fontWeight: isSoon ? 600 : 'inherit' }}>
                     {expiry.toLocaleDateString('es-VE', { year: 'numeric', month: '2-digit', day: '2-digit' })}
                 </span>
             );
@@ -77,7 +78,7 @@ const columns = [
         renderCell: (params: any) => {
             const margen = params.value;
             return (
-                <strong style={{ color: margen >= 0 ? '#16a34a' : '#dc2626' }}>
+                <strong style={{ color: margen >= 0 ? status.success : status.error }}>
                     {margen.toFixed(1)}%
                 </strong>
             );
@@ -170,14 +171,13 @@ export default function InventarioMainList() {
                     flex: 1,
                     display: 'flex',
                     flexDirection: 'column',
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: surface.white,
                     borderRadius: '20px',
-                    border: '1px solid #E0E4E8',
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.04)',
+                    border: `1px solid ${table.paperBorder}`,
+                    boxShadow: `0 10px 25px ${component.paperShadow}`,
                     overflow: 'hidden'
-                }}
-            >
-                {/* Title */}
+                }}>
+            {/* Title */}
                 <div className="flex items-center justify-between px-4 pt-4 pb-2 flex-shrink-0">
                     <h3 className="text-sm font-bold text-brand-orange uppercase tracking-wider">
                         Inventario
@@ -188,7 +188,7 @@ export default function InventarioMainList() {
                             anchorEl={anchorElAlmacen}
                             open={Boolean(anchorElAlmacen)}
                             onClose={() => setAnchorElAlmacen(null)}
-                            slotProps={{ paper: { sx: { borderRadius: '12px', mt: 1, boxShadow: '0 10px 25px rgba(0,0,0,0.1)', border: '1px solid #E0E4E8' } } }}
+                            slotProps={{ paper: { sx: { borderRadius: '12px', mt: 1, boxShadow: `0 10px 25px ${component.menuShadow}`, border: `1px solid ${table.paperBorder}` } } }}
                         >
                             <MenuItem onClick={() => { setSelectedAlmacen(''); setAnchorElAlmacen(null); }}>Todos</MenuItem>
                             {uniqueAlmacenes.map(almacen => (
@@ -207,13 +207,13 @@ export default function InventarioMainList() {
                                     }}
                                     size="small"
                                     sx={{
-                                        '& .MuiSwitch-switchBase.Mui-checked': { color: '#FF6600' },
-                                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { backgroundColor: '#FF6600' },
+                                        '& .MuiSwitch-switchBase.Mui-checked': { color: brand.orange },
+                                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { backgroundColor: brand.orange },
                                     }}
                                 />
                             }
                             label={
-                                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: showVencido ? '#FF6600' : '#A0AEC0' }}>
+                                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: showVencido ? brand.orange : toggle.labelDefault }}>
                                     Vencido
                                 </span>
                             }
@@ -233,14 +233,14 @@ export default function InventarioMainList() {
                             display: 'flex',
                             alignItems: 'center',
                             width: { xs: '100%', sm: 260 },
-                            backgroundColor: '#F9FAFB',
+                            backgroundColor: surface.page,
                             borderRadius: '12px',
-                            border: '1px solid #E0E4E8',
+                            border: `1px solid ${table.paperBorder}`,
                             transition: 'all 0.2s',
-                            '&:focus-within': { borderColor: '#FF6600', boxShadow: '0 4px 12px rgba(255,102,0,0.08)' }
+                            '&:focus-within': { borderColor: brand.orange, boxShadow: `0 4px 12px ${search.focusShadow}` }
                         }}
                     >
-                        <Search size={18} color="#A0AEC0" style={{ marginRight: '10px' }} />
+                        <Search size={18} color={toggle.labelDefault} style={{ marginRight: '10px' }} />
                         <InputBase
                             placeholder="Buscar productos..."
                             value={searchText}
@@ -248,7 +248,7 @@ export default function InventarioMainList() {
                             sx={{ fontSize: '0.9rem', flex: 1, fontWeight: 500 }}
                         />
                         {searchText && (
-                            <X size={16} color="#A0AEC0" style={{ cursor: 'pointer' }} onClick={() => setSearchText('')} />
+                            <X size={16} color={toggle.labelDefault} style={{ cursor: 'pointer' }} onClick={() => setSearchText('')} />
                         )}
                     </Paper>
 
@@ -260,14 +260,14 @@ export default function InventarioMainList() {
                             display: 'flex',
                             alignItems: 'center',
                             width: { xs: '100%', sm: 200 },
-                            backgroundColor: '#F9FAFB',
+                            backgroundColor: surface.page,
                             borderRadius: '12px',
-                            border: '1px solid #E0E4E8',
+                            border: `1px solid ${table.paperBorder}`,
                             transition: 'all 0.2s',
-                            '&:focus-within': { borderColor: '#FF6600', boxShadow: '0 4px 12px rgba(255,102,0,0.08)' }
+                            '&:focus-within': { borderColor: brand.orange, boxShadow: `0 4px 12px ${search.focusShadow}` }
                         }}
                     >
-                        <Search size={18} color="#A0AEC0" style={{ marginRight: '10px' }} />
+                        <Search size={18} color={toggle.labelDefault} style={{ marginRight: '10px' }} />
                         <InputBase
                             placeholder="Buscar lote..."
                             value={loteSearch}
@@ -275,7 +275,7 @@ export default function InventarioMainList() {
                             sx={{ fontSize: '0.9rem', flex: 1, fontWeight: 500 }}
                         />
                         {loteSearch && (
-                            <X size={16} color="#A0AEC0" style={{ cursor: 'pointer' }} onClick={() => setLoteSearch('')} />
+                            <X size={16} color={toggle.labelDefault} style={{ cursor: 'pointer' }} onClick={() => setLoteSearch('')} />
                         )}
                     </Paper>
 
@@ -287,7 +287,7 @@ export default function InventarioMainList() {
                                 setLoteSearch('');
                                 setSelectedAlmacen('');
                             }}
-                            sx={{ color: '#718096', textTransform: 'none', fontWeight: 600, fontSize: '0.85rem', '&:hover': { color: '#FF6600' }, alignSelf: { xs: 'flex-start', sm: 'center' } }}
+                            sx={{ color: component.clearButtonText, textTransform: 'none', fontWeight: 600, fontSize: '0.85rem', '&:hover': { color: brand.orange }, alignSelf: { xs: 'flex-start', sm: 'center' } }}
                         >
                             Limpiar
                         </Button>
@@ -301,14 +301,14 @@ export default function InventarioMainList() {
                         variant="outlined"
                         onClick={(e) => setAnchorElAlmacen(e.currentTarget)}
                         sx={{
-                            backgroundColor: '#FFFFFF',
-                            borderColor: selectedAlmacen ? '#FF6600' : '#E0E4E8',
-                            color: selectedAlmacen ? '#FF6600' : '#4A5568',
+                            backgroundColor: surface.white,
+                            borderColor: selectedAlmacen ? brand.orange : table.paperBorder,
+                            color: selectedAlmacen ? brand.orange : custom.cellTextAlt,
                             borderRadius: '10px',
                             textTransform: 'none',
                             fontWeight: 600,
                             px: 2,
-                            '&:hover': { backgroundColor: '#FFF', borderColor: '#FF6600' },
+                            '&:hover': { backgroundColor: component.almacenButtonHoverBg, borderColor: brand.orange },
                             alignSelf: { xs: 'flex-start', sm: 'center' }
                         }}
                     >
@@ -326,14 +326,14 @@ export default function InventarioMainList() {
                         mb: 2,
                         display: 'flex',
                         flexDirection: 'column',
-                        backgroundColor: '#FFFFFF',
+                        backgroundColor: surface.white,
                         borderRadius: '14px',
-                        border: '1px solid #E0E4E8',
+                        border: `1px solid ${table.paperBorder}`,
                         overflow: 'hidden',
                     }}
                 >
                     {error ? (
-                        <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: '#EF4444', fontSize: '0.9rem' }}>
+                        <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: status.errorText, fontSize: '0.9rem' }}>
                             {error}
                         </div>
                     ) : (
@@ -354,17 +354,17 @@ export default function InventarioMainList() {
                                 flex: 1,
                                 border: 'none',
                                 '& .MuiDataGrid-columnHeaders': {
-                                    borderBottom: '1px solid #F1F3F5',
+                                    borderBottom: `1px solid ${custom.headerBorderAlt}`,
                                     fontSize: '0.6rem',
                                     fontWeight: 600,
-                                    color: '#2D3748',
+                                    color: custom.headerTextAlt,
                                     textTransform: 'uppercase',
                                     letterSpacing: '0.3px'
                                 },
                                 '& .MuiDataGrid-cell': {
-                                    borderBottom: '1px solid #F1F3F5',
+                                    borderBottom: `1px solid ${custom.headerBorderAlt}`,
                                     fontSize: '0.65rem',
-                                    color: '#4A5568',
+                                    color: custom.cellTextAlt,
                                     py: 1
                                 },
                                 '& .MuiDataGrid-columnSeparator': { display: 'none' },
@@ -391,26 +391,26 @@ export default function InventarioMainList() {
                         flexWrap: 'wrap',
                         alignItems: 'center',
                         gap: { xs: 2, sm: 2, lg: 4 },
-                        backgroundColor: '#FFFFFF',
+                        backgroundColor: surface.white,
                         borderRadius: '20px',
-                        border: '1px solid #E0E4E8',
-                        boxShadow: '0 10px 25px rgba(0,0,0,0.04)',
+                        border: `1px solid ${table.paperBorder}`,
+                        boxShadow: `0 10px 25px ${component.paperShadow}`,
                         fontSize: { xs: '0.8rem', sm: '0.85rem' },
                         fontWeight: 600,
-                        color: '#4A5568',
+                        color: custom.cellTextAlt,
                         flexShrink: 0,
                     }}
                 >
                     <Box sx={{ width: { xs: '100%', sm: '100%', lg: 'auto' }, textAlign: { xs: 'center', sm: 'left', lg: 'left' }, mb: { xs: 0.5, sm: 0.5, lg: 0 }, mr: { lg: 'auto' } }}>
-                        <span style={{ color: '#FF6600', fontWeight: 800, fontSize: '0.9rem', letterSpacing: '0.3px' }}>TOTALES</span>
+                        <span style={{ color: brand.orange, fontWeight: 800, fontSize: '0.9rem', letterSpacing: '0.3px' }}>TOTALES</span>
                     </Box>
 
-                    <Box sx={{ display: { xs: 'none', lg: 'block' }, width: '1px', height: 28, backgroundColor: '#E0E4E8' }} />
+                    <Box sx={{ display: { xs: 'none', lg: 'block' }, width: '1px', height: 28, backgroundColor: table.paperBorder }} />
 
                     <Box sx={{ width: { xs: '100%', sm: 'calc(50% - 8px)', lg: 'auto' } }}>
                         <Box sx={{ display: 'flex', justifyContent: { xs: 'space-between', sm: 'flex-start' }, flexDirection: 'row', gap: 4 }}>
                             <span style={{ whiteSpace: 'nowrap' }}>Unidades:</span>
-                            <strong style={{ fontSize: '0.95rem', color: '#2D3748' }}>
+                            <strong style={{ fontSize: '0.95rem', color: custom.headerTextAlt }}>
                                 {hasActiveFilters
                                     ? totals.sumUnidades.toLocaleString('en-US')
                                     : (aggregateTotal?.Total_Unidades_Fisicas || 0).toLocaleString('en-US')}
@@ -418,23 +418,23 @@ export default function InventarioMainList() {
                         </Box>
                     </Box>
 
-                    <Box sx={{ display: { xs: 'none', lg: 'block' }, width: '1px', height: 28, backgroundColor: '#E0E4E8' }} />
+                    <Box sx={{ display: { xs: 'none', lg: 'block' }, width: '1px', height: 28, backgroundColor: table.paperBorder }} />
 
                     <Box sx={{ width: { xs: '100%', sm: 'calc(50% - 8px)', lg: 'auto' } }}>
                         <Box sx={{ display: 'flex', justifyContent: { xs: 'space-between', sm: 'flex-start' }, flexDirection: 'row', gap: 4 }}>
                             <span style={{ whiteSpace: 'nowrap' }}>Próx. Venc:</span>
-                            <strong style={{ fontSize: '0.95rem', color: totals.nearestExpiry && totals.nearestExpiry <= new Date() ? '#EF4444' : '#2D3748' }}>
+                            <strong style={{ fontSize: '0.95rem', color: totals.nearestExpiry && totals.nearestExpiry <= new Date() ? status.errorText : custom.headerTextAlt }}>
                                 {formatExpiry(totals.nearestExpiry)}
                             </strong>
                         </Box>
                     </Box>
 
-                    <Box sx={{ display: { xs: 'none', lg: 'block' }, width: '1px', height: 28, backgroundColor: '#E0E4E8' }} />
+                    <Box sx={{ display: { xs: 'none', lg: 'block' }, width: '1px', height: 28, backgroundColor: table.paperBorder }} />
 
                     <Box sx={{ width: { xs: '100%', sm: 'calc(50% - 8px)', lg: 'auto' } }}>
                         <Box sx={{ display: 'flex', justifyContent: { xs: 'space-between', sm: 'flex-start' }, flexDirection: 'row', gap: 4 }}>
                             <span style={{ whiteSpace: 'nowrap' }}>Total Venta:</span>
-                            <strong style={{ fontSize: '0.95rem', color: '#2D3748' }}>
+                            <strong style={{ fontSize: '0.95rem', color: custom.headerTextAlt }}>
                                 ${(hasActiveFilters
                                     ? totals.sumTotalVenta
                                     : (aggregateTotal?.Valor_Total_Venta_USD || 0)
@@ -443,12 +443,12 @@ export default function InventarioMainList() {
                         </Box>
                     </Box>
 
-                    <Box sx={{ display: { xs: 'none', lg: 'block' }, width: '1px', height: 28, backgroundColor: '#E0E4E8' }} />
+                    <Box sx={{ display: { xs: 'none', lg: 'block' }, width: '1px', height: 28, backgroundColor: table.paperBorder }} />
 
                     <Box sx={{ width: { xs: '100%', sm: 'calc(50% - 8px)', lg: 'auto' } }}>
                         <Box sx={{ display: 'flex', justifyContent: { xs: 'space-between', sm: 'flex-start' }, flexDirection: 'row', gap: 4 }}>
                             <span style={{ whiteSpace: 'nowrap' }}>Total Costo:</span>
-                            <strong style={{ fontSize: '0.95rem', color: '#2D3748' }}>
+                            <strong style={{ fontSize: '0.95rem', color: custom.headerTextAlt }}>
                                 ${(hasActiveFilters
                                     ? totals.sumTotalCosto
                                     : (aggregateTotal?.Valor_Total_Costo_USD || 0)

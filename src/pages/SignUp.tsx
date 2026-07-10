@@ -92,7 +92,7 @@ export default function SignUpPage() {
         <button
           type="submit"
           disabled={loading}
-          className="h-10 bg-brand-orange text-white rounded-lg text-sm font-semibold hover:bg-orange-600 transition-colors disabled:opacity-50"
+          className="h-10 bg-brand-orange text-white rounded-lg text-sm font-semibold hover:bg-amber-500 transition-colors disabled:opacity-50"
         >
           {loading ? 'Registrando...' : 'Crear cuenta'}
         </button>

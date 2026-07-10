@@ -1,5 +1,6 @@
 import { motion } from "framer-motion"
 import { ReactElement } from "react"
+import { component } from "../../config/colors"
 
 interface TableCardProps {
     title: string,
@@ -15,7 +16,7 @@ export default function TableCard({ title, subtitle, graph, legend, legendOrient
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.32, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            whileHover={{ boxShadow: '0 8px 28px rgba(26,42,94,0.07)' }}
+            whileHover={{ boxShadow: component.cardShadow }}
             className="chart-card flex flex-col h-full w-full"
         >
             <div className="flex-[1] flex items-start justify-between min-h-0 flex-col gap-0.5">

@@ -4,10 +4,10 @@ import { getContrastColor } from '../../utils/getContrastColor'
 import { formatCompact } from '../../utils/formatters'
 import GraphCard from '../utils/graphCard'
 import { ClientePorProducto } from '../../types/ventas'
+import { chart, brand } from '../../config/colors'
 
-// Brand colors for the top 5 clients
-const TOP_COLORS = ['#0F172A', '#334155', '#64748B', '#94A3B8', '#E2E8F0']
-const OTHERS_COLOR = '#FF6600' // Neutral slate for "Otros"
+const TOP_COLORS = chart.topProducts
+const OTHERS_COLOR = brand.orange
 
 interface Props {
     data: ClientePorProducto[];
@@ -17,18 +17,14 @@ interface Props {
 
 export default function DistribucionDeVentasChart({ data = [], period, selectedProductName }: Props) {
 
-    // Logic for Top 5 + Otros
     const chartData = useMemo(() => {
         if (!data || data.length === 0) return [];
 
-        // 1. Sort clients descending by Total_USD
         const sortedClients = [...data].sort((a, b) => Number(b.Total_USD) - Number(a.Total_USD));
 
-        // 2. Separate Top 5 and the rest
         const top5 = sortedClients.slice(0, 5);
         const theRest = sortedClients.slice(5);
 
-        // 3. Map Top 5 to the chart format
         const formattedData = top5.map((client, index) => ({
             id: index,
             label: client.Nombre_Cliente,
@@ -36,7 +32,6 @@ export default function DistribucionDeVentasChart({ data = [], period, selectedP
             color: TOP_COLORS[index % TOP_COLORS.length]
         }));
 
-        // 4. Sum up the rest into an "Otros" slice
         if (theRest.length > 0) {
             const othersTotal = theRest.reduce((sum, client) => sum + Number(client.Total_USD), 0);
             formattedData.push({

@@ -2,11 +2,11 @@ import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import DailyGoalsChart from './DailyGoalsChart'
 
-// MUI & Icons Imports
 import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
 import { InputBase, Paper, Stack, alpha, Button } from '@mui/material';
 import { Search, X, Eye } from 'lucide-react';
 import DownloadCsvButton, { sanitizeFilename } from '../utils/DownloadCsvButton';
+import { brand, surface, table, search, slate } from '../../config/colors';
 
 const MONTH_NAMES = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -107,12 +107,12 @@ export default function VentasUnidadesSection({
 
     const columns: GridColDef[] = [
         {
-            field: 'Codigo_Articulo',
-            headerName: 'Código',
+            field: 'Ref_Articulo',
+            headerName: 'Ref',
             flex: 0.8,
             minWidth: 110,
             renderCell: (params) => (
-                <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#475569', fontWeight: 600 }}>
+                <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: table.cellText, fontWeight: 600 }}>
                     {params.value}
                 </span>
             ),
@@ -136,7 +136,7 @@ export default function VentasUnidadesSection({
             flex: 1,
             minWidth: 110,
             renderCell: (params) => (
-                <strong style={{ color: '#1e293b' }}>
+                <strong style={{ color: slate[800] }}>
                     ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </strong>
             )
@@ -159,12 +159,12 @@ export default function VentasUnidadesSection({
                         minWidth: 'auto',
                         p: '4px',
                         borderRadius: '8px',
-                        backgroundColor: selectedProduct === params.row.Codigo_Articulo ? '#FF6600' : 'transparent',
-                        borderColor: selectedProduct === params.row.Codigo_Articulo ? '#FF6600' : '#E2E8F0',
-                        color: selectedProduct === params.row.Codigo_Articulo ? '#FFF' : '#64748B',
+                        backgroundColor: selectedProduct === params.row.Codigo_Articulo ? brand.orange : 'transparent',
+                        borderColor: selectedProduct === params.row.Codigo_Articulo ? brand.orange : slate[200],
+                        color: selectedProduct === params.row.Codigo_Articulo ? surface.white : slate[500],
                         '&:hover': {
-                            backgroundColor: selectedProduct === params.row.Codigo_Articulo ? '#E65C00' : '#F1F5F9',
-                            borderColor: selectedProduct === params.row.Codigo_Articulo ? '#E65C00' : '#CBD5E1',
+                            backgroundColor: selectedProduct === params.row.Codigo_Articulo ? brand.orangeHover : slate[100],
+                            borderColor: selectedProduct === params.row.Codigo_Articulo ? brand.orangeHover : slate[300],
                         }
                     }}
                 >
@@ -268,13 +268,13 @@ export default function VentasUnidadesSection({
                                 display: 'flex',
                                 alignItems: 'center',
                                 width: '100%',
-                                backgroundColor: '#FFFFFF',
+                                backgroundColor: search.bg,
                                 borderRadius: '10px',
-                                border: '1px solid #E0E4E8',
-                                '&:focus-within': { borderColor: '#FF6600' }
+                                border: `1px solid ${search.border}`,
+                                '&:focus-within': { borderColor: search.focusBorder }
                             }}
                         >
-                            <Search size={16} color="#A0AEC0" style={{ marginRight: '8px' }} />
+                            <Search size={16} color={search.iconColor} style={{ marginRight: '8px' }} />
                             <InputBase
                                 placeholder="Buscar artículo..."
                                 value={searchText}
@@ -284,7 +284,7 @@ export default function VentasUnidadesSection({
                             {searchText && (
                                 <X
                                     size={16}
-                                    color="#A0AEC0"
+                                    color={search.clearColor}
                                     style={{ cursor: 'pointer' }}
                                     onClick={() => setSearchText('')}
                                 />
@@ -298,10 +298,10 @@ export default function VentasUnidadesSection({
                             flex: 1,
                             minHeight: 0,
                             width: '100%',
-                            backgroundColor: '#FFFFFF',
+                            backgroundColor: surface.white,
                             borderRadius: '16px',
                             p: 1,
-                            border: '1px solid #E0E4E8',
+                            border: `1px solid ${table.paperBorder}`,
                             display: 'flex',
                             flexDirection: 'column'
                         }}
@@ -326,23 +326,23 @@ export default function VentasUnidadesSection({
                             sx={{
                                 border: 'none',
                                 '& .MuiDataGrid-columnHeaders': {
-                                    backgroundColor: '#f8fafc',
+                                    backgroundColor: table.headerBg,
                                     fontSize: '0.7rem',
                                     fontWeight: 800,
-                                    color: '#1e293b',
+                                    color: table.headerText,
                                     textTransform: 'uppercase',
                                 },
                                 '& .MuiDataGrid-cell': {
                                     fontSize: '0.75rem',
-                                    color: '#475569',
-                                    borderBottom: '1px solid #F1F5F9',
+                                    color: table.cellText,
+                                    borderBottom: `1px solid ${table.cellBorder}`,
                                     display: 'flex',
                                     alignItems: 'center'
                                 },
                                 '& .MuiDataGrid-footerContainer': {
                                     minHeight: '40px',
                                     height: '40px',
-                                    borderTop: '1px solid #F1F5F9',
+                                    borderTop: `1px solid ${table.footerBorder}`,
                                 },
                                 '& .MuiTablePagination-root': {
                                     fontSize: '0.7rem',

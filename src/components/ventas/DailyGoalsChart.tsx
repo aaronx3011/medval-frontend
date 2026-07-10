@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 import { LineChart } from '@mui/x-charts/LineChart';
 import GraphCard from '../utils/graphCard';
 import { useDetalleProductoMensualFechas } from '../../hooks/useDetalleProductoMensualFecha';
+import { brand, axis } from '../../config/colors'
 
-// Define the props that the parent (VentasUnidadesSection) is passing down
 interface DailyGoalsChartProps {
     selectedProduct: string | null;
     fromYear: string;
@@ -22,18 +22,15 @@ export default function DailyGoalsChart({
     period
 }: DailyGoalsChartProps) {
 
-    // Fetch the detailed data
     const { data: apiResponse, isLoading, error } = useDetalleProductoMensualFechas(
         fromYear, fromMonth, toYear, toMonth, selectedProduct
     );
 
-    // Transform and map data for the MUI LineChart (Cumulative Sum)
     const chartData = useMemo(() => {
         if (!apiResponse?.data || apiResponse.data.length === 0) {
             return { labels: [], usd: [], unidades: [] };
         }
 
-        // 1. Sort the data chronologically (oldest Anio/Mes to newest Anio/Mes)
         const sortedData = [...apiResponse.data].sort((a, b) => {
             if (a.Anio === b.Anio) return a.Mes - b.Mes;
             return a.Anio - b.Anio;
@@ -43,15 +40,12 @@ export default function DailyGoalsChart({
         const usd: number[] = [];
         const unidades: number[] = [];
 
-        // 2. Calculate the cumulative sum (running total)
         let accumulatedUsd = 0;
         let accumulatedUnidades = 0;
 
         sortedData.forEach((item) => {
-            // Create a short label like "1/26" for Jan 2026
             labels.push(`${item.Mes}/${item.Anio.toString().slice(-2)}`);
 
-            // Add the current month's value to the running total
             accumulatedUsd += item.Total_USD;
             accumulatedUnidades += item.Total_Unidades;
 
@@ -82,7 +76,7 @@ export default function DailyGoalsChart({
                             {
                                 data: chartData.usd,
                                 label: 'Valor ($)',
-                                color: '#1a2a5e',
+                                color: brand.navy,
                                 showMark: false,
                                 area: true,
                                 curve: 'catmullRom',
@@ -92,7 +86,7 @@ export default function DailyGoalsChart({
                             {
                                 data: chartData.unidades,
                                 label: 'Unidades',
-                                color: '#e96c2a',
+                                color: brand.orangeSecondary,
                                 showMark: false,
                                 area: true,
                                 curve: 'catmullRom',
@@ -104,12 +98,12 @@ export default function DailyGoalsChart({
                             {
                                 data: chartData.labels,
                                 scaleType: 'band',
-                                tickLabelStyle: { fontSize: 10, fill: '#9ca3af' },
+                                tickLabelStyle: { fontSize: 10, fill: axis.tickLabel },
                             }
                         ]}
                         yAxis={[
                             {
-                                tickLabelStyle: { fontSize: 10, fill: '#9ca3af' },
+                                tickLabelStyle: { fontSize: 10, fill: axis.tickLabel },
                                 valueFormatter: (v: number) =>
                                     new Intl.NumberFormat('en-US', {
                                         notation: "compact",
@@ -121,9 +115,9 @@ export default function DailyGoalsChart({
                         slotProps={{ legend: { hidden: true } }}
                         margin={{ left: 52, right: 12, top: 8, bottom: 28 }}
                         sx={{
-                            '& .MuiChartsAxis-line': { stroke: '#e2e8f0' },
-                            '& .MuiChartsAxis-tick': { stroke: '#e2e8f0' },
-                            '& .MuiChartsGrid-line': { stroke: '#f1f5f9', strokeDasharray: '4 3' },
+                            '& .MuiChartsAxis-line': { stroke: axis.line },
+                            '& .MuiChartsAxis-tick': { stroke: axis.line },
+                            '& .MuiChartsGrid-line': { stroke: axis.grid, strokeDasharray: '4 3' },
                         }}
                     />
                 )
@@ -133,11 +127,11 @@ export default function DailyGoalsChart({
                     <div className='flex items-center justify-center'>
                         <div className="flex items-center gap-4">
                             <span className="flex items-center gap-1.5 text-xs text-slate-500">
-                                <span className="w-5 h-0.5 bg-[#1a2a5e] inline-block rounded" />
+                                <span className="w-5 h-0.5 inline-block rounded" style={{ background: brand.navy }} />
                                 Valor Acumulado
                             </span>
                             <span className="flex items-center gap-1.5 text-xs text-slate-500">
-                                <span className="w-5 h-0.5 bg-[#e96c2a] inline-block rounded" />
+                                <span className="w-5 h-0.5 inline-block rounded" style={{ background: brand.orangeSecondary }} />
                                 Unidades Acumuladas
                             </span>
                         </div>

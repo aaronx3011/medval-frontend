@@ -110,7 +110,7 @@ export default function ConfigurationPage() {
                         <p className="text-slate-500 mb-4">No hay meta para {MONTH_NAMES[currentMonth - 1]} {currentYear}</p>
                         <button
                             onClick={() => setAddModalOpen(true)}
-                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-orange text-white text-sm font-medium hover:bg-orange-600 transition-colors"
+                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-orange text-white text-sm font-medium hover:bg-amber-500 transition-colors"
                         >
                             <Plus size={16} />
                             Crear Meta

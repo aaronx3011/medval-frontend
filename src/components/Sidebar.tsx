@@ -46,6 +46,7 @@ const navItems = [
             { id: 'users', label: 'Usuarios', path: '/configuration/users' },
             { id: 'patch-notes', label: 'Notas de Parche', path: '/configuration/patch-notes' },
             { id: 'issues', label: 'Reportar Problema', path: '/configuration/issues' },
+            { id: 'almacenes-excluidos', label: 'Almacenes Excluidos', path: '/configuration/almacenes-excluidos' },
         ]
     },
 ]
@@ -143,7 +144,7 @@ export default function Sidebar({ onLogout, isOpen, onClose }: { onLogout: () =>
                                                 end={sub.path === path}
                                                 onClick={onClose}
                                                 className={({ isActive }) =>
-                                                    `block py-2 px-3 text-xs rounded-lg transition-colors ${isActive ? 'text-brand-navy font-bold bg-orange-50' : 'text-slate-500 hover:text-brand-navy hover:bg-orange-50 hover:font-semibold'}`
+                                                    `block py-2 px-3 text-xs rounded-lg transition-colors ${isActive ? 'text-brand-navy font-bold bg-surface-muted' : 'text-slate-500 hover:text-brand-navy hover:bg-surface-muted hover:font-semibold'}`
                                                 }
                                             >
                                                 {sub.label}

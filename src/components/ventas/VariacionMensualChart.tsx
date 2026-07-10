@@ -2,9 +2,10 @@ import { useState, useMemo } from 'react'
 import GraphCardWithFilters from '../utils/graphCardWithFilters'
 import { BarChart } from '@mui/x-charts/BarChart'
 import { useProductoMensual } from '../../hooks/useProductoMensual'
+import { chart, axis } from '../../config/colors'
 
 const MONTH_NAMES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
-const MONTH_COLORS = ['#0f1b3d', '#1a2a5e', '#243a7a', '#2e4a99', '#3a5fcc', '#4a7ae0', '#5a99f0', '#6ab8f5', '#7ac8ff', '#8ad8ff', '#9ae8ff', '#aad8ff']
+const MONTH_COLORS = chart.monthColors
 
 interface DistribucionVentaProps {
     codigoArticulo: string;
@@ -16,17 +17,14 @@ export default function DistribucionVentaAnualPorProducto({ codigoArticulo, peri
     const { data: apiResponse, loading, error } = useProductoMensual(codigoArticulo)
     const [selectedYear, setSelectedYear] = useState<string>('')
 
-    // 1. Extract available years from the API data
     const availableYears = useMemo(() => {
         if (!apiResponse?.data || apiResponse.data.length === 0) return []
         const years = Array.from(new Set(apiResponse.data.map(d => d.Anio)))
-        return years.sort((a, b) => b - a) // Sort descending
+        return years.sort((a, b) => b - a)
     }, [apiResponse])
 
-    // 2. Set active year
     const activeYear = selectedYear ? parseInt(selectedYear) : (availableYears[0] || new Date().getFullYear())
 
-    // 3. Client-side mapping for the 12 months (re-runs instantly when year changes)
     const chartData = useMemo(() => {
         const monthsData = MONTH_NAMES.map(name => ({ name, value: 0 }))
 
@@ -35,7 +33,6 @@ export default function DistribucionVentaAnualPorProducto({ codigoArticulo, peri
 
             filteredData.forEach(item => {
                 if (item.Mes >= 1 && item.Mes <= 12) {
-                    // Defaulting to Total_USD. Change to Total_Unidades or Total_VES if needed.
                     monthsData[item.Mes - 1].value = item.Total_USD
                 }
             })
@@ -43,7 +40,6 @@ export default function DistribucionVentaAnualPorProducto({ codigoArticulo, peri
         return monthsData
     }, [apiResponse, activeYear])
 
-    // 4. Determine if there is actually any data to show
     const isEmpty = !apiResponse?.data || apiResponse.data.length === 0;
 
     const subtitle = period && selectedProductName
@@ -89,7 +85,7 @@ export default function DistribucionVentaAnualPorProducto({ codigoArticulo, peri
                         series={[
                             {
                                 data: chartData.map((c) => c.value),
-                                color: '#3d5a99',
+                                color: chart.barSeries,
                                 id: 'clients',
                             },
                         ]}
@@ -97,7 +93,7 @@ export default function DistribucionVentaAnualPorProducto({ codigoArticulo, peri
                             {
                                 data: chartData.map((c) => c.name),
                                 scaleType: 'band',
-                                tickLabelStyle: { fontSize: 9, fill: '#9ca3af' },
+                                tickLabelStyle: { fontSize: 9, fill: axis.tickLabel },
                                 colorMap: {
                                     type: 'ordinal',
                                     values: chartData.map((c) => c.name),
@@ -107,7 +103,7 @@ export default function DistribucionVentaAnualPorProducto({ codigoArticulo, peri
                         ]}
                         yAxis={[
                             {
-                                tickLabelStyle: { fontSize: 10, fill: '#9ca3af' },
+                                tickLabelStyle: { fontSize: 10, fill: axis.tickLabel },
                                 valueFormatter: (value) =>
                                     new Intl.NumberFormat('en-US', {
                                         notation: 'compact',
@@ -120,9 +116,9 @@ export default function DistribucionVentaAnualPorProducto({ codigoArticulo, peri
                         margin={{ left: 60, right: 8, top: 8, bottom: 32 }}
                         borderRadius={6}
                         sx={{
-                            '& .MuiChartsAxis-line': { stroke: '#e2e8f0' },
-                            '& .MuiChartsAxis-tick': { stroke: '#e2e8f0' },
-                            '& .MuiChartsGrid-line': { stroke: '#f1f5f9', strokeDasharray: '4 3' },
+                            '& .MuiChartsAxis-line': { stroke: axis.line },
+                            '& .MuiChartsAxis-tick': { stroke: axis.line },
+                            '& .MuiChartsGrid-line': { stroke: axis.grid, strokeDasharray: '4 3' },
                         }}
                     />
                 )

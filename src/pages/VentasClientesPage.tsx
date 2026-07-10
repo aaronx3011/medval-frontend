@@ -3,20 +3,18 @@ import { motion } from 'framer-motion';
 import { LineChart } from '@mui/x-charts/LineChart';
 import { ChevronDown } from 'lucide-react';
 
-// Hooks & Types
 import { useClientes } from '../hooks/useClientes';
 import { useDetalleVentasCliente } from '../hooks/useDetalleVentasClientes';
-import { useVentasAnualClientes } from '../hooks/useVentasAnualClientes'; // <-- Nuevo hook
+import { useVentasAnualClientes } from '../hooks/useVentasAnualClientes';
 import { Cliente } from '../types/clientes';
 
-// MUI components for the combobox
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 
-// Internal Components
 import ClientesConMayorCompraChart from '../components/ventas/ClientesConMayorCompraChart';
 import ProductosPorClienteTable from '../components/ventas/ProductoPorClienteTable';
 import GraphCardWithFilters from '../components/utils/graphCardWithFilters';
+import { brand, axis, slate, table } from '../config/colors';
 
 const MONTHS_LIST = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
@@ -123,7 +121,7 @@ export default function VentasClientesPage() {
                                                     style: {
                                                         fontSize: '0.75rem',
                                                         borderRadius: '9999px',
-                                                        backgroundColor: '#f8fafc',
+                                                        backgroundColor: table.headerBg,
                                                         height: '32px',
                                                         paddingTop: '2px',
                                                         paddingBottom: '2px'
@@ -131,9 +129,9 @@ export default function VentasClientesPage() {
                                                 }}
                                                 sx={{
                                                     '& .MuiOutlinedInput-root': {
-                                                        '& fieldset': { borderColor: '#e2e8f0' },
-                                                        '&:hover fieldset': { borderColor: '#cbd5e1' },
-                                                        '&.Mui-focused fieldset': { borderColor: '#FF6600' }
+                                                        '& fieldset': { borderColor: slate[200] },
+                                                        '&:hover fieldset': { borderColor: slate[300] },
+                                                        '&.Mui-focused fieldset': { borderColor: brand.orange }
                                                     }
                                                 }}
                                             />
@@ -165,7 +163,7 @@ export default function VentasClientesPage() {
                                         xAxis={[{
                                             scaleType: 'point',
                                             dataKey: 'x',
-                                            tickLabelStyle: { fill: '#94a3b8', fontSize: { xs: 8, lg: 11 } },
+                                            tickLabelStyle: { fill: axis.tickLabel, fontSize: { xs: 8, lg: 11 } },
                                             sx: {
                                                 '& .MuiChartsAxis-line': { stroke: 'transparent' },
                                                 '& .MuiChartsAxis-tick': { stroke: 'transparent' }
@@ -173,7 +171,7 @@ export default function VentasClientesPage() {
                                         }]}
                                         yAxis={[{
                                             valueFormatter: (v) => v.toLocaleString('es-ES'),
-                                            tickLabelStyle: { fill: '#94a3b8', fontSize: { xs: 8, lg: 11 } },
+                                            tickLabelStyle: { fill: axis.tickLabel, fontSize: { xs: 8, lg: 11 } },
                                             sx: {
                                                 '& .MuiChartsAxis-line': { stroke: 'transparent' },
                                                 '& .MuiChartsAxis-tick': { stroke: 'transparent' }
@@ -182,14 +180,14 @@ export default function VentasClientesPage() {
                                         series={[
                                             {
                                                 dataKey: 'unidades',
-                                                color: '#0F172A',
+                                                color: slate[900],
                                                 curve: 'monotoneX',
                                                 showMark: false,
                                                 area: false,
                                             },
                                             {
                                                 dataKey: 'usd',
-                                                color: '#ff6b00',
+                                                color: brand.orange,
                                                 curve: 'monotoneX',
                                                 showMark: false,
                                                 area: false,
@@ -198,7 +196,7 @@ export default function VentasClientesPage() {
                                         slotProps={{ legend: { hidden: true } }}
                                         margin={{ left: 45, right: 10, top: 10, bottom: 20 }}
                                         grid={{ horizontal: true }}
-                                        sx={{ '& .MuiChartsGrid-line': { stroke: '#f1f5f9', strokeWidth: 1.5 } }}
+                                        sx={{ '& .MuiChartsGrid-line': { stroke: axis.grid, strokeWidth: 1.5 } }}
                                     />
                                 ) : (
                                     <div className="absolute inset-0 flex items-center justify-center text-sm font-medium text-slate-400">
@@ -261,7 +259,7 @@ export default function VentasClientesPage() {
                                                     style: {
                                                         fontSize: '0.75rem',
                                                         borderRadius: '9999px',
-                                                        backgroundColor: '#f8fafc',
+                                                        backgroundColor: table.headerBg,
                                                         height: '32px',
                                                         paddingTop: '2px',
                                                         paddingBottom: '2px'
@@ -269,9 +267,9 @@ export default function VentasClientesPage() {
                                                 }}
                                                 sx={{
                                                     '& .MuiOutlinedInput-root': {
-                                                        '& fieldset': { borderColor: '#e2e8f0' },
-                                                        '&:hover fieldset': { borderColor: '#cbd5e1' },
-                                                        '&.Mui-focused fieldset': { borderColor: '#FF6600' }
+                                                        '& fieldset': { borderColor: slate[200] },
+                                                        '&:hover fieldset': { borderColor: slate[300] },
+                                                        '&.Mui-focused fieldset': { borderColor: brand.orange }
                                                     }
                                                 }}
                                             />
@@ -303,7 +301,7 @@ export default function VentasClientesPage() {
                                         xAxis={[{
                                             scaleType: 'point',
                                             dataKey: 'x',
-                                            tickLabelStyle: { fill: '#94a3b8', fontSize: { xs: 8, lg: 11 } },
+                                            tickLabelStyle: { fill: axis.tickLabel, fontSize: { xs: 8, lg: 11 } },
                                             sx: {
                                                 '& .MuiChartsAxis-line': { stroke: 'transparent' },
                                                 '& .MuiChartsAxis-tick': { stroke: 'transparent' }
@@ -311,7 +309,7 @@ export default function VentasClientesPage() {
                                         }]}
                                         yAxis={[{
                                             valueFormatter: (v) => v.toLocaleString('es-ES'),
-                                            tickLabelStyle: { fill: '#94a3b8', fontSize: { xs: 8, lg: 11 } },
+                                            tickLabelStyle: { fill: axis.tickLabel, fontSize: { xs: 8, lg: 11 } },
                                             sx: {
                                                 '& .MuiChartsAxis-line': { stroke: 'transparent' },
                                                 '& .MuiChartsAxis-tick': { stroke: 'transparent' }
@@ -320,14 +318,14 @@ export default function VentasClientesPage() {
                                         series={[
                                             {
                                                 dataKey: 'unidades',
-                                                color: '#0F172A',
+                                                color: slate[900],
                                                 curve: 'monotoneX',
                                                 showMark: false,
                                                 area: false,
                                             },
                                             {
                                                 dataKey: 'usd',
-                                                color: '#ff6b00',
+                                                color: brand.orange,
                                                 curve: 'monotoneX',
                                                 showMark: false,
                                                 area: false,
@@ -336,7 +334,7 @@ export default function VentasClientesPage() {
                                         slotProps={{ legend: { hidden: true } }}
                                         margin={{ left: 45, right: 10, top: 10, bottom: 20 }}
                                         grid={{ horizontal: true }}
-                                        sx={{ '& .MuiChartsGrid-line': { stroke: '#f1f5f9', strokeWidth: 1.5 } }}
+                                        sx={{ '& .MuiChartsGrid-line': { stroke: axis.grid, strokeWidth: 1.5 } }}
                                     />
                                 ) : (
                                     <div className="absolute inset-0 flex items-center justify-center text-sm font-medium text-slate-400">

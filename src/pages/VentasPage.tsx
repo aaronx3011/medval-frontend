@@ -13,8 +13,7 @@ import ArticuloVsVentas from '../components/ventas/ClientesDonut'
 import TopProductosMasVendidos from '../components/ventas/TopProductosMasVendidos'
 import TopProductosMenosVendidos from '../components/ventas/TopProductosMenosVendidos'
 
-// Complementary colors
-const OTHER_COLORS = ['#0F172A', '#334155', '#475569', '#64748B', '#94A3B8', '#CBD5E1']
+import { chart, brand, slate } from '../config/colors'
 
 const MONTH_NAMES = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -70,8 +69,8 @@ export default function VentasPage() {
             const othersValue = totalVentas - selectedValue;
 
             donutData = [
-                { id: 0, label: selectedItem.Descripcion_Articulo || selectedItem.Codigo_Articulo, value: selectedValue, color: '#FF6600' },
-                { id: 1, label: 'Otros Productos', value: othersValue, color: '#0F172A' } // Navy for contrast
+                { id: 0, label: selectedItem.Descripcion_Articulo || selectedItem.Ref_Articulo || selectedItem.Codigo_Articulo, value: selectedValue, color: brand.orange },
+                { id: 1, label: 'Otros Productos', value: othersValue, color: slate[900] }
             ];
         }
 
@@ -102,10 +101,10 @@ export default function VentasPage() {
             let colorIndex = 0;
             return rows.map((item, i) => {
                 const isSelected = item.Codigo_Articulo === selectedProduct;
-                const color = isSelected ? '#FF6600' : OTHER_COLORS[colorIndex++];
+                const color = isSelected ? brand.orange : chart.otherProducts[colorIndex++];
                 return {
                     id: i,
-                    label: item.Descripcion_Articulo || item.Codigo_Articulo,
+                    label: item.Descripcion_Articulo || item.Ref_Articulo || item.Codigo_Articulo,
                     value: Number(item.Total_USD),
                     color: color
                 };
@@ -131,7 +130,7 @@ export default function VentasPage() {
     const selectedProductName = useMemo(() => {
         if (!selectedProduct || !tableData) return '';
         const item = tableData.find((i: any) => i.Codigo_Articulo === selectedProduct);
-        return item ? (item.Descripcion_Articulo || item.Codigo_Articulo) : '';
+        return item ? (item.Descripcion_Articulo || item.Ref_Articulo || item.Codigo_Articulo) : '';
     }, [selectedProduct, tableData]);
 
     return (

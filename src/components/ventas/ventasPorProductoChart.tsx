@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { LineChart } from '@mui/x-charts/LineChart';
 import GraphCard from '../utils/graphCard';
-import { useProductoMensual } from '../../hooks/useProductoMensual'; // Adjust path if needed
+import { useProductoMensual } from '../../hooks/useProductoMensual';
+import { brand, axis } from '../../config/colors'
 
 interface VentasPorProductoChartProps {
     product: string;
@@ -10,16 +11,13 @@ interface VentasPorProductoChartProps {
 }
 
 export default function VentasPorProductoChart({ product, period, selectedProductName }: VentasPorProductoChartProps) {
-    // Uses the cached service to avoid double fetching
     const { data: apiResponse, loading, error } = useProductoMensual(product);
 
-    // Transform and accumulate data
     const chartData = useMemo(() => {
         if (!apiResponse?.data || apiResponse.data.length === 0) {
             return { labels: [], usd: [], unidades: [] };
         }
 
-        // 1. Sort the data chronologically (oldest Anio/Mes to newest Anio/Mes)
         const sortedData = [...apiResponse.data].sort((a, b) => {
             if (a.Anio === b.Anio) return a.Mes - b.Mes;
             return a.Anio - b.Anio;
@@ -29,12 +27,10 @@ export default function VentasPorProductoChart({ product, period, selectedProduc
         const usd: number[] = [];
         const unidades: number[] = [];
 
-        // 2. Calculate the cumulative sum (running total)
         let accumulatedUsd = 0;
         let accumulatedUnidades = 0;
 
         sortedData.forEach((item) => {
-            // Create a short label like "2/25" for Feb 2025
             labels.push(`${item.Mes}/${item.Anio.toString().slice(-2)}`);
 
             accumulatedUsd += item.Total_USD;
@@ -72,7 +68,7 @@ export default function VentasPorProductoChart({ product, period, selectedProduc
                             {
                                 data: chartData.usd,
                                 label: 'Valor (USD)',
-                                color: '#1a2a5e',
+                                color: brand.navy,
                                 showMark: false,
                                 area: true,
                                 curve: 'catmullRom',
@@ -80,7 +76,7 @@ export default function VentasPorProductoChart({ product, period, selectedProduc
                             {
                                 data: chartData.unidades,
                                 label: 'Unidades',
-                                color: '#e96c2a',
+                                color: brand.orangeSecondary,
                                 showMark: false,
                                 area: true,
                                 curve: 'catmullRom',
@@ -89,13 +85,13 @@ export default function VentasPorProductoChart({ product, period, selectedProduc
                         xAxis={[
                             {
                                 data: chartData.labels,
-                                scaleType: 'point', // 'point' aligns the Line markers directly with the string labels
-                                tickLabelStyle: { fontSize: 10, fill: '#9ca3af' },
+                                scaleType: 'point',
+                                tickLabelStyle: { fontSize: 10, fill: axis.tickLabel },
                             },
                         ]}
                         yAxis={[
                             {
-                                tickLabelStyle: { fontSize: 10, fill: '#9ca3af' },
+                                tickLabelStyle: { fontSize: 10, fill: axis.tickLabel },
                                 valueFormatter: (v: number) =>
                                     new Intl.NumberFormat('en-US', {
                                         notation: 'compact',
@@ -107,9 +103,9 @@ export default function VentasPorProductoChart({ product, period, selectedProduc
                         slotProps={{ legend: { hidden: true } }}
                         margin={{ left: 52, right: 12, top: 8, bottom: 28 }}
                         sx={{
-                            '& .MuiChartsAxis-line': { stroke: '#e2e8f0' },
-                            '& .MuiChartsAxis-tick': { stroke: '#e2e8f0' },
-                            '& .MuiChartsGrid-line': { stroke: '#f1f5f9', strokeDasharray: '4 3' },
+                            '& .MuiChartsAxis-line': { stroke: axis.line },
+                            '& .MuiChartsAxis-tick': { stroke: axis.line },
+                            '& .MuiChartsGrid-line': { stroke: axis.grid, strokeDasharray: '4 3' },
                         }}
                     />
                 )
@@ -119,11 +115,11 @@ export default function VentasPorProductoChart({ product, period, selectedProduc
                     <div className='flex items-center justify-center'>
                         <div className="flex items-center gap-4">
                             <span className="flex items-center gap-1.5 text-xs text-slate-500">
-                                <span className="w-5 h-0.5 bg-[#1a2a5e] inline-block rounded" />
+                                <span className="w-5 h-0.5 inline-block rounded" style={{ background: brand.navy }} />
                                 Valor
                             </span>
                             <span className="flex items-center gap-1.5 text-xs text-slate-500">
-                                <span className="w-5 h-0.5 bg-[#e96c2a] inline-block rounded" />
+                                <span className="w-5 h-0.5 inline-block rounded" style={{ background: brand.orangeSecondary }} />
                                 Unidades
                             </span>
                         </div>

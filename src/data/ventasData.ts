@@ -1,7 +1,6 @@
 import { KpiData } from "../types"
 import { VariacionMensual } from "../types"
-
-
+import { chart } from '../config/colors';
 
 export const PRODUCTS = [
     'MED-001', 'MED-002', 'MED-008', 'MED-011', 'MED-012',
@@ -47,10 +46,7 @@ export const rotacionData: Record<string, number[]> = {
     'MED-021': [7500, 3000, 3300, 2900, 1900, 1500, 2300, 14000, 3700, 3300, 1700],
 }
 
-export const PRODUCT_COLORS = [
-    '#6366f1', '#ef4444', '#f97316', '#eab308', '#22c55e',
-    '#14b8a6', '#8b5cf6', '#06b6d4', '#3b82f6', '#f59e0b',
-]
+export const PRODUCT_COLORS = chart.productColors
 
 export const scatterData = [
     { product: 'MED-001', price: 6, rotation: 180 },
@@ -71,20 +67,7 @@ export const scatterData = [
     { product: 'VALID-D', price: 35, rotation: 60 },
 ]
 
-export const donutData = [
-    { label: 'MED-034', value: 10.8, color: '#e09a3e' },
-    { label: 'MED-094', value: 11.5, color: '#ef4444' },
-    { label: 'MED-124', value: 2.14, color: '#f87171' },
-    { label: 'MED-022', value: 1.88, color: '#fb923c' },
-    { label: 'MED-032', value: 1.68, color: '#c084fc' },
-    { label: 'MED-038', value: 3.02, color: '#a78bfa' },
-    { label: 'MED-18', value: 1.48, color: '#60a5fa' },
-    { label: 'MED-008', value: 1.68, color: '#34d399' },
-    { label: 'MED-001', value: 6.01, color: '#4ade80' },
-    { label: 'MED-013', value: 9.11, color: '#86efac' },
-    { label: 'MED-015', value: 11.4, color: '#6ee7b7' },
-    { label: 'Others', value: 11.8, color: '#94a3b8' },
-]
+export const donutData = chart.donut.map(d => ({ ...d }))
 
 export const rankingData = [
     { product: 'MED-034', efficiency: 1500 },

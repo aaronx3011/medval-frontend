@@ -32,7 +32,7 @@ export default function DownloadCsvButton({ apiRef, filename }: Props) {
         <button
             onClick={handleDownload}
             title="Descargar CSV"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-brand-orange hover:bg-orange-50 transition-colors"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-brand-orange hover:bg-amber-50 transition-colors"
         >
             <Download size={16} />
         </button>

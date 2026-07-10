@@ -6,10 +6,12 @@ import { Search, X } from 'lucide-react'
 import GraphCardWithFilters from '../utils/graphCardWithFilters'
 import { apiClient } from '../../services/apiClient'
 import DownloadCsvButton, { sanitizeFilename } from '../utils/DownloadCsvButton'
+import { search as searchColors, table as tableColors, component as componentColors, status as statusColors, slate } from '../../config/colors'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface InventarioItem {
     Codigo_Articulo: string
+    Ref_Articulo: string
     Descripcion_Articulo: string
     Estado_Stock: string
     Proximo_Vencimiento: string
@@ -78,10 +80,10 @@ function ExpiringSoonBadge({ monthsLeft }: { monthsLeft: number }) {
                 ? 'text-red-600'
                 : urgent
                     ? 'text-red-500'
-                    : 'text-orange-500'
+                    : 'text-amber-500'
             }`}
         >
-            <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${expired ? 'bg-red-500' : urgent ? 'bg-red-400' : 'bg-orange-400'}`} />
+            <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${expired ? 'bg-red-500' : urgent ? 'bg-red-400' : 'bg-amber-400'}`} />
             {expired ? 'VENCIDO' : `VENCE ${monthsLeft} meses`}
         </span>
     )
@@ -138,8 +140,8 @@ const columns: GridColDef[] = [
         ),
     },
     {
-        field: 'Codigo_Articulo',
-        headerName: 'Código',
+        field: 'Ref_Articulo',
+        headerName: 'Ref',
         width: 100,
     },
     {
@@ -182,7 +184,7 @@ function Field({ label, value, highlight, color }: { label: string; value: strin
             <span
                 className="text-sm font-semibold text-right"
                 style={{
-                    color: color || (highlight ? (value.includes('CRITICO') || value.includes('VENCIDO') ? '#dc2626' : '#1e293b') : '#1e293b')
+                    color: color || (highlight ? (value.includes('CRITICO') || value.includes('VENCIDO') ? statusColors.error : slate[800]) : slate[800])
                 }}
             >
                 {value}
@@ -210,7 +212,7 @@ export default function NotificationsPanel() {
                 if (mounted) {
                     const filtered = json.data.filter(item => {
                         const { expiringSoon, lowStock } = getAlerts(item)
-                        return expiringSoon || lowStock
+                        return (expiringSoon || lowStock) && item.Stock_Total >= 0
                     })
                     const sorted = filtered.sort((a, b) => {
                         const aAlerts = getAlerts(a)
@@ -239,11 +241,10 @@ export default function NotificationsPanel() {
         setLotsLoading(true)
         const fetchLots = async () => {
             try {
-                const json: { data: LotInventoryItem[] } = await apiClient('/view/aaron_view_DetalleInventarioAlmacenLoteVencimientoDolarizado?limit=1000000')
+                const json: { data: LotInventoryItem[] } = await apiClient(`/inventario/lotes/${encodeURIComponent(selectedItem.Codigo_Articulo)}`)
                 if (!mounted) return
-                const filtered = json.data.filter(item => item.Codigo_Articulo === selectedItem.Codigo_Articulo)
                 const grouped: Record<string, GroupedLot> = {}
-                for (const item of filtered) {
+                for (const item of json.data) {
                     if (!grouped[item.Lote]) {
                         grouped[item.Lote] = { Lote: item.Lote, Unidades: 0, Fecha_Vencimiento: item.Fecha_Vencimiento, Almacenes: [] }
                     }
@@ -307,13 +308,13 @@ export default function NotificationsPanel() {
                     display: 'flex',
                     alignItems: 'center',
                     width: { xs: '100%', sm: '220px' },
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: searchColors.bg,
                     borderRadius: '10px',
-                    border: '1px solid #E0E4E8',
-                    '&:focus-within': { borderColor: '#FF6600' }
+                    border: `1px solid ${searchColors.border}`,
+                    '&:focus-within': { borderColor: searchColors.focusBorder }
                 }}
             >
-                <Search size={16} color="#A0AEC0" style={{ marginRight: '8px' }} />
+                <Search size={16} color={searchColors.iconColor} style={{ marginRight: '8px' }} />
                 <InputBase
                     placeholder="Buscar producto..."
                     value={searchText}
@@ -323,7 +324,7 @@ export default function NotificationsPanel() {
                 {searchText && (
                     <X
                         size={16}
-                        color="#A0AEC0"
+                        color={searchColors.clearColor}
                         style={{ cursor: 'pointer' }}
                         onClick={() => setSearchText('')}
                     />
@@ -348,7 +349,7 @@ export default function NotificationsPanel() {
     // ── Table slot ────────────────────────────────────────────────────────────
     const tableSlot = (
         <Box sx={{ height: '100%', width: '100%' }}>
-            <Paper elevation={0} sx={{ height: '100%', width: '100%', border: '1px solid #E0E4E8', borderRadius: '12px', overflow: 'hidden' }}>
+            <Paper elevation={0} sx={{ height: '100%', width: '100%', border: `1px solid ${tableColors.paperBorder}`, borderRadius: '12px', overflow: 'hidden' }}>
                 {isLoading ? (
                     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                         <CircularProgress />
@@ -381,24 +382,24 @@ export default function NotificationsPanel() {
                         sx={{
                             border: 'none',
                             '& .MuiDataGrid-columnHeaders': {
-                                backgroundColor: '#f8fafc',
+                                backgroundColor: tableColors.headerBg,
                                 fontSize: '0.7rem',
                                 fontWeight: 800,
-                                color: '#1e293b',
+                                color: tableColors.headerText,
                                 textTransform: 'uppercase',
-                                borderBottom: '1px solid #E0E4E8',
+                                borderBottom: `1px solid ${tableColors.paperBorder}`,
                             },
                             '& .MuiDataGrid-cell': {
                                 fontSize: '0.75rem',
-                                color: '#475569',
-                                borderBottom: '1px solid #F1F5F9',
+                                color: tableColors.cellText,
+                                borderBottom: `1px solid ${tableColors.cellBorder}`,
                                 display: 'flex',
                                 alignItems: 'center'
                             },
                             '& .MuiDataGrid-footerContainer': {
                                 minHeight: '40px',
                                 height: '40px',
-                                borderTop: '1px solid #F1F5F9',
+                                borderTop: `1px solid ${tableColors.footerBorder}`,
                             },
                             '& .MuiTablePagination-root': {
                                 fontSize: '0.7rem',
@@ -406,18 +407,18 @@ export default function NotificationsPanel() {
                             },
                             '& ::-webkit-scrollbar': { width: '6px', height: '6px' },
                             '& ::-webkit-scrollbar-thumb': {
-                                backgroundColor: alpha('#000', 0.1),
+                                backgroundColor: alpha(tableColors.scrollbarThumb.split("'")[1] || '#000', 0.1),
                                 borderRadius: '10px'
                             },
                         }}
-                        slotProps={{
-                            noRowsOverlay: {
-                                sx: {
-                                    fontSize: '0.8rem',
-                                    color: '#94a3b8',
+                            slotProps={{
+                                noRowsOverlay: {
+                                    sx: {
+                                        fontSize: '0.8rem',
+                                        color: componentColors.placeholder,
+                                    }
                                 }
-                            }
-                        }}
+                            }}
                     />
                 )}
             </Paper>
@@ -452,7 +453,7 @@ export default function NotificationsPanel() {
                             </div>
 
                             <div className="space-y-4">
-                                <Field label="Código" value={selectedItem.Codigo_Articulo} />
+                                <Field label="Ref" value={selectedItem.Ref_Articulo} />
                                 <Field label="Producto" value={selectedItem.Descripcion_Articulo} />
                                 <Field label="Stock Total" value={selectedItem.Stock_Total.toLocaleString()} />
                                 <Field
@@ -508,7 +509,7 @@ export default function NotificationsPanel() {
                                             label="Margen"
                                             value={`${margen.toFixed(1)}%`}
                                             highlight
-                                            color={margen >= 0 ? '#16a34a' : '#dc2626'}
+                                            color={margen >= 0 ? statusColors.success : statusColors.error}
                                         />
                                     );
                                 })()}
@@ -552,7 +553,7 @@ export default function NotificationsPanel() {
 
                             <button
                                 onClick={() => setSelectedItem(null)}
-                                className="w-full mt-6 px-4 py-2.5 rounded-xl bg-brand-orange text-white text-sm font-medium hover:bg-orange-600 transition-colors"
+                                className="w-full mt-6 px-4 py-2.5 rounded-xl bg-brand-orange text-white text-sm font-medium hover:bg-amber-500 transition-colors"
                             >
                                 Cerrar
                             </button>

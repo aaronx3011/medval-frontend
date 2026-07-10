@@ -1,6 +1,7 @@
 import { LineChart } from '@mui/x-charts/LineChart'
 import { dailyChartData } from '../../data/mockData'
 import GraphCard from '../utils/graphCard'
+import { brand, axis } from '../../config/colors'
 
 interface VentasTotalesPorPeriodoChartProps {
     product: string
@@ -23,7 +24,7 @@ export default function VentasTotalesPorPeriodoChart({ product }: VentasTotalesP
                         {
                             data: metasDiarias,
                             label: 'Monto Vendido',
-                            color: '#e96c2a',
+                            color: brand.orangeSecondary,
                             showMark: false,
                             area: true,
                             curve: 'catmullRom',
@@ -33,22 +34,22 @@ export default function VentasTotalesPorPeriodoChart({ product }: VentasTotalesP
                         {
                             data: xLabels,
                             scaleType: 'band',
-                            tickLabelStyle: { fontSize: 10, fill: '#9ca3af' },
+                            tickLabelStyle: { fontSize: 10, fill: axis.tickLabel },
                             tickInterval: (_val: unknown, i: number) => i % 5 === 0,
                         },
                     ]}
                     yAxis={[
                         {
-                            tickLabelStyle: { fontSize: 10, fill: '#9ca3af' },
+                            tickLabelStyle: { fontSize: 10, fill: axis.tickLabel },
                             valueFormatter: (v: number) => `${(v / 1000).toFixed(0)}k`,
                         },
                     ]}
                     slotProps={{ legend: { hidden: true } }}
                     margin={{ left: 52, right: 12, top: 8, bottom: 28 }}
                     sx={{
-                        '& .MuiChartsAxis-line': { stroke: '#e2e8f0' },
-                        '& .MuiChartsAxis-tick': { stroke: '#e2e8f0' },
-                        '& .MuiChartsGrid-line': { stroke: '#f1f5f9', strokeDasharray: '4 3' },
+                        '& .MuiChartsAxis-line': { stroke: axis.line },
+                        '& .MuiChartsAxis-tick': { stroke: axis.line },
+                        '& .MuiChartsGrid-line': { stroke: axis.grid, strokeDasharray: '4 3' },
                     }}
                 />
 

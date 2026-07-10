@@ -22,6 +22,7 @@ import ConfigurationPage from './pages/ConfigurationPage'
 import UserManagementPage from './pages/UserManagementPage'
 import PatchNotesPage from './pages/PatchNotesPage'
 import IssueReportsPage from './pages/IssueReportsPage'
+import AlmacenesExcluidosPage from './pages/AlmacenesExcluidosPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth()
@@ -89,6 +90,7 @@ function DashboardLayout() {
             <Route path="/configuration/users" element={<UserManagementPage />} />
             <Route path="/configuration/patch-notes" element={<PatchNotesPage />} />
             <Route path="/configuration/issues" element={<IssueReportsPage />} />
+            <Route path="/configuration/almacenes-excluidos" element={<AlmacenesExcluidosPage />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

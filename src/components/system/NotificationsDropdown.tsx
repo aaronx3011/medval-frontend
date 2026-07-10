@@ -13,7 +13,7 @@ const CATEGORY_LABELS: Record<string, { label: string; color: string }> = {
 
 const SEVERITY_COLORS: Record<string, string> = {
     Critical: 'bg-red-100 text-red-700',
-    High: 'bg-orange-100 text-orange-700',
+    High: 'bg-amber-100 text-amber-700',
     Medium: 'bg-yellow-100 text-yellow-700',
     Low: 'bg-green-100 text-green-700',
 };

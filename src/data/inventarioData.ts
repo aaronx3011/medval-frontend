@@ -1,3 +1,5 @@
+import { chart } from '../config/colors';
+
 export const inventarioKpiLabel = 'Ventas en unidades y valores'
 
 export const ventasUnidadesTable = [
@@ -35,10 +37,7 @@ export const slopeData = [
     { client: 'CLINICVE', unidades: 25.678, ventas: 245.890 },
 ]
 
-export const SLOPE_COLORS = [
-    '#6366f1', '#ef4444', '#f97316', '#eab308', '#22c55e',
-    '#14b8a6', '#8b5cf6', '#06b6d4', '#3b82f6', '#f59e0b',
-]
+export const SLOPE_COLORS = chart.slopeColors
 
 // Top 10 productos — grouped bar by month
 export const TOP_PRODUCTS = [
@@ -56,15 +55,7 @@ export const topProductosData = [
     { month: 'Junio', p1: 600, p2: 300, p3: 200 },
 ]
 
-// Donut clientes con más compra
-export const clientesDonutData = [
-    { label: 'COBECA', value: 14.58, color: '#3124B5' },
-    { label: 'BADAN', value: 8.9, color: '#685DDE' },
-    { label: 'FARMATODO', value: 8.54, color: '#8979FF' },
-    { label: 'VACUNMED', value: 12.0, color: '#FC5C04' },
-    { label: 'HOSPIPHARMA', value: 28.98, color: '#FD8B4C' },
-    { label: 'OTROS', value: 27, color: '#FEB993' }
-]
+export const clientesDonutData = chart.clientDonut.map(d => ({ ...d }))
 
 export const clientesBarData = [
     { month: 'Enero', p1: 0, p2: 0, p3: 0 },

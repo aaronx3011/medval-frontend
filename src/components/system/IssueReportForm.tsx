@@ -146,7 +146,7 @@ export default function IssueReportForm({ onSuccess }: { onSuccess: () => void }
             <button
                 type="submit"
                 disabled={submitting}
-                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-brand-orange text-white text-sm font-medium hover:bg-orange-600 transition-colors disabled:opacity-50"
+                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-brand-orange text-white text-sm font-medium hover:bg-amber-500 transition-colors disabled:opacity-50"
             >
                 {submitting ? 'Enviando...' : 'Enviar Reporte'}
             </button>

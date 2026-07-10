@@ -4,6 +4,7 @@ import { Paper, alpha } from '@mui/material';
 import { useProductosPorCliente } from '../../hooks/useProductosPorCliente';
 import GraphCardWithFilters from '../utils/graphCardWithFilters';
 import DownloadCsvButton, { sanitizeFilename } from '../utils/DownloadCsvButton';
+import { table, slate, surface, status, component } from '../../config/colors';
 
 interface Props {
     codigoCliente: string | undefined;
@@ -13,12 +14,12 @@ interface Props {
 
 const columns: GridColDef[] = [
     {
-        field: 'Codigo_Articulo',
-        headerName: 'Código',
+        field: 'Ref_Articulo',
+        headerName: 'Ref',
         flex: 0.8,
         minWidth: 110,
         renderCell: (params) => (
-            <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#475569', fontWeight: 600 }}>
+            <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: table.cellText, fontWeight: 600 }}>
                 {params.value}
             </span>
         ),
@@ -52,7 +53,7 @@ const columns: GridColDef[] = [
         align: 'left',
         headerAlign: 'left',
         renderCell: (params) => (
-            <strong style={{ color: '#1e293b' }}>
+            <strong style={{ color: slate[800] }}>
                 ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </strong>
         ),
@@ -97,21 +98,21 @@ export default function ProductosPorClienteTable({ codigoCliente, nombreCliente,
                         sx={{
                             width: '100%',
                             height: '100%',
-                            backgroundColor: '#FFFFFF',
+                            backgroundColor: surface.white,
                             borderRadius: '8px',
                             p: 1,
-                            border: '1px solid #E0E4E8',
+                            border: `1px solid ${table.paperBorder}`,
                             display: 'flex',
                             flexDirection: 'column',
                             overflow: 'hidden',
                         }}
                     >
                         {error ? (
-                            <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: '#EF4444', fontSize: '0.85rem' }}>
+                            <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: status.errorText, fontSize: '0.85rem' }}>
                                 {error}
                             </div>
                         ) : !codigoCliente ? (
-                            <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '0.85rem' }}>
+                            <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: component.placeholder, fontSize: '0.85rem' }}>
                                 Selecciona un cliente para ver sus productos
                             </div>
                         ) : (
@@ -135,23 +136,23 @@ export default function ProductosPorClienteTable({ codigoCliente, nombreCliente,
                                     flex: 1,
                                     minHeight: 0,
                                     '& .MuiDataGrid-columnHeaders': {
-                                        backgroundColor: '#f8fafc',
+                                        backgroundColor: table.headerBg,
                                         fontSize: '0.7rem',
                                         fontWeight: 800,
-                                        color: '#1e293b',
+                                        color: slate[800],
                                         textTransform: 'uppercase',
                                     },
                                     '& .MuiDataGrid-cell': {
                                         fontSize: '0.75rem',
-                                        color: '#475569',
-                                        borderBottom: '1px solid #F1F5F9',
+                                        color: table.cellText,
+                                        borderBottom: `1px solid ${table.cellBorder}`,
                                         display: 'flex',
                                         alignItems: 'center',
                                     },
                                     '& .MuiDataGrid-footerContainer': {
                                         minHeight: '40px',
                                         height: '40px',
-                                        borderTop: '1px solid #F1F5F9',
+                                        borderTop: `1px solid ${table.cellBorder}`,
                                     },
                                     '& .MuiTablePagination-root': {
                                         fontSize: '0.7rem',

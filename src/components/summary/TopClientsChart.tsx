@@ -1,6 +1,7 @@
 import { BarChart } from '@mui/x-charts/BarChart'
 import GraphCard from '../utils/graphCard'
-import { useTopClients } from '../../hooks/useTopClientes' // Adjust path accordingly
+import { useTopClients } from '../../hooks/useTopClientes'
+import { chart, axis } from '../../config/colors'
 
 export default function TopClientsChart() {
     const { data, loading, error } = useTopClients();
@@ -26,7 +27,7 @@ export default function TopClientsChart() {
                     series={[
                         {
                             data: data.map((c) => c.Total_USD),
-                            color: '#3d5a99',
+                            color: chart.barSeries,
                             id: 'clients',
                         },
                     ]}
@@ -36,7 +37,7 @@ export default function TopClientsChart() {
                             scaleType: 'band',
                             tickLabelStyle: {
                                 fontSize: 9,
-                                fill: '#9ca3af',
+                                fill: axis.tickLabel,
                                 textOverflow: 'ellipsis',
                                 overflow: 'hidden',
                                 whiteSpace: 'nowrap',
@@ -44,16 +45,13 @@ export default function TopClientsChart() {
                             colorMap: {
                                 type: 'ordinal',
                                 values: fullNames,
-                                colors: [
-                                    '#1a2a5e', '#2d3f7a', '#3d5a99', '#5b7fcc',
-                                    '#7a9de0', '#99baf0', '#b8d3f5', '#cce0ff',
-                                ],
+                                colors: chart.topClients,
                             },
                         },
                     ]}
                     yAxis={[
                         {
-                            tickLabelStyle: { fontSize: 10, fill: '#9ca3af' },
+                            tickLabelStyle: { fontSize: 10, fill: axis.tickLabel },
                             valueFormatter: (v: number) => formatTotal(v),
                         },
                     ]}
@@ -61,9 +59,9 @@ export default function TopClientsChart() {
                     margin={{ left: 56, right: 8, top: 8, bottom: 32 }}
                     borderRadius={6}
                     sx={{
-                        '& .MuiChartsAxis-line': { stroke: '#e2e8f0' },
-                        '& .MuiChartsAxis-tick': { stroke: '#e2e8f0' },
-                        '& .MuiChartsGrid-line': { stroke: '#f1f5f9', strokeDasharray: '4 3' },
+                        '& .MuiChartsAxis-line': { stroke: axis.line },
+                        '& .MuiChartsAxis-tick': { stroke: axis.tick },
+                        '& .MuiChartsGrid-line': { stroke: axis.grid, strokeDasharray: '4 3' },
                     }}
                 />
             }

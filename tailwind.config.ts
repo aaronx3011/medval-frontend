@@ -1,18 +1,20 @@
 /** @type {import('tailwindcss').Config} */
+import { brand, surface } from './src/config/colors'
+
 export default {
     content: ['./index.html', './src/**/*.{ts,tsx}'],
     theme: {
         extend: {
             colors: {
                 brand: {
-                    orange: '#e96c2a',
-                    navy: '#1a2a5e',
-                    'navy-light': '#2d3f7a',
+                    orange: brand.orange,
+                    navy: brand.navy,
+                    'navy-light': brand.navyLight,
                 },
                 surface: {
-                    DEFAULT: '#ffffff',
-                    page: '#f4f6fb',
-                    muted: '#f7f8fd',
+                    DEFAULT: surface.white,
+                    page: surface.page,
+                    muted: surface.muted,
                 },
             },
             fontFamily: {

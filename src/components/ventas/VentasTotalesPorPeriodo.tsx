@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { ClientePorProducto } from '../../types/ventas'
+import { brand, surface, table, search, slate } from '../../config/colors'
 
 // MUI & Icons
 import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
@@ -46,6 +47,8 @@ export default function VentasTotalesPorPeriodo({ data, isLoading, period, selec
         });
     }, [searchText, rows]);
 
+    const tableColors = table;
+
     // Columnas que reflejan el API real
     const columns: GridColDef[] = [
         {
@@ -54,7 +57,7 @@ export default function VentasTotalesPorPeriodo({ data, isLoading, period, selec
             flex: 0.8,
             minWidth: 110,
             renderCell: (params) => (
-                <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#475569', fontWeight: 600 }}>
+                <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: tableColors.cellText, fontWeight: 600 }}>
                     {params.value}
                 </span>
             ),
@@ -78,7 +81,7 @@ export default function VentasTotalesPorPeriodo({ data, isLoading, period, selec
             flex: 1,
             minWidth: 110,
             renderCell: (params) => (
-                <strong style={{ color: '#1e293b' }}>
+                <strong style={{ color: slate[800] }}>
                     ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </strong>
             )
@@ -119,13 +122,13 @@ export default function VentasTotalesPorPeriodo({ data, isLoading, period, selec
                         display: 'flex',
                         alignItems: 'center',
                         width: '100%',
-                        backgroundColor: '#FFFFFF',
+                        backgroundColor: surface.white,
                         borderRadius: '10px',
-                        border: '1px solid #E0E4E8',
-                        '&:focus-within': { borderColor: '#FF6600' }
+                        border: `1px solid ${table.paperBorder}`,
+                        '&:focus-within': { borderColor: brand.orange }
                     }}
                 >
-                    <Search size={16} color="#A0AEC0" style={{ marginRight: '8px' }} />
+                    <Search size={16} color={search.iconColor} style={{ marginRight: '8px' }} />
                     <InputBase
                         placeholder="Buscar cliente..."
                         value={searchText}
@@ -135,7 +138,7 @@ export default function VentasTotalesPorPeriodo({ data, isLoading, period, selec
                     {searchText && (
                         <X
                             size={16}
-                            color="#A0AEC0"
+                            color={search.iconColor}
                             style={{ cursor: 'pointer' }}
                             onClick={() => setSearchText('')}
                         />
@@ -149,10 +152,10 @@ export default function VentasTotalesPorPeriodo({ data, isLoading, period, selec
                     flex: 1,
                     minHeight: '300px',
                     width: '100%',
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: surface.white,
                     borderRadius: '16px',
                     p: 1,
-                    border: '1px solid #E0E4E8',
+                    border: `1px solid ${table.paperBorder}`,
                     display: 'flex',
                     flexDirection: 'column'
                 }}
@@ -176,23 +179,23 @@ export default function VentasTotalesPorPeriodo({ data, isLoading, period, selec
                     sx={{
                         border: 'none',
                         '& .MuiDataGrid-columnHeaders': {
-                            backgroundColor: '#f8fafc',
+                            backgroundColor: table.headerBg,
                             fontSize: '0.7rem',
                             fontWeight: 800,
-                            color: '#1e293b',
+                            color: slate[800],
                             textTransform: 'uppercase',
                         },
                         '& .MuiDataGrid-cell': {
                             fontSize: '0.75rem',
-                            color: '#475569',
-                            borderBottom: '1px solid #F1F5F9',
+                            color: tableColors.cellText,
+                            borderBottom: `1px solid ${table.cellBorder}`,
                             display: 'flex',
                             alignItems: 'center'
                         },
                         '& .MuiDataGrid-footerContainer': {
                             minHeight: '40px',
                             height: '40px',
-                            borderTop: '1px solid #F1F5F9',
+                            borderTop: `1px solid ${table.cellBorder}`,
                         },
                         '& .MuiTablePagination-root': {
                             fontSize: '0.7rem',

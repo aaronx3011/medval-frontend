@@ -2,8 +2,9 @@ import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart';
 import GraphCardWithFilters from '../utils/graphCardWithFilters';
 import { getContrastColor } from '../../utils/getContrastColor';
 import { formatCompact } from '../../utils/formatters';
+import { chart } from '../../config/colors';
 
-const COLORS = ['#0F172A', '#FF6600', '#334155', '#64748B', '#94A3B8'];
+const COLORS = chart.topClientColors;
 
 interface VentasAnualCliente {
     Codigo_Cliente: string;

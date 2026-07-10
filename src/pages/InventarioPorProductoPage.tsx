@@ -5,6 +5,7 @@ import { Box, InputBase, Button, Paper, Stack, alpha } from '@mui/material';
 import { Search, X } from 'lucide-react';
 import { useInventarioPorProducto } from '../hooks/useInventarioPorProducto';
 import DownloadCsvButton, { sanitizeFilename } from '../components/utils/DownloadCsvButton';
+import { brand, surface, status, table, search, component, custom, slate } from '../config/colors';
 
 export default function InventarioPorProductoPage() {
     const { data, isLoading } = useInventarioPorProducto();
@@ -38,12 +39,12 @@ export default function InventarioPorProductoPage() {
 
     const columns = useMemo(() => [
         {
-            field: 'Codigo_Articulo',
-            headerName: 'Código',
+            field: 'Ref_Articulo',
+            headerName: 'Ref',
             flex: 0.8,
             minWidth: 100,
             renderCell: (params: any) => (
-                <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#475569', fontWeight: 600 }}>
+                    <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: table.cellText, fontWeight: 600 }}>
                     {params.value}
                 </span>
             ),
@@ -78,11 +79,11 @@ export default function InventarioPorProductoPage() {
             flex: 0.9,
             minWidth: 100,
             renderCell: (params: any) => {
-                if (!params.value) return <span style={{ color: '#A0AEC0' }}>—</span>;
+                if (!params.value) return <span style={{ color: component.noValue }}>—</span>;
                 const expiry = new Date(params.value);
                 const isExpired = expiry < new Date();
                 return (
-                    <span style={{ color: isExpired ? '#EF4444' : 'inherit', fontWeight: isExpired ? 600 : 'inherit' }}>
+                    <span style={{ color: isExpired ? status.errorText : 'inherit', fontWeight: isExpired ? 600 : 'inherit' }}>
                         {expiry.toLocaleDateString('es-VE', { year: 'numeric', month: '2-digit', day: '2-digit' })}
                     </span>
                 );
@@ -97,7 +98,7 @@ export default function InventarioPorProductoPage() {
             align: 'left' as const,
             headerAlign: 'left' as const,
             renderCell: (params: any) => (
-                <strong style={{ color: '#1e293b' }}>
+                <strong style={{ color: slate[800] }}>
                     ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </strong>
             ),
@@ -111,7 +112,7 @@ export default function InventarioPorProductoPage() {
             align: 'left' as const,
             headerAlign: 'left' as const,
             renderCell: (params: any) => (
-                <span style={{ color: '#475569' }}>
+                <span style={{ color: table.cellText }}>
                     ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
             ),
@@ -133,7 +134,7 @@ export default function InventarioPorProductoPage() {
             renderCell: (params: any) => {
                 const margen = params.value;
                 return (
-                    <strong style={{ color: margen >= 0 ? '#16a34a' : '#dc2626' }}>
+                    <strong style={{ color: margen >= 0 ? status.success : status.error }}>
                         {margen.toFixed(1)}%
                     </strong>
                 );
@@ -160,10 +161,10 @@ export default function InventarioPorProductoPage() {
                         flex: 1,
                         display: 'flex',
                         flexDirection: 'column',
-                        backgroundColor: '#FFFFFF',
+                        backgroundColor: surface.white,
                         borderRadius: '20px',
-                        border: '1px solid #E0E4E8',
-                        boxShadow: '0 10px 25px rgba(0,0,0,0.04)',
+                        border: `1px solid ${table.paperBorder}`,
+                        boxShadow: `0 10px 25px ${component.paperShadow}`,
                         overflow: 'hidden'
                     }}
                 >
@@ -187,14 +188,14 @@ export default function InventarioPorProductoPage() {
                                 display: 'flex',
                                 alignItems: 'center',
                                 width: { xs: '100%', sm: 260 },
-                                backgroundColor: '#F9FAFB',
+                                backgroundColor: surface.page,
                                 borderRadius: '12px',
-                                border: '1px solid #E0E4E8',
+                                border: `1px solid ${table.paperBorder}`,
                                 transition: 'all 0.2s',
-                                '&:focus-within': { borderColor: '#FF6600', boxShadow: '0 4px 12px rgba(255,102,0,0.08)' }
+                                '&:focus-within': { borderColor: brand.orange, boxShadow: `0 4px 12px ${search.focusShadow}` }
                             }}
                         >
-                            <Search size={18} color="#A0AEC0" style={{ marginRight: '10px' }} />
+                            <Search size={18} color={component.noValue} style={{ marginRight: '10px' }} />
                             <InputBase
                                 placeholder="Buscar productos..."
                                 value={searchText}
@@ -202,7 +203,7 @@ export default function InventarioPorProductoPage() {
                                 sx={{ fontSize: '0.9rem', flex: 1, fontWeight: 500 }}
                             />
                             {searchText && (
-                                <X size={16} color="#A0AEC0" style={{ cursor: 'pointer' }} onClick={() => setSearchText('')} />
+                                <X size={16} color={component.noValue} style={{ cursor: 'pointer' }} onClick={() => setSearchText('')} />
                             )}
                         </Paper>
 
@@ -210,7 +211,7 @@ export default function InventarioPorProductoPage() {
                             <Button
                                 startIcon={<X size={16} />}
                                 onClick={() => setSearchText('')}
-                                sx={{ color: '#718096', textTransform: 'none', fontWeight: 600, fontSize: '0.85rem', '&:hover': { color: '#FF6600' }, alignSelf: { xs: 'flex-start', sm: 'center' } }}
+                                sx={{ color: component.clearButtonText, textTransform: 'none', fontWeight: 600, fontSize: '0.85rem', '&:hover': { color: brand.orange }, alignSelf: { xs: 'flex-start', sm: 'center' } }}
                             >
                                 Limpiar
                             </Button>
@@ -226,9 +227,9 @@ export default function InventarioPorProductoPage() {
                             mb: 2,
                             display: 'flex',
                             flexDirection: 'column',
-                            backgroundColor: '#FFFFFF',
+                            backgroundColor: surface.white,
                             borderRadius: '14px',
-                            border: '1px solid #E0E4E8',
+                            border: `1px solid ${table.paperBorder}`,
                             overflow: 'hidden',
                         }}
                     >
@@ -253,17 +254,17 @@ export default function InventarioPorProductoPage() {
                                 flex: 1,
                                 border: 'none',
                                 '& .MuiDataGrid-columnHeaders': {
-                                    borderBottom: '1px solid #F1F3F5',
+                                    borderBottom: `1px solid ${custom.headerBorderAlt}`,
                                     fontSize: '0.6rem',
                                     fontWeight: 600,
-                                    color: '#2D3748',
+                                    color: custom.headerTextAlt,
                                     textTransform: 'uppercase',
                                     letterSpacing: '0.3px'
                                 },
                                 '& .MuiDataGrid-cell': {
-                                    borderBottom: '1px solid #F1F3F5',
+                                    borderBottom: `1px solid ${custom.headerBorderAlt}`,
                                     fontSize: '0.65rem',
-                                    color: '#4A5568',
+                                    color: custom.cellTextAlt,
                                     py: 1
                                 },
                                 '& .MuiDataGrid-columnSeparator': { display: 'none' },
@@ -288,48 +289,48 @@ export default function InventarioPorProductoPage() {
                             flexWrap: 'wrap',
                             alignItems: 'center',
                             gap: { xs: 2, sm: 2, lg: 4 },
-                            backgroundColor: '#FFFFFF',
+                            backgroundColor: surface.white,
                             borderRadius: '20px',
-                            border: '1px solid #E0E4E8',
-                            boxShadow: '0 10px 25px rgba(0,0,0,0.04)',
+                            border: `1px solid ${table.paperBorder}`,
+                            boxShadow: `0 10px 25px ${component.paperShadow}`,
                             fontSize: { xs: '0.8rem', sm: '0.85rem' },
                             fontWeight: 600,
-                            color: '#4A5568',
+                            color: custom.cellTextAlt,
                             flexShrink: 0,
                         }}
                     >
                         <Box sx={{ width: { xs: '100%', sm: '100%', lg: 'auto' }, textAlign: { xs: 'center', sm: 'left', lg: 'left' }, mb: { xs: 0.5, sm: 0.5, lg: 0 }, mr: { lg: 'auto' } }}>
-                            <span style={{ color: '#FF6600', fontWeight: 800, fontSize: '0.9rem', letterSpacing: '0.3px' }}>TOTALES</span>
+                            <span style={{ color: brand.orange, fontWeight: 800, fontSize: '0.9rem', letterSpacing: '0.3px' }}>TOTALES</span>
                         </Box>
 
-                        <Box sx={{ display: { xs: 'none', lg: 'block' }, width: '1px', height: 28, backgroundColor: '#E0E4E8' }} />
+                        <Box sx={{ display: { xs: 'none', lg: 'block' }, width: '1px', height: 28, backgroundColor: table.paperBorder }} />
 
                         <Box sx={{ width: { xs: '100%', sm: 'calc(50% - 8px)', lg: 'auto' } }}>
                             <Box sx={{ display: 'flex', justifyContent: { xs: 'space-between', sm: 'flex-start' }, flexDirection: 'row', gap: 4 }}>
                                 <span style={{ whiteSpace: 'nowrap' }}>Unidades:</span>
-                                <strong style={{ fontSize: '0.95rem', color: '#2D3748' }}>
+                                <strong style={{ fontSize: '0.95rem', color: custom.headerTextAlt }}>
                                     {totals.sumUnidades.toLocaleString('en-US')}
                                 </strong>
                             </Box>
                         </Box>
 
-                        <Box sx={{ display: { xs: 'none', lg: 'block' }, width: '1px', height: 28, backgroundColor: '#E0E4E8' }} />
+                        <Box sx={{ display: { xs: 'none', lg: 'block' }, width: '1px', height: 28, backgroundColor: table.paperBorder }} />
 
                         <Box sx={{ width: { xs: '100%', sm: 'calc(50% - 8px)', lg: 'auto' } }}>
                             <Box sx={{ display: 'flex', justifyContent: { xs: 'space-between', sm: 'flex-start' }, flexDirection: 'row', gap: 4 }}>
                                 <span style={{ whiteSpace: 'nowrap' }}>Total Venta:</span>
-                                <strong style={{ fontSize: '0.95rem', color: '#2D3748' }}>
+                                <strong style={{ fontSize: '0.95rem', color: custom.headerTextAlt }}>
                                     ${totals.sumTotalVenta.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 </strong>
                             </Box>
                         </Box>
 
-                        <Box sx={{ display: { xs: 'none', lg: 'block' }, width: '1px', height: 28, backgroundColor: '#E0E4E8' }} />
+                        <Box sx={{ display: { xs: 'none', lg: 'block' }, width: '1px', height: 28, backgroundColor: table.paperBorder }} />
 
                         <Box sx={{ width: { xs: '100%', sm: 'calc(50% - 8px)', lg: 'auto' } }}>
                             <Box sx={{ display: 'flex', justifyContent: { xs: 'space-between', sm: 'flex-start' }, flexDirection: 'row', gap: 4 }}>
                                 <span style={{ whiteSpace: 'nowrap' }}>Total Costo:</span>
-                                <strong style={{ fontSize: '0.95rem', color: '#2D3748' }}>
+                                <strong style={{ fontSize: '0.95rem', color: custom.headerTextAlt }}>
                                     ${totals.sumTotalCosto.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 </strong>
                             </Box>

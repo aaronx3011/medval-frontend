@@ -5,6 +5,7 @@ import { useVentasAnuales } from '../hooks/useVentasAnuales'
 import { useAnalisisReposicion } from '../hooks/useAnalisisReposicion'
 import { useTotalInventario } from '../hooks/useTotalInventario'
 import { formatNumber } from '../utils/formatters'
+import { component } from '../config/colors'
 
 const cardVariants = {
     hidden: { opacity: 0, y: 24 },
@@ -95,7 +96,7 @@ export default function KpiRow() {
                     variants={cardVariants}
                     initial="hidden"
                     animate="visible"
-                    whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(26,42,94,0.08)' }}
+                    whileHover={{ y: -2, boxShadow: component.kpiShadow }}
                     className="kpi-card bg-white rounded-xl p-4"
                 >
                     {kpi.type === 'amount' ? (

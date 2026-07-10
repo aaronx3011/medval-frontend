@@ -561,6 +561,7 @@ This generic handler powers endpoints 16–21. See individual docs:
 
 #### CuentaPorCobrar
 - `Codigo_Cliente`: string - Client code
+- `Nombre_Cliente`: string - Client name
 - `Total_Documentos_Pendientes`: number - Total pending documents
 - `Dias_Maximo_Atraso`: number - Maximum days overdue
 - `Total_Facturado_USD`: number | null - Total invoiced in USD
@@ -605,6 +606,7 @@ This generic handler powers endpoints 16–21. See individual docs:
 
 #### VentasRotacionApiItem
 - `Codigo_Articulo`: string - Product code
+- `Descripcion_Articulo`: string - Product description
 - `Anio`: number - Year
 - `Enero` to `Diciembre`: number | null - Monthly sales for each month
 
@@ -657,6 +659,7 @@ This generic handler powers endpoints 16–21. See individual docs:
 
 #### ProductoMensualData / DetalleProductoMensualFechasData
 - `Codigo_Articulo`: string - Product code
+- `Descripcion_Articulo`: string - Product description
 - `Anio` or `Mes`: number - Year or month
 - `Total_Unidades`: number - Total units sold
 - `Total_VES`: number - Total in VES
@@ -665,6 +668,7 @@ This generic handler powers endpoints 16–21. See individual docs:
 
 #### VentaProducto
 - `Codigo_Articulo`: string - Product code
+- `Descripcion_Articulo`: string - Product description
 - `Total_Unidades`: number - Total units sold
 - `Total_VES`: number - Total in VES
 - `Total_USD`: number - Total in USD
@@ -676,6 +680,7 @@ This generic handler powers endpoints 16–21. See individual docs:
 
 #### AgrupadoProductoData
 - `Codigo_Articulo`: string - Product code
+- `Descripcion_Articulo`: string - Product description
 - `Total_USD`: number - Total in USD
 - `Total_Facturas`: number - Total invoices
 - `Total_Unidades`: number - Total units sold
@@ -687,7 +692,9 @@ This generic handler powers endpoints 16–21. See individual docs:
 
 #### ClientePorProducto
 - `Codigo_Articulo`: string - Product code
+- `Descripcion_Articulo`: string - Product description
 - `Codigo_Cliente`: string - Client code
+- `Nombre_Cliente`: string - Client name
 - `Total_Unidades`: number - Total units sold
 - `Total_VES`: number - Total in VES
 - `Total_USD`: number - Total in USD

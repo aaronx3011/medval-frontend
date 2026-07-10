@@ -2,6 +2,7 @@ import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
 import GraphCard from '../utils/graphCard';
 import { useVentasMensuales } from '../../hooks/useVentasMensuales';
 import { useSalesGoals } from '../../hooks/useSalesGoals';
+import { brand, status } from '../../config/colors';
 
 export default function MonthlySalesChart() {
     const { data, loading, error } = useVentasMensuales();
@@ -31,6 +32,8 @@ export default function MonthlySalesChart() {
         ? `${MONTH_NAMES[lastMonth.Mes - 1]} ${lastMonth.Anio}`
         : '';
 
+    const gaugeColor = currentK >= goalK ? status.success : brand.navy;
+
     return (
         <GraphCard
             titlle='Progreso de meta mensual'
@@ -59,7 +62,7 @@ export default function MonthlySalesChart() {
                                 transform: 'translate(0px, 0px)',
                             },
                             [`& .${gaugeClasses.valueArc}`]: {
-                                fill: currentK >= goalK ? '#16a34a' : '#1a2a5e',
+                                fill: gaugeColor,
                             },
                         }}
                         text={() => `${currentK}K / ${goalK}K`}
@@ -72,7 +75,7 @@ export default function MonthlySalesChart() {
                         <span className="flex items-center gap-1.5 text-[10px] text-slate-500">
                             <span
                                 className="w-2.5 h-2.5 rounded-sm flex-shrink-0"
-                                style={{ background: hasGoal && currentK >= goalK ? '#16a34a' : '#1a2a5e' }}
+                                style={{ background: gaugeColor }}
                             />
                             ${currentUSD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>

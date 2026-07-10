@@ -4,24 +4,11 @@ import { Treemap, ResponsiveContainer, Tooltip } from 'recharts';
 import { Select, MenuItem, SelectChangeEvent, Paper, alpha } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { useInventarioCompleto } from '../hooks/useInventarioCompleto';
+import { chart, component, slate, table, surface, custom } from '../config/colors';
 
 type ViewMode = 'units' | 'usd' | 'products';
 
-const SOFT_COLORS = [
-    '#0D0A6E',
-    '#2D25D4',
-    '#5650D4',
-    '#8B86E0',
-    '#B8B5EC',
-    '#E53E0A',
-    '#E8693A',
-    '#EF9B76',
-    '#F5C9A8',
-    '#8C8C8C',
-    '#B0B0B0',
-    '#D0D0D0',
-    '#EBEBEB',
-];
+const SOFT_COLORS = chart.treemap;
 
 const getPrefixColor = (() => {
     const cache: Record<string, string> = {};
@@ -76,16 +63,16 @@ function CustomNode(props: CustomNodeProps) {
                 rx={0}
                 ry={0}
                 fill={fill}
-                stroke="#fff"
+                stroke={component.treemapStroke}
                 strokeWidth={2}
             />
 
             {!tooSmall && (
                 <g clipPath={`url(#${clipId})`}>
-                    <text
-                        x={x + 8}
-                        y={y + height / 2 - 7}
-                        fill="#fff"
+            <text
+                x={x + 8}
+                y={y + height / 2 - 7}
+                fill={component.treemapText}
                         fontSize={10}
                         fontWeight={700}
                         style={{ pointerEvents: 'none', userSelect: 'none' }}
@@ -95,7 +82,7 @@ function CustomNode(props: CustomNodeProps) {
                     <text
                         x={x + 8}
                         y={y + height / 2 + 7}
-                        fill="rgba(255,255,255,0.85)"
+                        fill={component.treemapValueLabel}
                         fontSize={10}
                         fontWeight={500}
                         style={{ pointerEvents: 'none', userSelect: 'none' }}
@@ -128,17 +115,17 @@ function CustomTooltip({ active, payload, viewMode }: {
 
     return (
         <div style={{
-            background: '#1e293b',
+            background: slate[800],
             border: 'none',
             borderRadius: '10px',
             padding: '10px 14px',
-            color: '#fff',
+            color: component.treemapText,
             fontSize: '0.78rem',
             maxWidth: 260,
-            boxShadow: '0 8px 24px rgba(0,0,0,0.2)'
+            boxShadow: `0 8px 24px ${component.tooltipShadow}`
         }}>
             <p style={{ fontWeight: 700, marginBottom: 4, color: getPrefixColor(d.prefix) }}>{d.name}</p>
-            <p style={{ color: '#94a3b8', marginBottom: 6 }}>{d.descripcion}</p>
+            <p style={{ color: slate[400], marginBottom: 6 }}>{d.descripcion}</p>
             <p style={{ fontWeight: 600 }}>
                 {viewMode === 'units' || viewMode === 'products'
                     ? `${d.value.toLocaleString()} unidades`
@@ -185,12 +172,12 @@ export default function InventarioTreemap() {
     const productRows = useMemo(() => {
         if (!data.length) return [];
 
-        const groups: Record<string, { nombre: string; unidades: number; usd: number }> = {};
+        const groups: Record<string, { nombre: string; ref: string; unidades: number; usd: number }> = {};
 
         for (const item of data) {
             const codigo = item.Codigo_Articulo;
             if (!groups[codigo]) {
-                groups[codigo] = { nombre: item.Nombre_Articulo, unidades: 0, usd: 0 };
+                groups[codigo] = { nombre: item.Nombre_Articulo, ref: item.Ref_Articulo, unidades: 0, usd: 0 };
             }
             groups[codigo].unidades += item.Unidades ?? 0;
             groups[codigo].usd += item.Total_Ultimo_Precio_Venta_USD ?? 0;
@@ -203,6 +190,7 @@ export default function InventarioTreemap() {
                 id: codigo,
                 codigo,
                 nombre: vals.nombre,
+                ref: vals.ref,
                 unidades: vals.unidades,
                 usd: vals.usd,
                 pctUnidades: totalUnidades > 0 ? (vals.unidades / totalUnidades) * 100 : 0,
@@ -214,9 +202,9 @@ export default function InventarioTreemap() {
         if (viewMode === 'products') {
             return productRows.map(p => ({
                 name: p.nombre,
-                descripcion: p.codigo,
+                descripcion: p.ref || p.codigo,
                 value: p.unidades,
-                prefix: p.codigo,
+                prefix: p.ref || p.codigo,
             })).filter(item => item.value > 0);
         }
         return warehouseRows.map(w => ({
@@ -234,7 +222,7 @@ export default function InventarioTreemap() {
             flex: 1.5,
             minWidth: 140,
             renderCell: (params: any) => (
-                <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#475569', fontWeight: 600 }}>
+                <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: table.cellText, fontWeight: 600 }}>
                     {params.value}
                 </span>
             ),
@@ -257,7 +245,7 @@ export default function InventarioTreemap() {
             align: 'left' as const,
             headerAlign: 'left' as const,
             renderCell: (params: any) => (
-                <strong style={{ color: '#1e293b' }}>
+                <strong style={{ color: slate[800] }}>
                     ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </strong>
             ),
@@ -273,7 +261,7 @@ export default function InventarioTreemap() {
             renderCell: (params: any) => {
                 const pct = viewMode === 'units' ? params.row.pctUnidades : params.row.pctUSD;
                 return (
-                    <span style={{ color: '#475569', fontWeight: 500 }}>
+                    <span style={{ color: table.cellText, fontWeight: 500 }}>
                         {pct.toFixed(1)}%
                     </span>
                 );
@@ -283,12 +271,12 @@ export default function InventarioTreemap() {
 
     const productColumns = useMemo(() => [
         {
-            field: 'codigo',
-            headerName: 'Código',
+            field: 'ref',
+            headerName: 'Ref',
             flex: 1,
             minWidth: 110,
             renderCell: (params: any) => (
-                <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#475569', fontWeight: 600 }}>
+                <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: table.cellText, fontWeight: 600 }}>
                     {params.value}
                 </span>
             ),
@@ -317,7 +305,7 @@ export default function InventarioTreemap() {
             align: 'left' as const,
             headerAlign: 'left' as const,
             renderCell: (params: any) => (
-                <strong style={{ color: '#1e293b' }}>
+                <strong style={{ color: slate[800] }}>
                     ${Number(params.value).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </strong>
             ),
@@ -331,7 +319,7 @@ export default function InventarioTreemap() {
             align: 'left' as const,
             headerAlign: 'left' as const,
             renderCell: (params: any) => (
-                <span style={{ color: '#475569', fontWeight: 500 }}>
+                <span style={{ color: table.cellText, fontWeight: 500 }}>
                     {params.row.pctUnidades.toFixed(1)}%
                 </span>
             ),
@@ -393,15 +381,15 @@ export default function InventarioTreemap() {
                         onChange={handleViewModeChange}
                         size="small"
                         sx={{
-                            bgcolor: '#F8FAFC',
-                            border: '1px solid #E2E8F0',
-                            color: '#475569',
+                            bgcolor: custom.selectBg,
+                            border: `1px solid ${custom.selectBorder}`,
+                            color: table.cellText,
                             borderRadius: '8px',
                             height: '36px',
                             fontSize: '0.85rem',
                             minWidth: 140,
                             '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
-                            '&:hover': { bgcolor: '#F1F5F9' },
+                            '&:hover': { bgcolor: custom.selectHoverBg },
                         }}
                     >
                         <MenuItem sx={{ fontSize: '0.85rem' }} value="units">Unidades</MenuItem>
@@ -462,10 +450,10 @@ export default function InventarioTreemap() {
                     elevation={0}
                     sx={{
                         width: '100%',
-                        backgroundColor: '#FFFFFF',
+                        backgroundColor: surface.white,
                         borderRadius: '16px',
                         p: 1,
-                        border: '1px solid #E0E4E8',
+                        border: `1px solid ${table.paperBorder}`,
                         display: 'flex',
                         flexDirection: 'column',
                     }}
@@ -491,23 +479,23 @@ export default function InventarioTreemap() {
                         sx={{
                             border: 'none',
                             '& .MuiDataGrid-columnHeaders': {
-                                backgroundColor: '#f8fafc',
+                                backgroundColor: table.headerBg,
                                 fontSize: '0.7rem',
                                 fontWeight: 800,
-                                color: '#1e293b',
+                                color: slate[800],
                                 textTransform: 'uppercase',
                             },
                             '& .MuiDataGrid-cell': {
                                 fontSize: '0.75rem',
-                                color: '#475569',
-                                borderBottom: '1px solid #F1F5F9',
+                                color: table.cellText,
+                                borderBottom: `1px solid ${table.cellBorder}`,
                                 display: 'flex',
                                 alignItems: 'center',
                             },
-                            '& .MuiDataGrid-footerContainer': {
-                                minHeight: '40px',
-                                height: '40px',
-                                borderTop: '1px solid #F1F5F9',
+                                '& .MuiDataGrid-footerContainer': {
+                                    minHeight: '40px',
+                                    height: '40px',
+                                    borderTop: `1px solid ${table.cellBorder}`,
                             },
                             '& .MuiTablePagination-root': {
                                 fontSize: '0.7rem',
