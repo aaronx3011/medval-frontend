@@ -4,6 +4,17 @@ services:
       context: .
       args:
         VITE_API_URL: /api
+    networks:
+      - medval
+    restart: unless-stopped
+    depends_on:
+      - medval-backend
+
+  medval-backend:
+    build:
+      context: ../medval-backend
+    env_file:
+      - ../medval-backend/.env
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
@@ -12,9 +23,8 @@ services:
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
     networks:
-      - nginx_default
+      - medval
     restart: unless-stopped
 
 networks:
-  nginx_default:
-    external: true
+  medval:
