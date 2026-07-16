@@ -212,7 +212,7 @@ export default function NotificationsPanel() {
                 if (mounted) {
                     const filtered = json.data.filter(item => {
                         const { expiringSoon, lowStock } = getAlerts(item)
-                        return (expiringSoon || lowStock) && item.Stock_Total >= 0
+                        return (expiringSoon || lowStock) && item.Stock_Total > 0
                     })
                     const sorted = filtered.sort((a, b) => {
                         const aAlerts = getAlerts(a)
