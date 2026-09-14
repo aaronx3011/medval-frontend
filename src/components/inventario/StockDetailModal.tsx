@@ -5,6 +5,7 @@ import { Box, Paper, CircularProgress, alpha } from '@mui/material'
 import { X, ArrowLeft } from 'lucide-react'
 import { apiClient } from '../../services/apiClient'
 import { table as tableColors } from '../../config/colors'
+import type { InventoryMetadata } from '../../types/inventario'
 
 interface AnalisisItem {
     Codigo_Articulo: string
@@ -143,9 +144,9 @@ const columns: GridColDef[] = [
 ]
 
 const VIEW_ENDPOINTS: Record<string, string> = {
-    critico: '/view/aaron_view_AnalisisReposicionCritico?limit=10000',
-    'stock-bajo': '/view/aaron_view_AnalisisReposicionStockBajo?limit=10000',
-    activo: '/view/aaron_view_AnalisisReposicionActivo?limit=10000',
+    critico: '/inventario/analisis-reposicion/critico',
+    'stock-bajo': '/inventario/analisis-reposicion/stock-bajo',
+    activo: '/inventario/analisis-reposicion/activo',
 }
 
 interface StockDetailModalProps {
@@ -162,6 +163,7 @@ export default function StockDetailModal({ open, onClose, filterType, title }: S
     const [selectedItem, setSelectedItem] = useState<AnalisisItem | null>(null)
     const [lotRows, setLotRows] = useState<GroupedLot[]>([])
     const [lotsLoading, setLotsLoading] = useState(false)
+    const [metadata, setMetadata] = useState<InventoryMetadata | null>(null)
 
     useEffect(() => {
         if (!open) return
@@ -170,10 +172,14 @@ export default function StockDetailModal({ open, onClose, filterType, title }: S
         setError(null)
         setSelectedItem(null)
         setLotRows([])
+        setMetadata(null)
         const fetchData = async () => {
             try {
-                const json: { data: AnalisisItem[] } = await apiClient(VIEW_ENDPOINTS[filterType])
-                if (mounted) setItems(json.data)
+                const json: { metadata: InventoryMetadata; data: AnalisisItem[] } = await apiClient(VIEW_ENDPOINTS[filterType])
+                if (mounted) {
+                    setItems(json.data)
+                    setMetadata(json.metadata)
+                }
             } catch (err) {
                 if (mounted) setError(err instanceof Error ? err.message : 'Error desconocido')
             } finally {
@@ -253,6 +259,11 @@ export default function StockDetailModal({ open, onClose, filterType, title }: S
                                 <X size={20} />
                             </button>
                         </div>
+                        {metadata?.possiblyTruncated && (
+                            <div className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800">
+                                Esta lista puede estar incompleta porque el reporte alcanzó {metadata.rowLimit.toLocaleString('en-US')} registros.
+                            </div>
+                        )}
 
                         {selectedItem ? (
                             <div className="overflow-y-auto space-y-4">

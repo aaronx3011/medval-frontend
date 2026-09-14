@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { InventarioItem } from '../types/inventario';
+import type { InventarioItem, InventoryMetadata } from '../types/inventario';
 import { inventarioService } from '../services/inventarioService';
 
 export function useInventarioCompleto() {
     const [data, setData] = useState<InventarioItem[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [metadata, setMetadata] = useState<InventoryMetadata | null>(null);
 
     useEffect(() => {
         let isMounted = true;
@@ -15,7 +16,8 @@ export function useInventarioCompleto() {
                 setIsLoading(true);
                 const result = await inventarioService.fetchInventarioCompleto();
                 if (isMounted) {
-                    setData(result);
+                    setData(result.data);
+                    setMetadata(result.metadata);
                     setError(null);
                 }
             } catch (err) {
@@ -36,5 +38,5 @@ export function useInventarioCompleto() {
         };
     }, []);
 
-    return { data, isLoading, error };
+    return { data, metadata, isLoading, error };
 }

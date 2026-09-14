@@ -89,6 +89,11 @@ export default function VentaInventarioKpiRow() {
 
     return (
         <>
+            {data?.metadata.possiblyTruncated && (
+                <div className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800">
+                    Los KPIs de inventario pueden estar incompletos porque el reporte alcanzó {data.metadata.rowLimit.toLocaleString('en-US')} registros.
+                </div>
+            )}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5">
                 {kpiData.map((kpi, i) => (
                     <motion.div

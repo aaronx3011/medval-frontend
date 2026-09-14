@@ -82,8 +82,15 @@ Auth-related endpoints (`/api/auth/*`) are public and do not require a token.
 
 ### 2. Inventory (Inventario)
 
+> **Note (test branch `test/inventory-report-source`):** the dashboard inventory features now
+> consume the movement-report endpoints documented in section 11
+> (`/inventario/reporte`, `/inventario/completo`, `/inventario/analisis-reposicion`, ...).
+> The legacy generic view endpoints below remain available for comparison and rollback, but
+> are no longer used by the inventory UI. Their `metadata` shapes below describe the legacy
+> generic-view contract.
+
 #### Get Inventory Replenishment Analysis
-**Endpoint:** `/view/aaron_view_AnalisisReposicionInventario`
+**Endpoint:** `/view/aaron_view_AnalisisReposicionInventario` (legacy, kept for rollback)
 **Method:** GET
 **Parameters:**
 - `limit` (optional): Number of records to return
@@ -523,7 +530,48 @@ These endpoints are **public** (no JWT required).
 #### Delete Issue Report
 **Endpoint:** `DELETE /issue-reports/:id`
 
-### 11. Generic View Access
+### 11. Inventory Movement Report
+
+Inventory pages use a live movement-derived report instead of the legacy generic inventory
+views. Existing generic views remain available for comparison and rollback.
+
+#### Inventory Detail
+**Endpoint:** `GET /inventario/reporte`
+
+Returns lot and warehouse rows plus compatible totals.
+
+#### Treemap Inventory
+**Endpoint:** `GET /inventario/completo`
+
+Returns the same normalized rows after applying configured warehouse exclusions.
+
+#### Inventory Aggregates
+- `GET /inventario/por-producto`
+- `GET /inventario/por-vencimiento`
+- `GET /inventario/total/`
+- `GET /inventario/lotes/:codigoArticulo`
+
+#### Replenishment
+- `GET /inventario/analisis-reposicion`
+- `GET /inventario/analisis-reposicion/critico`
+- `GET /inventario/analisis-reposicion/stock-bajo`
+- `GET /inventario/analisis-reposicion/activo`
+
+Inventory responses include source metadata:
+
+```typescript
+{
+  source: 'inventory-movement-report';
+  generatedAt: string;
+  rowLimit: 10000;
+  possiblyTruncated: boolean;
+  count: number;
+}
+```
+
+When `possiblyTruncated` is true, `data`, `totals`, and derived aggregates can be incomplete.
+
+### 12. Generic View Access
 
 #### Get Available Views
 **Endpoint:** `GET /views`
@@ -612,12 +660,15 @@ This generic handler powers endpoints 16–21. See individual docs:
 
 #### InventarioItem
 - `Codigo_Articulo`: string - Product code
+- `Ref_Articulo`: string - Product reference
 - `Nombre_Articulo`: string - Product name
+- `Unidad`: string - Main unit of measure
 - `Codigo_Almacen`: string - Warehouse code
 - `Nombre_Almacen`: string - Warehouse name
 - `Unidades`: number - Units
 - `Fecha_Vencimiento`: string | null - Expiry date
 - `Lote`: string - Lot number
+- `Estado_Lote`: `Vigente | Vencido` - Expiry status returned by the movement report
 - `Ultimo_Precio_Venta_USD`: number | null - Last sale price in USD
 - `Ultimo_Costo_Compra_USD`: number | null - Last purchase cost in USD
 - `Total_Ultimo_Precio_Venta_USD`: number | null - Total last sale price in USD

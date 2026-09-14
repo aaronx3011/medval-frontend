@@ -7,6 +7,7 @@ import GraphCardWithFilters from '../utils/graphCardWithFilters'
 import { apiClient } from '../../services/apiClient'
 import DownloadCsvButton, { sanitizeFilename } from '../utils/DownloadCsvButton'
 import { search as searchColors, table as tableColors, component as componentColors, status as statusColors, slate } from '../../config/colors'
+import type { InventoryMetadata } from '../../types/inventario'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface InventarioItem {
@@ -24,6 +25,7 @@ interface InventarioItem {
 }
 
 interface ApiResponse {
+    metadata: InventoryMetadata
     data: InventarioItem[]
 }
 
@@ -203,12 +205,13 @@ export default function NotificationsPanel() {
     const [selectedItem, setSelectedItem] = useState<InventarioItem | null>(null)
     const [lotRows, setLotRows] = useState<GroupedLot[]>([])
     const [lotsLoading, setLotsLoading] = useState(false)
+    const [metadata, setMetadata] = useState<InventoryMetadata | null>(null)
 
     useEffect(() => {
         let mounted = true
         const fetchData = async () => {
             try {
-                const json: ApiResponse = await apiClient('/view/aaron_view_AnalisisReposicionInventario?limit=100000')
+                const json: ApiResponse = await apiClient('/inventario/analisis-reposicion')
                 if (mounted) {
                     const filtered = json.data.filter(item => {
                         const { expiringSoon, lowStock } = getAlerts(item)
@@ -223,6 +226,7 @@ export default function NotificationsPanel() {
                         return monthsUntil(a.Proximo_Vencimiento) - monthsUntil(b.Proximo_Vencimiento)
                     })
                     setAllItems(sorted)
+                    setMetadata(json.metadata)
                 }
             } catch (err) {
                 if (mounted) setError(err instanceof Error ? err.message : 'Error desconocido')
@@ -300,6 +304,11 @@ export default function NotificationsPanel() {
     // ── Filters slot ──────────────────────────────────────────────────────────
     const filtersSlot = (
         <div className="mb-3">
+        {metadata?.possiblyTruncated && (
+            <div className="mb-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800">
+                Las notificaciones pueden estar incompletas porque el reporte alcanzó {metadata.rowLimit.toLocaleString('en-US')} registros.
+            </div>
+        )}
         <div className="flex items-center justify-between gap-2 py-1.5">
             <Paper
                 elevation={0}

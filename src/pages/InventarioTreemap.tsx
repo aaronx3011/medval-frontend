@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Treemap, ResponsiveContainer, Tooltip } from 'recharts';
-import { Select, MenuItem, SelectChangeEvent, Paper, alpha } from '@mui/material';
+import { Alert, Select, MenuItem, SelectChangeEvent, Paper, alpha } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { useInventarioCompleto } from '../hooks/useInventarioCompleto';
 import { chart, component, slate, table, surface, custom } from '../config/colors';
@@ -137,7 +137,7 @@ function CustomTooltip({ active, payload, viewMode }: {
 }
 
 export default function InventarioTreemap() {
-    const { data, isLoading, error } = useInventarioCompleto();
+    const { data, metadata, isLoading, error } = useInventarioCompleto();
     const [viewMode, setViewMode] = useState<ViewMode>('units');
 
     const warehouseRows = useMemo(() => {
@@ -359,6 +359,11 @@ export default function InventarioTreemap() {
             transition={{ duration: 0.3 }}
             className="flex-1 overflow-y-auto p-4 lg:p-6"
         >
+            {metadata?.possiblyTruncated && (
+                <Alert severity="warning" sx={{ mb: 2, borderRadius: '12px' }}>
+                    Se muestran como máximo {metadata.rowLimit.toLocaleString('en-US')} registros. Los totales pueden estar incompletos.
+                </Alert>
+            )}
             {/* Chart Card */}
             <motion.div
                 initial={{ opacity: 0, y: 24 }}
