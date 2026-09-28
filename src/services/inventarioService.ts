@@ -1,21 +1,21 @@
 import { apiClient } from './apiClient';
-import type { AnalisisReposicionResponse, InventarioDetalle, InventarioDetalleResponse, InventarioItem, InventarioPorProducto, InventarioPorProductoResponse, InventarioPorVencimiento, InventarioPorVencimientoResponse, InventarioResponse, VentasRotacionApiResponse } from '../types/inventario';
+import type { AnalisisReposicionResponse, InventarioDetalle, InventarioDetalleResponse, InventarioPorProductoResponse, InventarioPorVencimientoResponse, InventarioResponse, VentasRotacionApiResponse } from '../types/inventario';
 
 export const inventarioService = {
     getAnalisisReposicion: async (): Promise<AnalisisReposicionResponse> => {
-        return apiClient('/view/aaron_view_AnalisisReposicionInventario?limit=100000');
+        return apiClient('/inventario/analisis-reposicion');
     },
 
     getAnalisisCritico: async (): Promise<AnalisisReposicionResponse> => {
-        return apiClient('/view/aaron_view_AnalisisReposicionCritico?limit=10000');
+        return apiClient('/inventario/analisis-reposicion/critico');
     },
 
     getAnalisisStockBajo: async (): Promise<AnalisisReposicionResponse> => {
-        return apiClient('/view/aaron_view_AnalisisReposicionStockBajo?limit=10000');
+        return apiClient('/inventario/analisis-reposicion/stock-bajo');
     },
 
     getAnalisisActivo: async (): Promise<AnalisisReposicionResponse> => {
-        return apiClient('/view/aaron_view_AnalisisReposicionActivo?limit=10000');
+        return apiClient('/inventario/analisis-reposicion/activo');
     },
 
     getLotesByProducto: async (codigoArticulo: string): Promise<{ data: any[] }> => {
@@ -26,9 +26,8 @@ export const inventarioService = {
         return apiClient('/ventas/agrupado-producto-anual-total-mes');
     },
 
-    fetchInventario: async (): Promise<InventarioItem[]> => {
-        const json: InventarioResponse = await apiClient('/view/aaron_view_DetalleInventarioAlmacenLoteVencimientoDolarizado?limit=1000000');
-        return json.data;
+    fetchInventario: async (): Promise<InventarioResponse> => {
+        return apiClient('/inventario/reporte');
     },
 
     fetchInventarioDetalle: async (): Promise<InventarioDetalle[]> => {
@@ -36,19 +35,16 @@ export const inventarioService = {
         return json.data;
     },
 
-    fetchInventarioPorProducto: async (): Promise<InventarioPorProducto[]> => {
-        const json: InventarioPorProductoResponse = await apiClient('/view/aaron_view_InventarioPorProducto?limit=10000');
-        return json.data;
+    fetchInventarioPorProducto: async (): Promise<InventarioPorProductoResponse> => {
+        return apiClient('/inventario/por-producto');
     },
 
-    fetchInventarioPorVencimiento: async (): Promise<InventarioPorVencimiento[]> => {
-        const json: InventarioPorVencimientoResponse = await apiClient('/view/aaron_view_InventarioPorVencimiento?limit=10000');
-        return json.data;
+    fetchInventarioPorVencimiento: async (): Promise<InventarioPorVencimientoResponse> => {
+        return apiClient('/inventario/por-vencimiento');
     },
 
-    fetchInventarioCompleto: async (): Promise<InventarioItem[]> => {
-        const json: InventarioResponse = await apiClient('/view/aaron_view_DetalleInventarioCompletoDolarizado?limit=1000000');
-        return json.data;
+    fetchInventarioCompleto: async (): Promise<InventarioResponse> => {
+        return apiClient('/inventario/completo');
     },
 
     getAlmacenesList: async (): Promise<{ data: { Codigo_Almacen: string; Nombre_Almacen: string }[] }> => {

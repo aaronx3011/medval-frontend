@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { InventarioPorProducto } from '../types/inventario';
+import type { InventarioPorProducto, InventoryMetadata } from '../types/inventario';
 import { inventarioService } from '../services/inventarioService';
 
 export function useInventarioPorProducto() {
     const [data, setData] = useState<InventarioPorProducto[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [metadata, setMetadata] = useState<InventoryMetadata | null>(null);
 
     useEffect(() => {
         let isMounted = true;
@@ -15,7 +16,8 @@ export function useInventarioPorProducto() {
                 setIsLoading(true);
                 const result = await inventarioService.fetchInventarioPorProducto();
                 if (isMounted) {
-                    setData(result);
+                    setData(result.data);
+                    setMetadata(result.metadata);
                     setError(null);
                 }
             } catch (err) {
@@ -36,5 +38,5 @@ export function useInventarioPorProducto() {
         };
     }, []);
 
-    return { data, isLoading, error };
+    return { data, metadata, isLoading, error };
 }

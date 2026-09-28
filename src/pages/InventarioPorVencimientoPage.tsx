@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
-import { Box, InputBase, Button, Paper, Stack, alpha } from '@mui/material';
+import { Alert, Box, InputBase, Button, Paper, Stack, alpha } from '@mui/material';
 import { Search, X } from 'lucide-react';
 import { useInventarioPorVencimiento } from '../hooks/useInventarioPorVencimiento';
 import DownloadCsvButton, { sanitizeFilename } from '../components/utils/DownloadCsvButton';
@@ -13,7 +13,7 @@ const MONTHS = [
 ];
 
 export default function InventarioPorVencimientoPage() {
-    const { data, isLoading } = useInventarioPorVencimiento();
+    const { data, metadata, isLoading } = useInventarioPorVencimiento();
     const [searchText, setSearchText] = useState('');
 
     const rows = useMemo(() =>
@@ -148,6 +148,11 @@ export default function InventarioPorVencimientoPage() {
                 transition={{ delay: 0.32, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 className="flex flex-col w-full gap-4"
             >
+                {metadata?.possiblyTruncated && (
+                    <Alert severity="warning" sx={{ borderRadius: '12px' }}>
+                        El reporte base alcanzó el límite de {metadata.rowLimit.toLocaleString('en-US')} registros. Los agregados pueden estar incompletos.
+                    </Alert>
+                )}
                 <Paper
                     elevation={0}
                     sx={{

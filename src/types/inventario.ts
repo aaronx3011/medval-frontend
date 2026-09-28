@@ -22,7 +22,7 @@ export interface AnalisisReposicionTotals {
 }
 
 export interface AnalisisReposicionResponse {
-    metadata: any;
+    metadata: InventoryMetadata;
     totals: AnalisisReposicionTotals;
     data: AnalisisReposicion[];
 }
@@ -105,24 +105,29 @@ export interface InventarioItem {
     Codigo_Articulo: string;
     Ref_Articulo: string;
     Nombre_Articulo: string;
+    Unidad: string;
     Codigo_Almacen: string;
     Nombre_Almacen: string;
     Unidades: number;
     Fecha_Vencimiento: string | null;
     Lote: string;
+    Estado_Lote: 'Vigente' | 'Vencido';
     Ultimo_Precio_Venta_USD: number | null;
     Ultimo_Costo_Compra_USD: number | null;
     Total_Ultimo_Precio_Venta_USD: number | null;
     Total_Ultimo_Costo_Compra_USD: number | null;
 }
 
+export interface InventoryMetadata {
+    source: 'inventory-movement-report';
+    generatedAt: string;
+    rowLimit: number;
+    possiblyTruncated: boolean;
+    count: number;
+}
+
 export interface InventarioResponse {
-    metadata: {
-        view: string;
-        page: number;
-        limit: number;
-        count: number;
-    };
+    metadata: InventoryMetadata;
     totals: {
         Unidades: number;
         Ultimo_Precio_Venta_USD: number;
@@ -144,7 +149,7 @@ export interface InventarioTotal {
 }
 
 export interface InventarioTotalResponse {
-    metadata: Record<string, never>;
+    metadata: InventoryMetadata;
     data: [InventarioTotal];
 }
 
@@ -152,20 +157,18 @@ export interface InventarioPorProducto {
     Codigo_Articulo: string;
     Ref_Articulo: string;
     Nombre_Articulo: string;
+    Unidad: string;
     Almacenes_Distintos: number;
     Total_Unidades: number;
     Proximo_Vencimiento: string | null;
     Total_Valor_Venta_USD: number;
     Total_Valor_Costo_USD: number;
+    Ultimo_Precio_Venta_USD: number | null;
+    Ultimo_Costo_Compra_USD: number | null;
 }
 
 export interface InventarioPorProductoResponse {
-    metadata: {
-        view: string;
-        page: number;
-        limit: number;
-        count: number;
-    };
+    metadata: InventoryMetadata;
     totals: Record<string, number>;
     data: InventarioPorProducto[];
 }
@@ -180,12 +183,7 @@ export interface InventarioPorVencimiento {
 }
 
 export interface InventarioPorVencimientoResponse {
-    metadata: {
-        view: string;
-        page: number;
-        limit: number;
-        count: number;
-    };
+    metadata: InventoryMetadata;
     totals: Record<string, number>;
     data: InventarioPorVencimiento[];
 }

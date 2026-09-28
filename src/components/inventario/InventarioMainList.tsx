@@ -1,19 +1,23 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
-import { Box, InputBase, Button, Paper, Stack, Menu, MenuItem, alpha, Switch, FormControlLabel } from '@mui/material';
+import type { GridColDef } from '@mui/x-data-grid';
+import { Alert, Box, InputBase, Button, Paper, Stack, Menu, MenuItem, alpha, Switch, FormControlLabel } from '@mui/material';
 import { Search, ChevronDown, X } from 'lucide-react';
 import { useInventario } from '../../hooks/useInventario';
-import { useTotalInventario } from '../../hooks/useTotalInventario';
 import DownloadCsvButton, { sanitizeFilename } from '../utils/DownloadCsvButton';
 import { brand, surface, status, table, search, toggle, component, custom } from '../../config/colors';
+import type { InventarioItem } from '../../types/inventario';
 
-const columns = [
+type InventoryGridRow = InventarioItem & { id: number };
+
+const columns: GridColDef<InventoryGridRow>[] = [
     { field: 'Ref_Articulo', headerName: 'Ref', flex: 1, minWidth: 100 },
     { field: 'Nombre_Articulo', headerName: 'Artículo', flex: 2, minWidth: 180 },
     { field: 'Codigo_Almacen', headerName: 'Cód. Almacén', flex: 1, minWidth: 100 },
     { field: 'Nombre_Almacen', headerName: 'Almacén', flex: 1.2, minWidth: 120 },
     { field: 'Unidades', headerName: 'Unidades', flex: 0.8, type: 'number', align: 'left', headerAlign: 'left' },
+    { field: 'Unidad', headerName: 'Unidad', flex: 0.7, minWidth: 80 },
     {
         field: 'Fecha_Vencimiento',
         headerName: 'Vencimiento',
@@ -22,7 +26,7 @@ const columns = [
         valueFormatter: (value: string | null) => {
             if (!value) return '—';
             return new Date(value).toLocaleDateString('es-VE', {
-                year: 'numeric', month: '2-digit', day: '2-digit'
+                year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'UTC'
             });
         },
         renderCell: (params) => {
@@ -33,12 +37,23 @@ const columns = [
             const isSoon = expiry <= sixMonthsFromNow;
             return (
                 <span style={{ color: isSoon ? status.errorText : 'inherit', fontWeight: isSoon ? 600 : 'inherit' }}>
-                    {expiry.toLocaleDateString('es-VE', { year: 'numeric', month: '2-digit', day: '2-digit' })}
+                    {expiry.toLocaleDateString('es-VE', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'UTC' })}
                 </span>
             );
         }
     },
     { field: 'Lote', headerName: 'Lote', flex: 1, minWidth: 100 },
+    {
+        field: 'Estado_Lote',
+        headerName: 'Estado',
+        flex: 0.8,
+        minWidth: 90,
+        renderCell: (params: any) => (
+            <strong style={{ color: params.value === 'Vigente' ? status.success : status.errorText }}>
+                {params.value}
+            </strong>
+        ),
+    },
     {
         field: 'Ultimo_Precio_Venta_USD',
         headerName: 'Precio USD',
@@ -87,7 +102,7 @@ const columns = [
 ];
 
 export default function InventarioMainList() {
-    const { data, isLoading, error } = useInventario();
+    const { data, metadata, isLoading, error } = useInventario();
 
     const [searchText, setSearchText] = useState('');
     const [loteSearch, setLoteSearch] = useState('');
@@ -123,8 +138,6 @@ export default function InventarioMainList() {
 
     const hasActiveFilters = selectedAlmacen || loteSearch || searchText || showVencido;
 
-    const { data: aggregateTotal } = useTotalInventario();
-
     const totals = useMemo(() => {
         const sumUnidades = filteredRows.reduce((acc, r) => acc + (r.Unidades || 0), 0);
         const sumTotalVenta = filteredRows.reduce((acc, r) => acc + (r.Total_Ultimo_Precio_Venta_USD || 0), 0);
@@ -153,7 +166,7 @@ export default function InventarioMainList() {
     const formatExpiry = (date: Date | null) => {
         if (!date) return '—';
         return date.toLocaleDateString('es-VE', {
-            year: 'numeric', month: '2-digit', day: '2-digit'
+            year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'UTC'
         });
     };
 
@@ -317,6 +330,11 @@ export default function InventarioMainList() {
                 </Stack>
 
                 {/* Table */}
+                {metadata?.possiblyTruncated && (
+                    <Alert severity="warning" sx={{ mx: 2, mb: 2, borderRadius: '12px' }}>
+                        Se muestran como máximo {metadata.rowLimit.toLocaleString('en-US')} registros. Los totales pueden estar incompletos.
+                    </Alert>
+                )}
                 <Paper
                     elevation={0}
                     sx={{
@@ -411,9 +429,7 @@ export default function InventarioMainList() {
                         <Box sx={{ display: 'flex', justifyContent: { xs: 'space-between', sm: 'flex-start' }, flexDirection: 'row', gap: 4 }}>
                             <span style={{ whiteSpace: 'nowrap' }}>Unidades:</span>
                             <strong style={{ fontSize: '0.95rem', color: custom.headerTextAlt }}>
-                                {hasActiveFilters
-                                    ? totals.sumUnidades.toLocaleString('en-US')
-                                    : (aggregateTotal?.Total_Unidades_Fisicas || 0).toLocaleString('en-US')}
+                                {totals.sumUnidades.toLocaleString('en-US')}
                             </strong>
                         </Box>
                     </Box>
@@ -435,10 +451,7 @@ export default function InventarioMainList() {
                         <Box sx={{ display: 'flex', justifyContent: { xs: 'space-between', sm: 'flex-start' }, flexDirection: 'row', gap: 4 }}>
                             <span style={{ whiteSpace: 'nowrap' }}>Total Venta:</span>
                             <strong style={{ fontSize: '0.95rem', color: custom.headerTextAlt }}>
-                                ${(hasActiveFilters
-                                    ? totals.sumTotalVenta
-                                    : (aggregateTotal?.Valor_Total_Venta_USD || 0)
-                                ).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                ${totals.sumTotalVenta.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </strong>
                         </Box>
                     </Box>
@@ -449,10 +462,7 @@ export default function InventarioMainList() {
                         <Box sx={{ display: 'flex', justifyContent: { xs: 'space-between', sm: 'flex-start' }, flexDirection: 'row', gap: 4 }}>
                             <span style={{ whiteSpace: 'nowrap' }}>Total Costo:</span>
                             <strong style={{ fontSize: '0.95rem', color: custom.headerTextAlt }}>
-                                ${(hasActiveFilters
-                                    ? totals.sumTotalCosto
-                                    : (aggregateTotal?.Valor_Total_Costo_USD || 0)
-                                ).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                ${totals.sumTotalCosto.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </strong>
                         </Box>
                     </Box>

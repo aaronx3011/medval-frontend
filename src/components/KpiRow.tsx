@@ -2,7 +2,6 @@ import { motion } from 'framer-motion'
 import AmountCard from './utils/amountCard'
 import ProuctCard from './utils/productCard'
 import { useVentasAnuales } from '../hooks/useVentasAnuales'
-import { useAnalisisReposicion } from '../hooks/useAnalisisReposicion'
 import { useTotalInventario } from '../hooks/useTotalInventario'
 import { formatNumber } from '../utils/formatters'
 import { component } from '../config/colors'
@@ -38,6 +37,7 @@ export default function KpiRow() {
     // Fetch inventory totals from aggregate endpoint
     const {
         data: totalInvData,
+        metadata: inventoryMetadata,
         isLoading: invLoading,
         error: invError
     } = useTotalInventario()
@@ -88,31 +88,31 @@ export default function KpiRow() {
     ];
 
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5">
-            {kpiData.map((kpi, i) => (
-                <motion.div
-                    key={i}
-                    custom={i}
-                    variants={cardVariants}
-                    initial="hidden"
-                    animate="visible"
-                    whileHover={{ y: -2, boxShadow: component.kpiShadow }}
-                    className="kpi-card bg-white rounded-xl p-4"
-                >
-                    {kpi.type === 'amount' ? (
-                        <AmountCard
-                            titlle={kpi.label}
-                            value={kpi.value}
-                            value2={kpi.units}
-                        />
-                    ) : (
-                        <ProuctCard
-                            titlle={kpi.label}
-                            value={kpi.value}
-                        />
-                    )}
-                </motion.div>
-            ))}
-        </div>
+        <>
+            {inventoryMetadata?.possiblyTruncated && (
+                <div className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800">
+                    El KPI de inventario puede estar incompleto porque el reporte alcanzó {inventoryMetadata.rowLimit.toLocaleString('en-US')} registros.
+                </div>
+            )}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5">
+                {kpiData.map((kpi, i) => (
+                    <motion.div
+                        key={i}
+                        custom={i}
+                        variants={cardVariants}
+                        initial="hidden"
+                        animate="visible"
+                        whileHover={{ y: -2, boxShadow: component.kpiShadow }}
+                        className="kpi-card bg-white rounded-xl p-4"
+                    >
+                        {kpi.type === 'amount' ? (
+                            <AmountCard titlle={kpi.label} value={kpi.value} value2={kpi.units} />
+                        ) : (
+                            <ProuctCard titlle={kpi.label} value={kpi.value} />
+                        )}
+                    </motion.div>
+                ))}
+            </div>
+        </>
     )
 }
