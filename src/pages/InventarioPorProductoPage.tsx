@@ -84,7 +84,7 @@ export default function InventarioPorProductoPage() {
                 const isExpired = expiry < new Date();
                 return (
                     <span style={{ color: isExpired ? status.errorText : 'inherit', fontWeight: isExpired ? 600 : 'inherit' }}>
-                        {expiry.toLocaleDateString('es-VE', { year: 'numeric', month: '2-digit', day: '2-digit' })}
+                        {expiry.toLocaleDateString('es-VE', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'UTC' })}
                     </span>
                 );
             },

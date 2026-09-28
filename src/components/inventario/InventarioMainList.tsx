@@ -26,7 +26,7 @@ const columns: GridColDef<InventoryGridRow>[] = [
         valueFormatter: (value: string | null) => {
             if (!value) return '—';
             return new Date(value).toLocaleDateString('es-VE', {
-                year: 'numeric', month: '2-digit', day: '2-digit'
+                year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'UTC'
             });
         },
         renderCell: (params) => {
@@ -37,7 +37,7 @@ const columns: GridColDef<InventoryGridRow>[] = [
             const isSoon = expiry <= sixMonthsFromNow;
             return (
                 <span style={{ color: isSoon ? status.errorText : 'inherit', fontWeight: isSoon ? 600 : 'inherit' }}>
-                    {expiry.toLocaleDateString('es-VE', { year: 'numeric', month: '2-digit', day: '2-digit' })}
+                    {expiry.toLocaleDateString('es-VE', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'UTC' })}
                 </span>
             );
         }
@@ -166,7 +166,7 @@ export default function InventarioMainList() {
     const formatExpiry = (date: Date | null) => {
         if (!date) return '—';
         return date.toLocaleDateString('es-VE', {
-            year: 'numeric', month: '2-digit', day: '2-digit'
+            year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'UTC'
         });
     };
 
