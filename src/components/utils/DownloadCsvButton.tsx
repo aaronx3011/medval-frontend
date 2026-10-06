@@ -24,6 +24,8 @@ export default function DownloadCsvButton({ apiRef, filename }: Props) {
     const handleDownload = () => {
         apiRef.current.exportDataAsCsv({
             fileName: filename,
+            utf8WithBom: true,
+            escapeFormulas: false,
             getRowsToExport: () => apiRef.current.getAllRowIds(),
         });
     };
